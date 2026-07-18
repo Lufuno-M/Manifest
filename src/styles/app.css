@@ -1,0 +1,106 @@
+/* ---------- Home ---------- */
+.home{
+  min-height: 100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap: 22px; padding: 24px; text-align:center;
+}
+.home__mark{ letter-spacing: 0.3em; }
+.home__prompt{ font-size: clamp(28px, 5vw, 48px); max-width: 18ch; }
+.home__hint{ color: var(--silver); font-size: 12px; }
+
+/* ---------- Search rail ---------- */
+.search-rail{
+  width: min(640px, 90vw);
+  display:flex; align-items:center; gap: 12px;
+  border-bottom: 1px solid var(--hairline);
+  padding: 14px 4px;
+}
+.search-rail__eyebrow{ display:none; }
+.search-rail__input{
+  flex:1; background:none; border:none; color: var(--bone);
+  font-size: 20px; font-style: italic;
+}
+.search-rail__input::placeholder{ color: var(--silver); opacity: 0.7; }
+.search-rail__input:focus{ outline:none; }
+.search-rail__submit{
+  background:none; border: 1px solid var(--hairline); color: var(--bone);
+  width: 34px; height: 34px; transition: border-color 200ms var(--ease), color 200ms var(--ease);
+}
+.search-rail__submit:hover{ border-color: var(--oxide-lit); color: var(--oxide-lit); }
+
+/* ---------- Search results ---------- */
+.search-page{ max-width: 1200px; margin: 0 auto; padding: 32px clamp(20px,4vw,56px) 80px; }
+.search-page__status{ color: var(--silver); margin-top: 24px; }
+.object-grid{
+  margin-top: 32px;
+  display:grid; gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+/* ---------- Object card ---------- */
+.object-card{ display:block; text-decoration:none; color:inherit; }
+.object-card__frame{
+  aspect-ratio: 4/5; background: var(--ash); border: 1px solid var(--hairline);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.object-card__frame img{ width:100%; height:100%; object-fit: cover; }
+.object-card__placeholder{ font-size: 10px; color: var(--silver); letter-spacing: 0.04em; }
+.object-card__meta{ margin-top: 10px; display:flex; flex-direction:column; gap: 3px; }
+.object-card__brand{ font-size: 10px; }
+.object-card__name{ font-size: 16px; }
+.object-card__price{ font-size: 12px; color: var(--silver); }
+
+/* ---------- Showroom ---------- */
+.showroom{
+  max-width: 1320px; margin: 0 auto;
+  padding: clamp(24px,4vw,56px);
+  display:grid; gap: 56px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 980px){
+  .showroom{ grid-template-columns: 1.3fr 0.9fr; align-items:start; }
+}
+.showroom__title{ font-size: clamp(28px,3vw,38px); margin: 8px 0 12px; }
+.showroom__price{ font-size: 16px; color: var(--silver); margin-bottom: 20px; }
+.showroom__desc{ max-width: 46ch; line-height: 1.65; color: #C9C2B4; margin-bottom: 28px; }
+.showroom__variants{ display:flex; gap: 12px; margin-bottom: 24px; }
+.showroom__variant{
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--hairline);
+}
+.showroom__add{
+  width:100%; padding: 16px; background: var(--bone); color: var(--void);
+  border:none; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px;
+  transition: background 200ms var(--ease);
+}
+.showroom__add:hover{ background: var(--sterling); }
+
+/* ---------- Gallery ---------- */
+.gallery__stage{
+  aspect-ratio: 1/1; background: var(--ash); border: 1px solid var(--hairline);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.gallery__stage img{ width:100%; height:100%; object-fit:cover; }
+.gallery__placeholder{ color: var(--silver); font-size: 11px; letter-spacing: 0.05em; }
+.gallery__thumbs{ margin-top: 12px; display:flex; gap: 10px; }
+.gallery__thumb{
+  flex:1; padding: 10px; background: var(--ash); border: 1px solid var(--hairline);
+  color: var(--silver); font-size: 10px; letter-spacing: 0.04em;
+}
+.gallery__thumb[aria-pressed="true"]{ border-color: var(--sterling); color: var(--bone); }
+
+/* ---------- Ledger (signature element) ---------- */
+.ledger{ margin-top: 36px; border: 1px solid var(--hairline); background: var(--ash-raised); }
+.ledger__head{
+  padding: 12px 16px; border-bottom: 1px solid var(--hairline);
+  display:flex; justify-content:space-between; font-size: 10.5px;
+  color: var(--silver); letter-spacing: 0.08em;
+}
+.ledger__body{ padding: 4px 16px 14px; }
+.ledger__row{
+  display:flex; justify-content:space-between; gap: 20px; padding: 8px 0;
+  border-bottom: 1px dashed var(--hairline); font-size: 12px;
+}
+.ledger__row:last-child{ border-bottom:none; }
+.ledger__k{ color: var(--silver); }
+.ledger__v--pending{ color: var(--silver); font-style: italic; }
