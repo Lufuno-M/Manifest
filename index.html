@@ -1,15 +1,551 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manifest — find the object</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manifest — Object of the Week</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+
+  :root{
+    --canvas:   #F6F7F5;
+    --mist:     #E7EAEC;
+    --silver:   #AFB7C0;
+    --chrome:   #6E7580;
+    --ink:      #15171A;
+    --ink-soft: #565C63;
+    --interp:   #CBD9DF;
+    --glass:    rgba(255,255,255,0.52);
+    --hairline: #D3D7D8;
+    --pressure: #170606;
+    --led:      #E8342A;
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  button{ font-family:inherit; cursor:pointer; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+  :focus-visible{ outline:2px solid var(--chrome); outline-offset:3px; }
+
+  .serif{ font-family:'Newsreader', serif; font-weight:400; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ============ NAV ============ */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px clamp(20px,4vw,48px);
+    mix-blend-mode: difference;
+    color: #fff;
+  }
+  .wordmark{ font-size:14px; letter-spacing:0.18em; font-weight:600; }
+  .nav-right{ display:flex; align-items:center; gap:22px; font-size:12px; letter-spacing:0.06em; }
+  .menu-glyph{ width:20px; height:14px; position:relative; }
+  .menu-glyph span{ position:absolute; left:0; right:0; height:1.5px; background:currentColor; }
+  .menu-glyph span:nth-child(1){ top:0; }
+  .menu-glyph span:nth-child(2){ top:6px; width:70%; }
+  .menu-glyph span:nth-child(3){ top:12px; }
+
+  /* ============ HERO / STAGE ============ */
+  .hero{
+    position:relative;
+    height:100svh;
+    width:100%;
+    overflow:hidden;
+    background: var(--canvas);
+  }
+  /* red-black pressure — one restrained accent, bleeding from a single corner */
+  .hero::before{
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 60% 45% at 100% 100%, var(--pressure) 0%, transparent 62%);
+    opacity: 0.14;
+    pointer-events:none;
+    z-index: 2;
+  }
+  /* raw grain — keeps the chrome from reading as sterile CG */
+  .hero::after{
+    content:'';
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index: 3;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .flash-overlay{
+    position:fixed; inset:0; z-index:100;
+    background:#fff;
+    pointer-events:none;
+    opacity:1;
+  }
+  .flash-overlay.run{
+    animation: flash-hit 900ms cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  @keyframes flash-hit{
+    0%{ opacity:1; }
+    12%{ opacity:0.15; }
+    22%{ opacity:0.85; }
+    45%{ opacity:0; }
+    100%{ opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .flash-overlay{ display:none; }
+  }
+
+  .status-tag{
+    position:absolute; top:82px; left: clamp(20px,4vw,48px);
+    z-index: 5;
+    display:flex; align-items:center; gap:7px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:0.1em;
+    color: var(--chrome);
+    opacity:0;
+    animation: rise 700ms var(--ease) 500ms forwards;
+  }
+  .status-tag .led{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--led);
+    box-shadow: 0 0 6px 1px rgba(232,52,42,0.6);
+    animation: led-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes led-pulse{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0.35; }
+  }
+  #stage-canvas{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    cursor: grab;
+  }
+  #stage-canvas:active{ cursor:grabbing; }
+
+  .stage-caption{
+    position:absolute;
+    right: clamp(20px,4vw,48px);
+    bottom: 26px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color: var(--chrome);
+    letter-spacing:0.05em;
+    text-align:right;
+    max-width: 220px;
+    line-height:1.5;
+  }
+
+  /* ============ GLASS PANEL ============ */
+  .panel-wrap{
+    position:absolute;
+    left: clamp(20px,5vw,64px);
+    bottom: clamp(24px,6vh,64px);
+    width: min(440px, 86vw);
+    z-index: 10;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color: var(--chrome);
+    margin-bottom:10px;
+    opacity:0;
+    animation: rise 700ms var(--ease) 100ms forwards;
+  }
+  h1.title{
+    font-size: clamp(34px,4vw,52px);
+    line-height:1.02;
+    letter-spacing: -0.01em;
+    margin: 0 0 22px;
+    font-weight:400;
+    opacity:0;
+    animation: rise 700ms var(--ease) 200ms forwards;
+  }
+  h1.title em{
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink-soft);
+  }
+
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ---- reading layer toggles: Facts is not among these, it's the floor ---- */
+  .reading-rail{
+    display:flex; gap:18px;
+    margin: 14px 0 0;
+    opacity:0;
+    animation: rise 700ms var(--ease) 340ms forwards;
+  }
+  .reading-toggle{
+    background:none; border:none; padding:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing:0.05em;
+    color: var(--ink-soft);
+    display:flex; align-items:center; gap:6px;
+    transition: color 180ms var(--ease);
+  }
+  .reading-toggle:hover{ color: var(--ink); }
+  .reading-toggle .glyph{ font-size:13px; width:12px; display:inline-block; }
+  .reading-toggle[aria-expanded="true"]{ color: var(--ink); }
+
+  .reading-panel{
+    margin-top: 14px;
+    padding: 18px 20px;
+    border: 1px solid var(--hairline);
+    max-height: 0;
+    opacity: 0;
+    overflow:hidden;
+    transition: max-height 380ms var(--ease), opacity 280ms var(--ease), padding 380ms var(--ease);
+  }
+  .reading-panel.open{
+    max-height: 320px;
+    opacity: 1;
+  }
+  .reading-panel[data-kind="narrative"]{
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    border-color: rgba(255,255,255,0.7);
+  }
+  .reading-panel[data-kind="interpretation"]{
+    background: color-mix(in srgb, var(--interp) 55%, rgba(255,255,255,0.4));
+    backdrop-filter: blur(10px);
+    border-color: #A9C0CB;
+  }
+
+  /* ---- content card: the facts floor, always rendered, never toggled away ---- */
+  .content-card{
+    position:relative;
+    padding: 18px 20px 16px;
+    border: 1px solid var(--hairline);
+    opacity:0;
+    animation: rise 700ms var(--ease) 380ms forwards;
+    /* flat, literal, spec-sheet — this is the floor, not a mode among modes */
+    background: repeating-linear-gradient(
+      0deg, rgba(110,117,128,0.05) 0px, rgba(110,117,128,0.05) 1px,
+      transparent 1px, transparent 25px
+    ), var(--mist);
+  }
+
+  .layer-label{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color: var(--chrome);
+    margin-bottom: 12px;
+  }
+  .layer-label .dot{ width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .reading-panel[data-kind="interpretation"] .layer-label{
+    color:#3E5A66;
+    font-weight:500;
+  }
+
+  .layer-body{ font-size:14px; line-height:1.6; }
+  .reading-panel .layer-body{
+    font-family:'Newsreader', serif;
+    font-size: 16px;
+    line-height:1.55;
+    color:#2A2D30;
+  }
+  .reading-panel[data-kind="interpretation"] .layer-body{ font-style:italic; }
+
+  .fact-row{
+    display:flex; justify-content:space-between; gap:16px;
+    padding: 7px 0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    border-bottom: 1px dashed rgba(110,117,128,0.3);
+  }
+  .fact-row:last-child{ border-bottom:none; }
+  .fact-row .k{ color: var(--chrome); }
+  .fact-row .v.unconfirmed{ color: var(--chrome); font-style:italic; }
+
+  .panel-footer{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline);
+    opacity:0;
+    animation: rise 700ms var(--ease) 460ms forwards;
+  }
+  /* quiet, secondary — commerce is downstream of inspection, not the hero action */
+  .add-link{
+    background:none; border:none; padding:0;
+    font-size:12px; letter-spacing:0.02em;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    text-decoration-color: var(--hairline);
+    text-underline-offset: 3px;
+    transition: color 180ms var(--ease), text-decoration-color 180ms var(--ease);
+  }
+  .add-link:hover{ color: var(--ink); text-decoration-color: var(--ink); }
+  .cycle-note{ font-size:11px; color:var(--chrome); font-family:'JetBrains Mono', monospace; }
+
+  footer{
+    text-align:center;
+    padding: 28px 20px 44px;
+    font-size:10.5px;
+    color: var(--chrome);
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.05em;
+  }
+
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+
+<div class="flash-overlay" id="flash-overlay"></div>
+
+<header>
+  <div class="wordmark">MANIFEST</div>
+  <div class="nav-right">
+    <span>Object of the Week</span>
+    <div class="menu-glyph"><span></span><span></span><span></span></div>
+  </div>
+</header>
+
+<section class="hero" aria-label="Featured object">
+  <canvas id="stage-canvas"></canvas>
+  <div class="status-tag"><span class="led"></span>MANIFEST — LIVE FEATURE</div>
+  <div class="stage-caption">
+    placeholder render — no real model attached yet.<br>
+    drag to rotate
+  </div>
+
+  <div class="panel-wrap">
+    <div class="eyebrow mono" id="eyebrow">Sample data — chronograph, case</div>
+    <h1 class="title serif" id="title">A case built for daily wear</h1>
+
+    <!-- Facts: always rendered. Not a tab, not a mode you can navigate away
+         from — it's the floor the rest of the page stands on. -->
+    <div class="content-card" id="facts-card">
+      <div class="layer-label"><span class="dot"></span>Verified fields — from manifest</div>
+      <div class="layer-body" id="facts-body"></div>
+    </div>
+
+    <!-- Narrative / Interpretation: optional reading layers that expand on
+         top of the facts above. Never replace them, never hide them. -->
+    <div class="reading-rail">
+      <button class="reading-toggle" data-target="narrative" aria-expanded="false">
+        <span class="glyph">+</span>Narrative
+      </button>
+      <button class="reading-toggle" data-target="interpretation" aria-expanded="false">
+        <span class="glyph">+</span>A perspective
+      </button>
+    </div>
+    <div class="reading-panel" id="narrative-panel" data-kind="narrative">
+      <div class="layer-label"><span class="dot"></span>AI-composed — bounded to verified fields only</div>
+      <div class="layer-body" id="narrative-body"></div>
+    </div>
+    <div class="reading-panel" id="interpretation-panel" data-kind="interpretation">
+      <div class="layer-label"><span class="dot"></span>A perspective — opinion, not verified fact</div>
+      <div class="layer-body" id="interpretation-body"></div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="add-link">Add to Bag</button>
+      <span class="cycle-note mono">01 / 05 this week</span>
+    </div>
+  </div>
+</section>
+
+<footer>MANIFEST — homepage prototype · 3D placeholder + layered content architecture, no live generation yet</footer>
+
+<script>
+  /* ==========================================================================
+     OBJECT DATA
+     Placeholder sample object for testing the architecture only — not a real
+     catalog item. Mirrors PRODUCT.manifest pattern: unresolved fields stay
+     "pending" and are NEVER passed into generated text.
+  ========================================================================== */
+  const OBJECT = {
+    eyebrow: 'Sample data — chronograph, case',
+    title: 'A case built for <em>daily</em> wear',
+    manifest: {
+      material:    'titanium case, sapphire crystal',
+      dimensions:  '40mm case diameter',
+      origin:      'pending',
+      introduced:  'pending',
+      weight:      'pending',
+      movement:    'pending'
+    },
+    // Simulates Call A output (see architecture doc) — composed ONLY from
+    // resolved fields above. No origin, date, weight, or movement is
+    // mentioned anywhere in this text, because none of those are confirmed.
+    narrative:
+      "A 40mm case, built from titanium and closed with a sapphire crystal " +
+      "that holds its clarity under daily wear. The proportions sit close " +
+      "to the wrist rather than announcing themselves — a size chosen to " +
+      "disappear into use rather than to be noticed.",
+    // Simulates Call B output — explicitly opinion, never presented as fact,
+    // and avoids inventing new specifics (no dates, no named collaborators).
+    interpretation:
+      "There's a quiet confidence in a case that doesn't reach for heritage " +
+      "language to justify itself. In a category that usually sells story " +
+      "before substance, this one seems content to just be worn."
+  };
+
+  const RESOLVED_KEYS = Object.entries(OBJECT.manifest)
+    .filter(([_, v]) => v && v !== 'pending')
+    .map(([k]) => k);
+
+  document.getElementById('eyebrow').textContent = OBJECT.eyebrow;
+  document.getElementById('title').innerHTML = OBJECT.title;
+
+  const FIELD_LABELS = {
+    material: 'material', dimensions: 'dimensions', origin: 'origin',
+    introduced: 'introduced', weight: 'weight', movement: 'movement'
+  };
+
+  function renderFacts(){
+    return Object.entries(OBJECT.manifest).map(([key, val]) => {
+      const unresolved = !val || val === 'pending';
+      return `<div class="fact-row">
+        <span class="k">${FIELD_LABELS[key] || key}</span>
+        <span class="v${unresolved ? ' unconfirmed' : ''}">${unresolved ? 'unconfirmed' : val}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Facts render once, permanently. Nothing in this file ever hides them.
+  document.getElementById('facts-body').innerHTML = renderFacts();
+  document.getElementById('narrative-body').innerHTML = `<p style="margin:0;">${OBJECT.narrative}</p>`;
+  document.getElementById('interpretation-body').innerHTML = `<p style="margin:0;">${OBJECT.interpretation}</p>`;
+
+  // Narrative / Interpretation are independent expandable reading layers —
+  // either, both, or neither can be open. Opening one never closes the other,
+  // and neither ever displaces the Facts card above.
+  document.querySelectorAll('.reading-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target + '-panel');
+      const isOpen = target.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+      btn.querySelector('.glyph').textContent = isOpen ? '–' : '+';
+    });
+  });
+
+  // ---------- 3D stage ----------
+  const canvas = document.getElementById('stage-canvas');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.85; // pushed hot — blown highlights, not safe CG-silver
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+  // tight + off-center: the object is cropped by the frame, not centered on it
+  camera.position.set(0.9, 0.35, 6.1);
+  camera.lookAt(0.55, 0.15, 0);
+
+  const key = new THREE.DirectionalLight(0xffffff, 2.4);
+  key.position.set(4, 5, 6);
+  scene.add(key);
+  // a hard, narrow flash-bounce highlight — the "blown" hit
+  const flashLight = new THREE.PointLight(0xffffff, 6, 8, 2);
+  flashLight.position.set(2.4, 2.1, 3.4);
+  scene.add(flashLight);
+  const rim = new THREE.DirectionalLight(0xdfe7ee, 0.7);
+  rim.position.set(-5, -2, -4);
+  scene.add(rim);
+  const fill = new THREE.AmbientLight(0xbfc6cc, 0.35);
+  scene.add(fill);
+
+  const geo = new THREE.IcosahedronGeometry(2.35, 1);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xCDD2D7,
+    metalness: 0.92,
+    roughness: 0.14,
+    flatShading: true
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(0.7, 0.1, 0);
+  scene.add(mesh);
+
+  const wireGeo = new THREE.IcosahedronGeometry(2.4, 1);
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe:true, transparent:true, opacity:0.16 });
+  const wire = new THREE.Mesh(wireGeo, wireMat);
+  wire.position.copy(mesh.position);
+  scene.add(wire);
+
+  // motion-blur ghost: a faint duplicate that lags behind fast rotation,
+  // instead of a clean, safe lerp — the trail is the point
+  const ghostMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe:true, transparent:true, opacity:0 });
+  const ghost = new THREE.Mesh(wireGeo, ghostMat);
+  ghost.position.copy(mesh.position);
+  scene.add(ghost);
+  let ghostRotY = 0, ghostRotX = 0;
+
+  function resize(){
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  // drag-to-rotate
+  let dragging = false, lastX = 0, lastY = 0;
+  let velX = 0, velY = 0;
+  canvas.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+  window.addEventListener('pointerup', () => dragging = false);
+  window.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    velX = dx * 0.005; velY = dy * 0.005;
+    mesh.rotation.y += velX; mesh.rotation.x += velY;
+    wire.rotation.copy(mesh.rotation);
+  });
+
+  function animate(){
+    requestAnimationFrame(animate);
+    if (!dragging){
+      const idle = reduceMotion ? 0 : 0.0022;
+      mesh.rotation.y += idle + velX * 0.02;
+      mesh.rotation.x += velY * 0.02;
+    }
+    wire.rotation.copy(mesh.rotation);
+
+    // ghost lags behind by easing toward mesh rotation slower than mesh moves —
+    // the gap between them, rendered, is the blur
+    ghostRotY += (mesh.rotation.y - ghostRotY) * 0.18;
+    ghostRotX += (mesh.rotation.x - ghostRotX) * 0.18;
+    ghost.rotation.set(ghostRotX, ghostRotY, 0);
+    const speed = Math.min(Math.abs(velX) + Math.abs(velY), 0.4);
+    ghostMat.opacity = reduceMotion ? 0 : speed * 0.9;
+
+    velX *= 0.9; velY *= 0.9;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  const flashOverlay = document.getElementById('flash-overlay');
+  requestAnimationFrame(() => flashOverlay.classList.add('run'));
+  setTimeout(() => flashOverlay.remove(), 1000);
+</script>
+
 </body>
 </html>
