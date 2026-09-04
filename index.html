@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANIFEST</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --ink:       #201C14;
+    --ink-soft:  #7A7160;
+    --hairline:  rgba(32,28,20,0.12);
+    --ease: cubic-bezier(.22,.61,.36,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:#FFFFFF; /* white is a note, not the base — see .weather */
+    color:var(--ink);
+    font-family:'Archivo', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img,svg{ display:block; max-width:100%; }
+  button{ font-family:inherit; cursor:pointer; background:none; border:none; }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid #A8632B; outline-offset:3px; }
+
+  .display{ font-family:'Fraunces', serif; letter-spacing:-0.01em; }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ============================================================
+     WEATHER — the atmosphere that is always alive. Not triggered,
+     not a hover effect, not tied to any object. Several soft,
+     blurred color bodies drift slowly and continuously across the
+     viewport at all times, independent of scroll or cursor. White
+     is what shows through the gaps between them, not a background
+     underneath them. Palette pulled from the actual bottle/juice:
+     citrus-white, champagne-gold, blood-orange warmth, tiaré cream,
+     sandalwood dust — no blues, no violets, nothing outside the
+     fragrance's real notes.
+     ============================================================ */
+  .weather{
+    position:fixed; inset:0; z-index:0;
+    pointer-events:none; overflow:hidden;
+  }
+  .weather .cloud{
+    position:absolute;
+    width:64vmax; height:64vmax;
+    border-radius:50%;
+    filter: blur(60px);
+    will-change: transform;
+  }
+  .cloud-1{ /* citrus-white */
+    top:-18vmax; left:-14vmax;
+    background: radial-gradient(circle, hsl(46 62% 80%) 0%, transparent 72%);
+    opacity:0.6;
+  }
+  .cloud-2{ /* champagne-gold */
+    top:10vmax; right:-20vmax;
+    background: radial-gradient(circle, hsl(38 68% 66%) 0%, transparent 72%);
+    opacity:0.52;
+  }
+  .cloud-3{ /* blood-orange warmth — an accent note, kept a touch quieter than the rest */
+    bottom:-24vmax; left:8vmax;
+    background: radial-gradient(circle, hsl(18 68% 58%) 0%, transparent 74%);
+    opacity:0.38;
+  }
+  .cloud-4{ /* tiare cream */
+    bottom:6vmax; right:2vmax;
+    background: radial-gradient(circle, hsl(30 50% 74%) 0%, transparent 72%);
+    opacity:0.5;
+  }
+  .cloud-5{ /* sandalwood dust */
+    top:38vmax; left:26vmax;
+    background: radial-gradient(circle, hsl(32 34% 62%) 0%, transparent 74%);
+    opacity:0.42;
+  }
+
+  /* ============================================================
+     ATTENTION HALOS — one per object, in page-space (not fixed).
+     These are pulled by dwell time + proximity + repeated return,
+     never by hover/click. They thicken the weather locally rather
+     than paint a new color on top of it (multiply blend). Hue is
+     assigned per "episode" of attention, drawn from the same
+     bottle-accurate palette — no object owns a repeating color.
+     ============================================================ */
+  .halo{
+    position:absolute;
+    left:50%; top:50%;
+    width: calc(100% + 520px);
+    height: calc(100% + 520px);
+    transform: translate(-50%,-50%) scale(var(--halo-scale, 0.5));
+    border-radius:50%;
+    background: radial-gradient(circle, var(--halo-color, transparent) 0%, transparent 68%);
+    opacity: var(--halo-opacity, 0);
+    mix-blend-mode: multiply;
+    pointer-events:none;
+    z-index:1;
+  }
+
+  /* ============================================================
+     NAV — quiet, no seam. No mix-blend trickery needed now that
+     there's no black chamber underneath it.
+     ============================================================ */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:80;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px clamp(20px,4vw,52px);
+    background: transparent;
+  }
+  .wordmark-nav{
+    font-family:'Fraunces', serif; font-weight:400; font-size:14px;
+    letter-spacing:0.24em; color:var(--ink); opacity:0.82;
+  }
+  .nav-right{
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
+  }
+
+  /* ============================================================
+     ARRIVAL — the top of the field, not a separate room. One
+     object, already faintly attended (a small head start on its
+     dwell value), floating the same way every other object floats.
+     ============================================================ */
+  .arrival{
+    position:relative; z-index:2;
+    min-height:100svh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center;
+    padding: 120px 24px 60px;
+  }
+  .arrival .wordmark{
+    font-family:'Fraunces', serif; font-weight:400;
+    font-size: clamp(30px, 5vw, 52px);
+    letter-spacing:0.04em; color:var(--ink);
+  }
+  .arrival .thesis{
+    margin-top:10px;
+    font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .arrival-obj-wrap{
+    position:relative;
+    width:min(52vw, 340px); height:min(52vw, 340px);
+    margin-top: 56px;
+  }
+  .arrival-obj-wrap .stage{
+    position:relative; z-index:2;
+    width:100%; height:100%;
+    filter: drop-shadow(0 18px 22px rgba(32,28,20,0.10));
+    animation: drift-obj 16s ease-in-out infinite;
+  }
+  .arrival-obj-wrap img{ width:100%; height:100%; object-fit:contain; }
+  .arrival-cap{
+    margin-top:20px;
+    opacity: var(--halo-opacity, 0);
+    transition: opacity 1.4s linear;
+  }
+  .arrival-cap .maker{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); }
+  .arrival-cap .name{ font-family:'Fraunces', serif; font-size:16px; margin-top:3px; color:var(--ink); }
+
+  .scroll-cue{
+    position:absolute; left:50%; bottom:28px; transform:translateX(-50%);
+    opacity:0.4;
+  }
+  .scroll-cue svg{ width:12px; height:20px; }
+
+  /* ============================================================
+     FIELD — same environment as arrival, no border between them.
+     ============================================================ */
+  .field-note{
+    position:relative; z-index:2;
+    max-width:520px; margin:0 auto;
+    padding: 4vh 24px 8vh;
+    text-align:center;
+  }
+  .field-note p{
+    font-family:'Fraunces', serif; font-style:italic;
+    font-size:15px; line-height:1.6; color:#3A382F; margin:0;
+  }
+
+  .field{ position:relative; z-index:2; }
+
+  .field-obj{
+    position:absolute;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    animation: drift-obj 15s ease-in-out infinite;
+    cursor:default;
+  }
+  .field-obj .stage{
+    width:100%; height:100%;
+    filter: drop-shadow(0 12px 16px rgba(32,28,20,0.08));
+  }
+  .field-obj img{ width:100%; height:100%; object-fit:contain; }
+  .field-obj .cap{
+    margin-top:12px;
+    text-align:center;
+    opacity: var(--halo-opacity, 0);
+    transform: translateY(4px);
+    transition: opacity 1.4s linear, transform 1.4s linear;
+    pointer-events:none;
+  }
+  .field-obj .cap .maker{
+    font-family:'JetBrains Mono', monospace; font-size:9px;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft);
+  }
+  .field-obj .cap .name{
+    font-family:'Fraunces', serif; font-size:14px; margin-top:2px; color:var(--ink);
+    white-space:nowrap;
+  }
+  @keyframes drift-obj{
+    0%{ transform: translate(0,0) rotate(var(--jitter-r, 0deg)); }
+    50%{ transform: translate(5px,-12px) rotate(calc(var(--jitter-r, 0deg) + 0.7deg)); }
+    100%{ transform: translate(0,0) rotate(var(--jitter-r, 0deg)); }
+  }
+
+  .pending-mark{
+    width:100%; height:100%;
+    border:1px dashed var(--hairline);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .pending-mark .pending-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--ink-soft); text-align:center;
+  }
+
+  .field-outro{
+    position:relative; z-index:2;
+    text-align:center;
+    padding: 6vh 24px 10vh;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+
+  .pending-toggle{
+    position:relative; z-index:2;
+    max-width:1200px; margin:0 auto;
+    padding: 0 clamp(20px,4vw,52px);
+  }
+  .pending-toggle button{
+    display:flex; align-items:center; gap:10px;
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
+    padding: 16px 0; border-top:1px solid var(--hairline); width:100%;
+    justify-content:space-between;
+  }
+  .pending-toggle .chev{ transition: transform 220ms var(--ease); }
+  .pending-toggle button.open .chev{ transform: rotate(180deg); }
+  .pending-body{ max-height:0; overflow:hidden; transition: max-height 420ms var(--ease); }
+  .pending-body.open{ max-height:600px; }
+  .pending-list{
+    padding: 20px 0 60px;
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    color: var(--ink-soft);
+    display:grid; gap:10px;
+  }
+  .pending-list .row{
+    display:flex; justify-content:space-between; gap:20px;
+    padding-bottom:10px; border-bottom:1px dashed var(--hairline);
+  }
+  .pending-list .row .name{ color:var(--ink); }
+
+  footer{
+    position:relative; z-index:2;
+    text-align:center;
+    padding: 40px 20px 60px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .weather .cloud{ animation:none; }
+    .field-obj, .arrival-obj-wrap .stage{ animation:none; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="weather" aria-hidden="true">
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+  <div class="cloud cloud-4"></div>
+  <div class="cloud cloud-5"></div>
+</div>
+
+<nav>
+  <div class="wordmark-nav">MANIFEST</div>
+  <div class="nav-right"><span id="field-count">— objects</span></div>
+</nav>
+
+<section class="arrival" id="arrival">
+  <div class="wordmark display">Manifest</div>
+  <div class="thesis">An archive of attention</div>
+  <div class="arrival-obj-wrap" id="arrival-obj">
+    <div class="halo" id="arrival-halo"></div>
+    <div class="stage" id="arrival-stage"></div>
+  </div>
+  <div class="arrival-cap" id="arrival-cap">
+    <div class="maker mono" id="arrival-maker"></div>
+    <div class="name" id="arrival-name"></div>
+  </div>
+  <div class="scroll-cue">
+    <svg viewBox="0 0 12 20" fill="none"><path d="M1 1L6 19L11 1" stroke="#7A7160" stroke-width="1.2"/></svg>
+  </div>
+</section>
+
+<section class="field-note">
+  <p>Nothing here is sorted. Stay a while — the room remembers where you've been.</p>
+</section>
+
+<section class="field" id="field">
+  <div id="field-objects" style="position:relative;"></div>
+</section>
+
+<div class="field-outro">End of record — for now</div>
+
+<div class="pending-toggle">
+  <button id="pending-btn" aria-expanded="false">
+    <span>Pending Bloodline + SRDP review</span>
+    <span class="chev">▾</span>
+  </button>
+  <div class="pending-body" id="pending-body">
+    <div class="pending-list" id="pending-list"></div>
+  </div>
+</div>
+
+<footer>MANIFEST — objects, not products · attention is the product</footer>
+
+<script>
+/* ==========================================================================
+   CATALOG — confirmed admitted objects only. No fabricated photography.
+========================================================================== */
+const OBJECTS = [
+  { id:'lv-city-of-stars', name:'City of Stars', maker:'Louis Vuitton', category:'Fragrance',
+    blurb:'Naming still unresolved against "City of Nights" — the object stands, the title is pending.', asset:'assets/lv-city-of-stars.png' },
+  { id:'lv-murakami-charm', name:'Monogram Charm', maker:'Louis Vuitton × Takashi Murakami', category:'Jewelry',
+    blurb:'The collaboration reduced to a single wearable fragment.', asset:'assets/lv-murakami-charm.png' },
+  { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object',
+    blurb:'Evaluated and admitted on its own terms, separate from the grey release.', asset:'assets/murakami-cushion-pink.png' },
+  { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object',
+    blurb:'Same silhouette as the pink, its own admission decision.', asset:null },
+  { id:'youngboy-tee', name:'Graphic Tee', maker:'YoungBoy Never Broke Again', category:'Apparel',
+    blurb:'Recoded through fan and resale culture rather than runway.', asset:'assets/youngboy-tee.png' },
+  { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object',
+    blurb:'Reads as a distinct BAPE object, not a graphic applied to homeware.', asset:'assets/bape-clock.png' },
+  { id:'coming-soon-titanic', name:'Titanic Hoodie', maker:'Coming Soon × Vetements', category:'Apparel',
+    blurb:'The ironic bootleg-movie-graphic lineage Vetements itself trades in.', asset:'assets/coming-soon-titanic.png' },
+  { id:'storm-red', name:'Storm — Red', maker:'Revenge', category:'Footwear',
+    blurb:'The "is it cap or its own thing" debate on Grailed and Instagram — real recoding, argued in the open.', asset:'assets/storm-red.png' },
+  { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear',
+    blurb:'Same debate, same platforms, its own manifestation.', asset:'assets/storm-blue.png' },
+  { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear',
+    blurb:'Third colorway, admitted individually per the standing one-at-a-time process.', asset:'assets/storm-black.png' },
+  { id:'lv-imagination', name:'Imagination', maker:'Louis Vuitton Fragrance', category:'Fragrance',
+    blurb:'A house best known for luggage, bottling a scent instead. Proof the canon isn\'t only bags and sneakers.', asset:'assets/lv-imagination.png' },
+  { id:'lv-limmensite', name:'L\'Immensité', maker:'Louis Vuitton Fragrance', category:'Fragrance',
+    blurb:'Same house, same restraint, different register — amber where Imagination runs pale.', asset:'assets/lv-limmensite.png' },
+  { id:'lv-chain-bracelet', name:'Monogram Chain Bracelet', maker:'Louis Vuitton', category:'Jewelry',
+    blurb:'The monogram reduced to a single link. Small enough to miss, unmistakable once you clock it.', asset:'assets/lv-chain-bracelet.png' },
+  { id:'lv-messenger-bag', name:'Trio Messenger', maker:'Louis Vuitton', category:'Bag',
+    blurb:'Utility read through a monogram — the house\'s answer to a bag built to actually be used daily.', asset:'assets/lv-messenger-bag.png' },
+  { id:'goyard-saint-louis-gm', name:'Saint Louis GM Tote', maker:'Goyard', category:'Bag',
+    blurb:'The Chevron pattern in its most recognized carry — hand-painted, not printed, and the house still won\'t confirm which.', asset:null },
+  { id:'chrome-hearts-cemetery-ring', name:'Cemetery Cross Ring', maker:'Chrome Hearts', category:'Jewelry',
+    blurb:'Sterling silver worn into culture by proximity — rock, skate, and now runway — rather than by campaign.', asset:null },
+  { id:'supreme-box-logo-hoodie', name:'Box Logo Hoodie', maker:'Supreme', category:'Apparel',
+    blurb:'A logo that became a unit of resale value before it became a garment people actually wear.', asset:null },
+  { id:'bape-shark-hoodie', name:'Shark Full Zip Hoodie', maker:'A Bathing Ape', category:'Apparel',
+    blurb:'The zip-through mouth turned a hood into a mask — one of the few graphics that changed how a garment is worn.', asset:'assets/bape-shark-hoodie.png' },
+  { id:'off-white-af1-university-blue', name:'Air Force 1 "University Blue"', maker:'Off-White × Nike', category:'Footwear',
+    blurb:'Zip ties and quote marks as a design language — the deconstruction that made the collaboration format legible.', asset:null },
+
+  /* ---- everything below was pending a Bloodline/SRDP pass; hand-selected
+     and released to stand alone, one object per colorway/variant ---- */
+  { id:'off-white-af1-black', name:'Air Force 1 "Black"', maker:'Off-White × Nike', category:'Footwear',
+    blurb:'The same deconstruction, restated in black — quote marks and zip ties reading as language rather than color.', asset:null },
+  { id:'off-white-af1-green', name:'Air Force 1 "Green"', maker:'Off-White × Nike', category:'Footwear',
+    blurb:'A quieter colorway of the same collaboration, still carrying the exposed foam and printed text.', asset:null },
+  { id:'off-white-af1-white-red-tie', name:'Air Force 1 "White / Red Tie"', maker:'Off-White × Nike', category:'Footwear',
+    blurb:'The zip tie rendered in red against white — the accent that turned a shoelace tag into a signature.', asset:null },
+  { id:'goyard-marquises-tote-blue', name:'Marquises Tote', maker:'Goyard', category:'Bag',
+    blurb:'Structured where the Saint Louis is soft — the Marquises carries the same chevron in a firmer, boxier body.',
+    asset:'assets/goyard-marquises-tote-blue.png' },
+  { id:'goyard-cap-vert-crossbody', name:'Cap Vert Crossbody', maker:'Goyard', category:'Bag',
+    blurb:'The Cap Vert scaled down to a body bag — same coated canvas, worn close rather than carried.', asset:null },
+  { id:'goyard-cap-vert-backpack', name:'Cap Vert Backpack', maker:'Goyard', category:'Bag',
+    blurb:'A third body in the Cap Vert line — the chevron read at backpack scale.', asset:null },
+  { id:'bape-ape-head-pillow-green', name:'Ape Head Pillow — Green Camo', maker:'A Bathing Ape', category:'Object',
+    blurb:'The house camo graphic moved off apparel and onto homeware — a logo that furnishes a room instead of dressing a body.', asset:null },
+  { id:'bape-ape-head-pillow-purple', name:'Ape Head Pillow — Purple Camo', maker:'A Bathing Ape', category:'Object',
+    blurb:'Same object, the house camo run in purple — proof the graphic was always the product, the colorway just its mood.', asset:null },
+  { id:'gucci-gg-iphone-case', name:'GG Monogram iPhone Case', maker:'Gucci', category:'Object',
+    blurb:'The GG monogram applied to the object everyone actually holds — the phone case as the new logo carrier.', asset:null },
+  { id:'mm6-numbers-keyholder', name:'Numbers Keyholder', maker:'MM6 Maison Margiela', category:'Object',
+    blurb:'Margiela\'s anonymous numbering system, reduced to a small object that identifies nothing and everyone recognizes anyway.', asset:'assets/mm6-numbers-keyholder.png' },
+  { id:'lv-lv-charm', name:'"LV" Monogram Charm', maker:'Louis Vuitton', category:'Jewelry',
+    blurb:'Two letters, cast small enough to hang off a bag or a keyring — the house’s shortest possible signature.', asset:null },
+  { id:'chrome-hearts-fleur-cross-pendant', name:'Fleur Cross Pendant', maker:'Chrome Hearts', category:'Jewelry',
+    blurb:'The cross reworked with a floral scroll — Chrome Hearts\' gothic silverwork softened, but not by much.', asset:null },
+  { id:'supreme-chrome-hearts-ring', name:'Box Logo Ring', maker:'Supreme × Chrome Hearts', category:'Jewelry',
+    blurb:'A collaboration between two houses that don\'t usually need collaborators — the box logo cast in silver.', asset:null },
+  { id:'bape-baby-milo-tee-green', name:'Baby Milo Tee — Green', maker:'A Bathing Ape', category:'Apparel',
+    blurb:'BAPE\'s mascot in its most collected colorway — an entire secondary market built on which Milo tee you own.', asset:null },
+  { id:'bape-baby-milo-tee-yellow', name:'Baby Milo Tee — Yellow', maker:'A Bathing Ape', category:'Apparel',
+    blurb:'The same Milo graphic, run yellow — each colorway treated as its own object rather than a variant of one.', asset:null },
+  { id:'bape-baby-milo-tee-blue', name:'Baby Milo Tee — Blue', maker:'A Bathing Ape', category:'Apparel',
+    blurb:'A third colorway of the Baby Milo tee, standing on its own the same as the other two.', asset:null },
+  { id:'palm-angels-track-pants', name:'Track Pants', maker:'Palm Angels', category:'Apparel',
+    blurb:'First Palm Angels admission — the side-stripe track silhouette that put the house on every off-duty rack.', asset:'assets/palm-angels-track-pants.png' },
+  { id:'vetements-hoodie-black', name:'Hoodie — Black', maker:'Vetements', category:'Apparel',
+    blurb:'Oversized, unadorned, deliberately anti-branding — the house\'s founding gesture stripped to its basic form.', asset:'assets/vetements-hoodie-black.png' },
+  { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel',
+    blurb:'Butterfly-sleeve track top, the house\'s signature silhouette in its loudest register.', asset:'assets/needles-track-jacket-purple.png' },
+  { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel',
+    blurb:'Same butterfly cut, cooler colorway — admitted separately per the one-colorway-one-object rule.', asset:'assets/needles-track-jacket-blue.png' },
+  { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object',
+    blurb:'The house\'s mascot rendered underfoot, in the camo that started it all.', asset:'assets/bape-ape-head-rug-camo.png' },
+  { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object',
+    blurb:'Same silhouette, a colorway built for visibility rather than camouflage.', asset:'assets/bape-ape-head-rug-pink.png' },
+  { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object',
+    blurb:'The smallest possible object still carrying full house recognition.', asset:'assets/bape-lighter-wordmark.png' },
+  { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object',
+    blurb:'Same form, the ape-head line art instead of the wordmark — a second, distinct admission.', asset:'assets/bape-lighter-camo-graphic.png' },
+  { id:'supreme-crewneck-blue', name:'Box Logo Crewneck — Blue', maker:'Supreme', category:'Apparel',
+    blurb:'The plainest possible carrier for the most recognized logo in the archive.', asset:'assets/supreme-crewneck-blue.png' },
+  { id:'nike-cpfm-vapormax-2019', name:'Vapormax 2019', maker:'Nike × Cactus Plant Flea Market', category:'Footwear',
+    blurb:'CPFM\'s tubing and hardware grafted onto the Vapormax sole — collaboration as visible surgery, not a colorway.', asset:'assets/nike-cpfm-vapormax-2019.png' },
+  { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear',
+    blurb:'First Adidas admission — the Human Race line in the colorway most tied to the collaboration\'s identity.', asset:'assets/adidas-nmd-human-race-green.png' },
+  { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear',
+    blurb:'Same line, the text-forward colorway that turned the shoe into a slogan.', asset:'assets/adidas-nmd-human-race-blue.png' },
+  { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object',
+    blurb:'Second colorway of the wall clock already in the archive, admitted on its own per house policy.', asset:'assets/bape-clock-blue.png' },
+  { id:'ambush-lighter-keychain', name:'Lighter Keychain', maker:'Ambush', category:'Accessory',
+    blurb:'First Ambush admission — hardware-forward, the house\'s jewelry logic applied to something disposable.', asset:'assets/ambush-lighter-keychain.png' },
+  { id:'balenciaga-keychain', name:'Keychain', maker:'Balenciaga', category:'Accessory',
+    blurb:'First Balenciaga admission, entering through an accessory rather than a headline piece.', asset:'assets/balenciaga-keychain.png' },
+  { id:'revenge-storm-velcro', name:'Storm Velcro Patch', maker:'Revenge', category:'Accessory',
+    blurb:'The removable panel from the Storm collaboration, admitted as its own small object.', asset:'assets/revenge-storm-velcro.png' },
+];
+const PENDING = [];
+
+function renderPendingMark(){
+  return `<div class="pending-mark"><span class="pending-label">pending<br>imagery</span></div>`;
+}
+function renderStage(o){
+  return o.asset
+    ? `<img src="${o.asset}" alt="${o.name}" loading="lazy">`
+    : renderPendingMark();
+}
+
+document.getElementById('field-count').textContent =
+  String(OBJECTS.length).padStart(2,'0') + ' objects';
+
+/* ---------- Arrival object: floats in the same atmosphere as
+   everything else, and — like weather — it doesn't hold perfectly
+   still. Roughly once a minute it slowly dissolves to a different
+   object rather than staying fixed forever. This isn't a carousel
+   (no controls, no fixed interval tick you can feel, no drag) — the
+   timing is randomized within a window so it never reads as a UI
+   beat. It's given a small head start on dwell so it isn't at zero
+   the moment the page opens. ---------- */
+const arrivalStageEl = document.getElementById('arrival-stage');
+const arrivalMakerEl = document.getElementById('arrival-maker');
+const arrivalNameEl = document.getElementById('arrival-name');
+arrivalStageEl.style.transition = 'opacity 1.8s ease';
+
+let arrivalObjData = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
+function paintArrival(){
+  arrivalStageEl.innerHTML = renderStage(arrivalObjData);
+  arrivalMakerEl.textContent = arrivalObjData.maker;
+  arrivalNameEl.textContent = arrivalObjData.name;
+}
+paintArrival();
+
+function scheduleArrivalDrift(){
+  const wait = 45000 + Math.random() * 30000; // 45–75s, not a fixed beat
+  setTimeout(() => {
+    arrivalStageEl.style.opacity = '0';
+    setTimeout(() => {
+      let next = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
+      while (next.id === arrivalObjData.id && OBJECTS.length > 1){
+        next = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
+      }
+      arrivalObjData = next;
+      paintArrival();
+      arrivalStageEl.style.opacity = '1';
+      scheduleArrivalDrift();
+    }, 1800);
+  }, wait);
+}
+scheduleArrivalDrift();
+
+
+/* ---------- Field: scattered, deterministic-but-loose placement.
+   Same pattern approach as before — position and size come from an
+   indexed pattern rather than a hardcoded per-object layout, so the
+   field simply grows as the catalog grows. ---------- */
+const fieldObjectsEl = document.getElementById('field-objects');
+const shuffled = [...OBJECTS].sort(() => Math.random() - 0.5);
+
+const LEFT_PATTERN = [10, 62, 26, 70, 15, 55, 34, 74, 8, 58, 22, 66, 12, 50, 30, 68, 18, 60, 40, 6, 64, 28];
+const WIDTH_PATTERN = [150, 125, 165, 118, 145, 132, 158, 122, 148, 136];
+const DURATION_PATTERN = [14, 17, 12, 19, 15, 13, 18, 16, 20, 14];
+
+let cursorTop = 4; // vh
+const wells = []; // { el, halo, top(vh), left(%), cx, cy (page px, computed after layout), dwell, episodeOpen, hue, neighbor }
+
+shuffled.forEach((o, i) => {
+  const left = LEFT_PATTERN[i % LEFT_PATTERN.length];
+  const width = WIDTH_PATTERN[i % WIDTH_PATTERN.length];
+  const duration = DURATION_PATTERN[i % DURATION_PATTERN.length];
+  const jr = (Math.random() * 6 - 3).toFixed(1);
+
+  const el = document.createElement('div');
+  el.className = 'field-obj';
+  el.dataset.id = o.id;
+  el.style.top = cursorTop + 'vh';
+  el.style.left = left + '%';
+  el.style.width = width + 'px';
+  el.style.height = width + 'px';
+  el.style.animationDuration = duration + 's';
+  el.style.setProperty('--jitter-r', jr + 'deg');
+  el.innerHTML = `
+    <div class="halo"></div>
+    <div class="stage">${renderStage(o)}</div>
+    <div class="cap">
+      <div class="maker mono">${o.maker}</div>
+      <div class="name">${o.name}</div>
+    </div>
+  `;
+  fieldObjectsEl.appendChild(el);
+
+  wells.push({
+    el,
+    halo: el.querySelector('.halo'),
+    topVh: cursorTop,
+    leftPct: left,
+    dwell: 0,
+    episodeOpen: false,
+    hue: null,
+    neighbor: null
+  });
+
+  cursorTop += 20 + (i % 3) * 3;
+});
+
+fieldObjectsEl.style.height = (cursorTop + 14) + 'vh';
+document.getElementById('field').style.minHeight = (cursorTop + 20) + 'vh';
+
+// nearest neighbor per well, by placement position (rough but sufficient
+// for "attention starts affecting neighboring objects")
+wells.forEach((w, i) => {
+  let best = null, bestD = Infinity;
+  wells.forEach((w2, j) => {
+    if (i === j) return;
+    const d = Math.hypot(w.topVh - w2.topVh, w.leftPct - w2.leftPct);
+    if (d < bestD) { bestD = d; best = w2; }
+  });
+  w.neighbor = best;
+});
+
+document.getElementById('pending-btn').addEventListener('click', function(){
+  const open = this.classList.toggle('open');
+  this.setAttribute('aria-expanded', open);
+  document.getElementById('pending-body').classList.toggle('open', open);
+});
+document.getElementById('pending-list').innerHTML = PENDING.map(p => `
+  <div class="row"><span class="name">${p.name}</span><span>${p.note}</span></div>
+`).join('');
+
+/* ==========================================================================
+   ATTENTION AS MEMORY
+   Not hover, not click. A per-object "dwell" value rises only while the
+   viewer is near AND moving slowly (or the page is scrolling slowly) —
+   that's the closest a cursor can get to "the system believes you're
+   genuinely looking." It never resets on departure; it decays over
+   minutes, so a return visit to a region already carrying some memory
+   builds back up faster than a first visit did. Roughly:
+     ~8s   dwell/MAX ≈ 0.13  → a bloom becomes just visible
+     ~20s  dwell/MAX ≈ 0.33  → visibly stronger
+     ~40s  dwell/MAX ≈ 0.66  → visibly wider
+     ~60s+ dwell/MAX = 1.0   → begins lending a little of its own
+                                intensity to its nearest neighbor
+   Hue is chosen per attention "episode," drawn from the bottle-accurate
+   palette below — never the same hue twice in a row on the same object,
+   and never assigned to an object as a fixed identity.
+========================================================================== */
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  // City of Stars, corrected against the actual bottle/juice/notes —
+  // citrus through amber through cream through sandalwood. No blues,
+  // no violets; those aren't in the fragrance.
+  const hues = [
+    'hsl(46 55% 78%)',   // citrus-white / lemon peel
+    'hsl(38 60% 68%)',   // champagne-gold
+    'hsl(18 62% 62%)',   // blood-orange flashbulb
+    'hsl(30 40% 74%)',   // tiaré cream
+    'hsl(32 26% 62%)'    // sandalwood dust
+  ];
+  function pickHue(w){
+    let next;
+    do { next = hues[Math.floor(Math.random() * hues.length)]; } while (next === w.hue && hues.length > 1);
+    w.hue = next;
+  }
+
+  const MAX = 60;      // seconds-equivalent of full, sustained attention
+  const RISE = 1;       // dwell seconds gained per real second of full proximity+stillness
+  const DECAY = MAX / 240; // full memory fades over ~4 minutes of absence
+
+  // global stillness: cursor velocity + scroll velocity, decaying —
+  // this gates whether nearby dwell is allowed to accumulate at all.
+  let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
+  let curX = targetX, curY = targetY;
+  let motionEnergy = 0;
+  let lastMX = targetX, lastMY = targetY, lastT = performance.now();
+
+  window.addEventListener('mousemove', (e) => {
+    const now = performance.now();
+    const dt = Math.max(now - lastT, 1);
+    const dist = Math.hypot(e.clientX - lastMX, e.clientY - lastMY);
+    motionEnergy = Math.min(1, motionEnergy + (dist / dt) * 3.6);
+    lastMX = e.clientX; lastMY = e.clientY; lastT = now;
+    targetX = e.clientX; targetY = e.clientY;
+  }, { passive: true });
+
+  window.addEventListener('scroll', () => {
+    motionEnergy = Math.min(1, motionEnergy + 0.1);
+  }, { passive: true });
+
+  // arrival object gets its own well too, with a small head start
+  const arrivalWell = {
+    dwell: 8, episodeOpen: false, hue: null,
+    haloEl: document.getElementById('arrival-halo'),
+    capEl: document.getElementById('arrival-cap')
+  };
+  pickHue(arrivalWell);
+  arrivalWell.episodeOpen = true;
+
+  let lastFrame = performance.now();
+  const t0 = performance.now();
+
+  // Wave motion for the weather clouds — continuous sine drift rather
+  // than a back-and-forth CSS alternate, so it reads as breeze/current
+  // rather than a mechanical loop. Each cloud gets its own period,
+  // amplitude and phase so they never fall into sync with each other.
+  const cloudEls = Array.from(document.querySelectorAll('.weather .cloud'));
+  const waveParams = cloudEls.map((el, i) => ({
+    el,
+    ax: 6 + i * 1.4,           // amplitude, vmax
+    ay: 5 + i * 1.1,
+    px: 60 + i * 17,           // period, seconds
+    py: 75 + i * 21,
+    phase: i * 1.7,
+    scaleAmp: 0.08 + i * 0.01,
+    scalePeriod: 90 + i * 13
+  }));
+
+  function applyWell(w, energy, opacityCap, isArrival){
+    const opacity = Math.min(opacityCap, energy * opacityCap * 1.05);
+    const scale = 0.5 + Math.min(1, energy) * 1.0;
+    const target = isArrival ? arrivalWell.haloEl : w.halo;
+    target.style.setProperty('--halo-opacity', opacity.toFixed(3));
+    target.style.setProperty('--halo-scale', scale.toFixed(3));
+    target.style.setProperty('--halo-color', w.hue || 'transparent');
+    const capEl = isArrival ? arrivalWell.capEl : w.el.querySelector('.cap');
+    capEl.style.setProperty('--halo-opacity', Math.min(1, energy * 3.2).toFixed(3));
+  }
+
+  function loop(){
+    const now = performance.now();
+    const dt = Math.min((now - lastFrame) / 1000, 0.1); // seconds, clamped
+    lastFrame = now;
+
+    // breeze: continuous sine-driven drift, independent of attention
+    const elapsed = (now - t0) / 1000;
+    waveParams.forEach(p => {
+      const x = Math.sin(elapsed / p.px * Math.PI * 2 + p.phase) * p.ax;
+      const y = Math.cos(elapsed / p.py * Math.PI * 2 + p.phase) * p.ay;
+      const s = 1 + Math.sin(elapsed / p.scalePeriod * Math.PI * 2 + p.phase) * p.scaleAmp;
+      p.el.style.transform = `translate(${x.toFixed(2)}vmax, ${y.toFixed(2)}vmax) scale(${s.toFixed(3)})`;
+    });
+
+    motionEnergy *= 0.93;
+    const stillness = 1 - Math.min(motionEnergy, 1);
+
+    curX += (targetX - curX) * 0.05;
+    curY += (targetY - curY) * 0.05;
+
+    // arrival well: reinforced only while it's actually on screen and
+    // roughly centered in view (arrival is a fixed first-viewport beat,
+    // not something you can "aim" a cursor at the way field objects are)
+    const arrivalRect = document.getElementById('arrival-obj').getBoundingClientRect();
+    const arrivalVisible = arrivalRect.bottom > 0 && arrivalRect.top < window.innerHeight;
+    if (arrivalVisible && stillness > 0.3){
+      arrivalWell.dwell = Math.min(MAX, arrivalWell.dwell + dt * stillness * RISE * 0.6);
+    } else {
+      arrivalWell.dwell = Math.max(0, arrivalWell.dwell - dt * DECAY);
+    }
+    applyWell(arrivalWell, arrivalWell.dwell / MAX, 0.5, true);
+
+    wells.forEach(w => {
+      const r = w.el.getBoundingClientRect();
+      const onscreen = r.bottom > -300 && r.top < window.innerHeight + 300;
+      if (!onscreen){
+        w.dwell = Math.max(0, w.dwell - dt * DECAY);
+        applyWell(w, w.dwell / MAX, 0.55, false);
+        return;
+      }
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const dist = Math.hypot(cx - curX, cy - curY);
+      const proximity = Math.max(0, 1 - dist / 560); // generous — a region, not the object itself
+
+      if (proximity > 0.04 && stillness > 0.32){
+        w.dwell = Math.min(MAX, w.dwell + dt * proximity * stillness * RISE);
+      } else {
+        w.dwell = Math.max(0, w.dwell - dt * DECAY);
+      }
+
+      const energy = w.dwell / MAX;
+
+      if (energy > 0.02 && !w.episodeOpen){ pickHue(w); w.episodeOpen = true; }
+      if (energy < 0.01){ w.episodeOpen = false; }
+
+      // ~60s+: lend a little of this well's own strength to its nearest
+      // neighbor, so sustained attention in a region visibly spreads.
+      if (energy > 0.85 && w.neighbor){
+        w.neighbor.dwell = Math.min(MAX, w.neighbor.dwell + dt * 0.35);
+      }
+
+      applyWell(w, energy, 0.55, false);
+    });
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+
+</body>
+</html>
