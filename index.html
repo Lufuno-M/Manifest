@@ -315,35 +315,35 @@
   <defs>
     <filter id="water-1" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.010 0.014" numOctaves="2" seed="3" result="n">
-        <animate attributeName="baseFrequency" values="0.008 0.012;0.014 0.009;0.008 0.012" dur="58s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.008 0.012;0.014 0.009;0.008 0.012" dur="22s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="14"/>
     </filter>
     <filter id="water-2" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.008 0.011" numOctaves="2" seed="11" result="n">
-        <animate attributeName="baseFrequency" values="0.007 0.010;0.011 0.007;0.007 0.010" dur="71s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.007 0.010;0.011 0.007;0.007 0.010" dur="26s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="16"/>
     </filter>
     <filter id="water-3" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.012 0.009" numOctaves="1" seed="27" result="n">
-        <animate attributeName="baseFrequency" values="0.010 0.008;0.015 0.011;0.010 0.008" dur="64s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.010 0.008;0.015 0.011;0.010 0.008" dur="20s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="80" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="12"/>
     </filter>
     <filter id="water-4" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.009 0.013" numOctaves="2" seed="41" result="n">
-        <animate attributeName="baseFrequency" values="0.008 0.011;0.012 0.015;0.008 0.011" dur="66s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.008 0.011;0.012 0.015;0.008 0.011" dur="24s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="55" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="15"/>
     </filter>
     <filter id="water-5" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.011 0.008" numOctaves="1" seed="53" result="n">
-        <animate attributeName="baseFrequency" values="0.009 0.007;0.013 0.010;0.009 0.007" dur="49s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.009 0.007;0.013 0.010;0.009 0.007" dur="18s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="65" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="13"/>
@@ -550,7 +550,7 @@ function paintArrival(){
 paintArrival();
 
 function scheduleArrivalDrift(){
-  const wait = 45000 + Math.random() * 30000; // 45–75s, not a fixed beat
+  const wait = 18000 + Math.random() * 12000; // 18–30s, not a fixed beat
   setTimeout(() => {
     arrivalStageEl.style.opacity = '0';
     setTimeout(() => {
