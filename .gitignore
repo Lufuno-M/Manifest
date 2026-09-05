@@ -1,0 +1,6 @@
+.DS_Store
+*.code-workspace
+src/
+index.backup.html
+NOTES-2026-07-26.md
+Screenshot *.png
