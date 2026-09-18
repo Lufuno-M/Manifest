@@ -315,35 +315,35 @@
   <defs>
     <filter id="water-1" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.010 0.014" numOctaves="2" seed="3" result="n">
-        <animate attributeName="baseFrequency" values="0.008 0.012;0.014 0.009;0.008 0.012" dur="22s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.008 0.012;0.014 0.009;0.008 0.012" dur="12s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="14"/>
     </filter>
     <filter id="water-2" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.008 0.011" numOctaves="2" seed="11" result="n">
-        <animate attributeName="baseFrequency" values="0.007 0.010;0.011 0.007;0.007 0.010" dur="26s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.007 0.010;0.011 0.007;0.007 0.010" dur="14s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="16"/>
     </filter>
     <filter id="water-3" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.012 0.009" numOctaves="1" seed="27" result="n">
-        <animate attributeName="baseFrequency" values="0.010 0.008;0.015 0.011;0.010 0.008" dur="20s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.010 0.008;0.015 0.011;0.010 0.008" dur="11s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="80" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="12"/>
     </filter>
     <filter id="water-4" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.009 0.013" numOctaves="2" seed="41" result="n">
-        <animate attributeName="baseFrequency" values="0.008 0.011;0.012 0.015;0.008 0.011" dur="24s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.008 0.011;0.012 0.015;0.008 0.011" dur="13s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="55" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="15"/>
     </filter>
     <filter id="water-5" x="-30%" y="-30%" width="160%" height="160%">
       <feTurbulence type="fractalNoise" baseFrequency="0.011 0.008" numOctaves="1" seed="53" result="n">
-        <animate attributeName="baseFrequency" values="0.009 0.007;0.013 0.010;0.009 0.007" dur="18s" repeatCount="indefinite"/>
+        <animate attributeName="baseFrequency" values="0.009 0.007;0.013 0.010;0.009 0.007" dur="10s" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="65" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="13"/>
@@ -539,7 +539,7 @@ function paintArrival(){
 paintArrival();
 
 function scheduleArrivalDrift(){
-  const wait = 18000 + Math.random() * 12000; // 18–30s, not a fixed beat
+  const wait = 10000 + Math.random() * 7000; // 10–17s, not a fixed beat — tempo raised, still no perceptible UI tick
   setTimeout(() => {
     arrivalStageEl.style.opacity = '0';
     setTimeout(() => {
@@ -566,7 +566,7 @@ const shuffled = [...OBJECTS].sort(() => Math.random() - 0.5);
 
 const LEFT_PATTERN = [10, 62, 26, 70, 15, 55, 34, 74, 8, 58, 22, 66, 12, 50, 30, 68, 18, 60, 40, 6, 64, 28];
 const WIDTH_PATTERN = [150, 125, 165, 118, 145, 132, 158, 122, 148, 136];
-const DURATION_PATTERN = [14, 17, 12, 19, 15, 13, 18, 16, 20, 14];
+const DURATION_PATTERN = [8, 9, 7, 11, 8, 7, 10, 9, 11, 8];
 
 let cursorTop = 4; // vh
 const wells = []; // { el, halo, top(vh), left(%), cx, cy (page px, computed after layout), dwell, episodeOpen, hue, neighbor }
@@ -642,10 +642,10 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
    genuinely looking." It never resets on departure; it decays over
    minutes, so a return visit to a region already carrying some memory
    builds back up faster than a first visit did. Roughly:
-     ~8s   dwell/MAX ≈ 0.13  → a bloom becomes just visible
-     ~20s  dwell/MAX ≈ 0.33  → visibly stronger
-     ~40s  dwell/MAX ≈ 0.66  → visibly wider
-     ~60s+ dwell/MAX = 1.0   → begins lending a little of its own
+     ~4s   dwell/MAX ≈ 0.13  → a bloom becomes just visible
+     ~11s  dwell/MAX ≈ 0.33  → visibly stronger
+     ~22s  dwell/MAX ≈ 0.66  → visibly wider
+     ~33s+ dwell/MAX = 1.0   → begins lending a little of its own
                                 intensity to its nearest neighbor
    Hue is chosen per attention "episode," drawn from the bottle-accurate
    palette below — never the same hue twice in a row on the same object,
@@ -672,8 +672,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   }
 
   const MAX = 60;      // seconds-equivalent of full, sustained attention
-  const RISE = 1;       // dwell seconds gained per real second of full proximity+stillness
-  const DECAY = MAX / 240; // full memory fades over ~4 minutes of absence
+  const RISE = 1.8;       // dwell seconds gained per real second of full proximity+stillness — raised tempo, presence registers faster
+  const DECAY = MAX / 133; // full memory fades over ~2.2 minutes of absence — raised tempo, matches faster rise
 
   // global stillness: cursor velocity + scroll velocity, decaying —
   // this gates whether nearby dwell is allowed to accumulate at all.
@@ -832,7 +832,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       if (energy > 0.02 && !w.episodeOpen){ pickHue(w); w.episodeOpen = true; }
       if (energy < 0.01){ w.episodeOpen = false; }
 
-      // ~60s+: lend a little of this well's own strength to its nearest
+      // ~33s+: lend a little of this well's own strength to its nearest
       // neighbor, so sustained attention in a region visibly spreads.
       if (energy > 0.85 && w.neighbor){
         w.neighbor.dwell = Math.min(MAX, w.neighbor.dwell + dt * 0.35);
