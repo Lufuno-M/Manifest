@@ -402,6 +402,74 @@
 
 <footer>MANIFEST — objects, not products · attention is the product</footer>
 
+<audio id="ambient" src="assets/manifest-ambient.mp3" loop preload="metadata" style="display:none"></audio>
+<button id="ambience-toggle" aria-label="sound" onclick="AMBIENCE.toggle()"
+  style="position:fixed; bottom:24px; right:24px; width:8px; height:8px;
+  border-radius:50%; background:var(--champagne-gold, #d4af37);
+  border:none; opacity:0.3; transition:opacity 0.8s ease, box-shadow 0.8s ease;
+  cursor:pointer; z-index:1000; padding:0;">
+</button>
+
+<script>
+/* ==========================================================================
+   AMBIENCE — off by default, no autoplay (browsers block it regardless).
+   A real Web Audio graph from day one: the filter node sits inert now so
+   step two (binding intensity to the dwell/sine-motion clock below) is
+   just wiring a value into a node that already exists, not a rearchitecture.
+========================================================================== */
+const AMBIENCE = (() => {
+  let ctx, gainNode, filterNode, playing = false, ready = false;
+  const el = document.getElementById('ambient');
+  const dot = document.getElementById('ambience-toggle');
+
+  function init(){
+    if (ready) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = ctx.createMediaElementSource(el);
+    gainNode = ctx.createGain();
+    filterNode = ctx.createBiquadFilter(); // reserved for later reactivity
+    filterNode.type = 'lowpass';
+    filterNode.frequency.value = 20000;
+
+    gainNode.gain.value = 0;
+    source.connect(filterNode).connect(gainNode).connect(ctx.destination);
+    ready = true;
+  }
+
+  function fade(target, duration = 1.2){
+    const now = ctx.currentTime;
+    gainNode.gain.cancelScheduledValues(now);
+    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+    gainNode.gain.linearRampToValueAtTime(target, now + duration);
+  }
+
+  function toggle(){
+    init();
+    if (ctx.state === 'suspended') ctx.resume();
+    if (!playing){
+      el.play();
+      fade(0.35);
+      dot.style.opacity = '0.85';
+      dot.style.boxShadow = '0 0 6px var(--champagne-gold, #d4af37)';
+    } else {
+      fade(0, 1.5);
+      dot.style.opacity = '0.3';
+      dot.style.boxShadow = 'none';
+      setTimeout(() => { if (!playing) el.pause(); }, 1600);
+    }
+    playing = !playing;
+  }
+
+  // Reserved — will be called from the dwell/sine-motion loop below once
+  // step two begins: gain/filter breathing with the same environmental clock.
+  function setIntensity(v){
+    if (!ready) return;
+  }
+
+  return { toggle, setIntensity };
+})();
+</script>
+
 <script>
 /* ==========================================================================
    CATALOG — confirmed admitted objects only. No fabricated photography.
