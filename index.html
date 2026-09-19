@@ -45,10 +45,10 @@
      blurred color bodies drift slowly and continuously across the
      viewport at all times, independent of scroll or cursor. White
      is what shows through the gaps between them, not a background
-     underneath them. Palette pulled from the actual bottle/juice:
-     citrus-white, champagne-gold, blood-orange warmth, tiaré cream,
-     sandalwood dust — no blues, no violets, nothing outside the
-     fragrance's real notes.
+     underneath them. Manifest 2: palette moved off the warm
+     fragrance-derived colors onto a water palette — sea-foam,
+     deep teal, indigo, violet mist, slate-blue dusk. The turbulence/
+     drift engine itself is unchanged; only the hues moved.
      ============================================================ */
   .weather{
     position:fixed; inset:0; z-index:0;
@@ -66,29 +66,29 @@
       glass" and actually being in the same room as the light */
     will-change: transform, filter;
   }
-  .cloud-1{ /* citrus-white */
+  .cloud-1{ /* sea-foam */
     top:-18vmax; left:-14vmax;
-    background: radial-gradient(circle, hsl(46 62% 76%) 0%, transparent 68%);
+    background: radial-gradient(circle, hsl(198 60% 82%) 0%, transparent 68%);
     opacity:0.78;
   }
-  .cloud-2{ /* champagne-gold */
+  .cloud-2{ /* deep teal */
     top:10vmax; right:-20vmax;
-    background: radial-gradient(circle, hsl(38 68% 62%) 0%, transparent 68%);
+    background: radial-gradient(circle, hsl(190 55% 55%) 0%, transparent 68%);
     opacity:0.72;
   }
-  .cloud-3{ /* blood-orange warmth — an accent note, kept a touch quieter than the rest */
+  .cloud-3{ /* indigo undertow — an accent note, kept a touch quieter than the rest */
     bottom:-24vmax; left:8vmax;
-    background: radial-gradient(circle, hsl(18 68% 54%) 0%, transparent 70%);
+    background: radial-gradient(circle, hsl(248 45% 42%) 0%, transparent 70%);
     opacity:0.56;
   }
-  .cloud-4{ /* tiare cream */
+  .cloud-4{ /* violet mist */
     bottom:6vmax; right:2vmax;
-    background: radial-gradient(circle, hsl(30 50% 70%) 0%, transparent 68%);
+    background: radial-gradient(circle, hsl(268 40% 68%) 0%, transparent 68%);
     opacity:0.68;
   }
-  .cloud-5{ /* sandalwood dust */
+  .cloud-5{ /* slate-blue dusk */
     top:38vmax; left:26vmax;
-    background: radial-gradient(circle, hsl(32 34% 58%) 0%, transparent 70%);
+    background: radial-gradient(circle, hsl(222 30% 50%) 0%, transparent 70%);
     opacity:0.6;
   }
 
@@ -170,8 +170,8 @@
   .arrival-obj-wrap img{ width:100%; height:100%; object-fit:contain; }
   .arrival-cap{
     margin-top:20px;
-    opacity: var(--halo-opacity, 0);
-    transition: opacity 1.4s linear;
+    opacity: var(--cap-opacity, 0);
+    transition: opacity 0.5s ease-out;
   }
   .arrival-cap .maker{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); }
   .arrival-cap .name{ font-family:'Fraunces', serif; font-size:16px; margin-top:3px; color:var(--ink); }
@@ -196,6 +196,26 @@
     font-size:15px; line-height:1.6; color:#3A382F; margin:0;
   }
 
+  /* Search — a way to find within the unsorted, not a storefront filter.
+     No box, no icon-button chrome; just a line, in the same quiet
+     register as everything else on the page. */
+  .field-search{
+    position:relative; z-index:2;
+    max-width:340px; margin:0 auto 6vh; padding:0 24px;
+    text-align:center;
+  }
+  .field-search input{
+    width:100%;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--ink); background:transparent;
+    border:none; border-bottom:1px solid var(--hairline);
+    padding:8px 2px; text-align:center;
+    transition: border-color 0.4s ease;
+  }
+  .field-search input::placeholder{ color:var(--ink-soft); opacity:0.7; }
+  .field-search input:focus{ border-bottom-color:var(--ink-soft); }
+
   .field{ position:relative; z-index:2; }
 
   .field-obj{
@@ -215,9 +235,9 @@
   .field-obj .cap{
     margin-top:12px;
     text-align:center;
-    opacity: var(--halo-opacity, 0);
+    opacity: var(--cap-opacity, 0);
     transform: translateY(4px);
-    transition: opacity 1.4s linear, transform 1.4s linear;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
     pointer-events:none;
   }
   .field-obj .cap .maker{
@@ -382,6 +402,10 @@
 
 <section class="field-note">
   <p>Nothing here is sorted. Stay a while — the room remembers where you've been.</p>
+</section>
+
+<section class="field-search">
+  <input type="text" id="field-search-input" placeholder="Find by name or maker" autocomplete="off" aria-label="Search the catalog by name, maker, or category">
 </section>
 
 <section class="field" id="field">
@@ -666,6 +690,7 @@ shuffled.forEach((o, i) => {
 
   wells.push({
     el,
+    obj: o,
     halo: el.querySelector('.halo'),
     topVh: cursorTop,
     leftPct: left,
@@ -691,6 +716,26 @@ wells.forEach((w, i) => {
     if (d < bestD) { bestD = d; best = w2; }
   });
   w.neighbor = best;
+});
+
+/* Search — filters the unsorted field in place by name, maker, or
+   category. Matched objects keep floating exactly as before; the
+   rest simply aren't shown. No re-sort, no re-layout — the field's
+   scatter is the point, search just narrows what's visible in it. */
+document.getElementById('field-search-input').addEventListener('input', function(){
+  const q = this.value.trim().toLowerCase();
+  let visibleCount = 0;
+  wells.forEach(w => {
+    const match = !q
+      || w.obj.name.toLowerCase().includes(q)
+      || w.obj.maker.toLowerCase().includes(q)
+      || w.obj.category.toLowerCase().includes(q);
+    w.el.style.display = match ? '' : 'none';
+    if (match) visibleCount++;
+  });
+  document.getElementById('field-count').textContent =
+    q ? (String(visibleCount).padStart(2,'0') + ' matching')
+      : (String(OBJECTS.length).padStart(2,'0') + ' objects');
 });
 
 document.getElementById('pending-btn').addEventListener('click', function(){
@@ -723,15 +768,15 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) return;
 
-  // City of Stars, corrected against the actual bottle/juice/notes —
-  // citrus through amber through cream through sandalwood. No blues,
-  // no violets; those aren't in the fragrance.
+  // Manifest 2 water palette — sea-foam through teal through indigo
+  // through violet through slate-blue. Matches the weather clouds above,
+  // so an attention bloom reads as the same water, not a different light.
   const hues = [
-    'hsl(46 55% 78%)',   // citrus-white / lemon peel
-    'hsl(38 60% 68%)',   // champagne-gold
-    'hsl(18 62% 62%)',   // blood-orange flashbulb
-    'hsl(30 40% 74%)',   // tiaré cream
-    'hsl(32 26% 62%)'    // sandalwood dust
+    'hsl(198 55% 80%)',  // sea-foam
+    'hsl(190 50% 58%)',  // deep teal
+    'hsl(248 42% 52%)',  // indigo undertow
+    'hsl(268 38% 66%)',  // violet mist
+    'hsl(222 28% 54%)'   // slate-blue dusk
   ];
   function pickHue(w){
     let next;
@@ -815,7 +860,12 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     huePhase: i * 2.3
   }));
 
-  function applyWell(w, energy, opacityCap, isArrival){
+  function applyWell(w, energy, opacityCap, isArrival, presence){
+    // The halo (color bloom) is the slow memory system — how much
+    // sustained attention this object has earned. The cap (name/maker
+    // text) is identity, not memory: it should read as soon as the
+    // object is actually in view, on its own fast transition, never
+    // gated by cursor stillness or accumulated dwell.
     const opacity = Math.min(opacityCap, energy * opacityCap * 1.05);
     const scale = 0.5 + Math.min(1, energy) * 1.0;
     const target = isArrival ? arrivalWell.haloEl : w.halo;
@@ -823,7 +873,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     target.style.setProperty('--halo-scale', scale.toFixed(3));
     target.style.setProperty('--halo-color', w.hue || 'transparent');
     const capEl = isArrival ? arrivalWell.capEl : w.el.querySelector('.cap');
-    capEl.style.setProperty('--halo-opacity', Math.min(1, energy * 3.2).toFixed(3));
+    capEl.style.setProperty('--cap-opacity', presence.toFixed(3));
   }
 
   function loop(){
@@ -875,19 +925,24 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     } else {
       arrivalWell.dwell = Math.max(0, arrivalWell.dwell - dt * DECAY);
     }
-    applyWell(arrivalWell, arrivalWell.dwell / MAX, 0.5, true);
+    applyWell(arrivalWell, arrivalWell.dwell / MAX, 0.5, true, arrivalVisible ? 1 : 0);
 
     wells.forEach(w => {
       const r = w.el.getBoundingClientRect();
       const onscreen = r.bottom > -300 && r.top < window.innerHeight + 300;
       if (!onscreen){
         w.dwell = Math.max(0, w.dwell - dt * DECAY);
-        applyWell(w, w.dwell / MAX, 0.55, false);
+        applyWell(w, w.dwell / MAX, 0.55, false, 0);
         return;
       }
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       const dist = Math.hypot(cx - curX, cy - curY);
       const proximity = Math.max(0, 1 - dist / 560); // generous — a region, not the object itself
+
+      // presence: is this object actually sitting somewhere readable on
+      // screen right now? If so, its name is just true — no waiting.
+      const inBand = r.top < window.innerHeight * 0.88 && r.bottom > window.innerHeight * 0.08;
+      const presence = inBand ? 1 : Math.max(0.25, proximity * 0.8);
 
       if (proximity > 0.04 && stillness > 0.32){
         w.dwell = Math.min(MAX, w.dwell + dt * proximity * stillness * RISE);
@@ -906,7 +961,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
         w.neighbor.dwell = Math.min(MAX, w.neighbor.dwell + dt * 0.35);
       }
 
-      applyWell(w, energy, 0.55, false);
+      applyWell(w, energy, 0.55, false, presence);
     });
 
     requestAnimationFrame(loop);
