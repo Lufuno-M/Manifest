@@ -160,6 +160,7 @@
     position:relative;
     width:min(52vw, 340px); height:min(52vw, 340px);
     margin-top: 56px;
+    cursor:pointer;
   }
   .arrival-obj-wrap .stage{
     position:relative; z-index:2;
@@ -225,7 +226,7 @@
     flex-direction:column;
     align-items:center;
     animation: drift-obj 15s ease-in-out infinite;
-    cursor:default;
+    cursor:pointer;
   }
   .field-obj .stage{
     width:100%; height:100%;
@@ -318,6 +319,82 @@
     .field-obj, .arrival-obj-wrap .stage{ animation:none; }
   }
 
+  /* ============================================================
+     RECORD — the click-to-view detail. Not a product page: same
+     quiet register as everything else, no cart chrome, no discount
+     language. Price is stated once, plainly, as a recorded fact —
+     "recognized at" rather than "buy now."
+     ============================================================ */
+  .record-backdrop{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(20,18,26,0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity:0; pointer-events:none;
+    transition: opacity 0.35s var(--ease);
+  }
+  .record-backdrop.open{ opacity:1; pointer-events:auto; }
+  .record{
+    position:fixed; z-index:201;
+    left:50%; top:50%;
+    transform: translate(-50%,-46%);
+    width:min(560px, 88vw);
+    max-height:86vh; overflow-y:auto;
+    background:#FCFBF8;
+    border-radius:2px;
+    box-shadow:0 30px 60px rgba(20,18,26,0.28);
+    padding:40px clamp(24px,5vw,48px) 36px;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  }
+  .record-backdrop.open + .record, .record.open{ opacity:1; transform:translate(-50%,-50%); pointer-events:auto; }
+  .record-close{
+    position:absolute; top:18px; right:20px;
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
+    padding:6px 8px;
+  }
+  .record-stage{ width:100%; max-width:260px; margin:0 auto; }
+  .record-stage img{ width:100%; height:auto; object-fit:contain; }
+  .record-maker{ text-align:center; margin-top:22px; }
+  .record-name{
+    text-align:center; margin-top:4px;
+    font-family:'Fraunces', serif; font-size:22px; color:var(--ink);
+  }
+  .record-blurb{
+    margin-top:16px; text-align:center;
+    font-family:'Fraunces', serif; font-style:italic;
+    font-size:14px; line-height:1.6; color:#3A382F;
+  }
+  .record-sizes{
+    margin-top:26px; text-align:center;
+  }
+  .record-sizes .label{ margin-bottom:10px; }
+  .record-size-row{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+  }
+  .record-size-row button{
+    font-family:'JetBrains Mono', monospace; font-size:11px;
+    letter-spacing:0.06em;
+    border:1px solid var(--hairline);
+    color:var(--ink); padding:8px 13px;
+    border-radius:1px;
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+  .record-size-row button:hover{ border-color:var(--ink-soft); }
+  .record-size-row button.chosen{ border-color:var(--ink); color:var(--ink); font-weight:600; }
+  .record-price{
+    margin-top:26px; text-align:center;
+    padding-top:22px; border-top:1px solid var(--hairline);
+  }
+  .record-price .amount{
+    font-family:'Fraunces', serif; font-size:20px; color:var(--ink);
+  }
+  .record-price .label{ margin-top:4px; }
+  .record-note{
+    margin-top:16px; text-align:center; font-size:10px;
+    color:var(--ink-soft); opacity:0.7; line-height:1.5;
+  }
 </style>
 </head>
 <body>
@@ -424,6 +501,24 @@
   </div>
 </div>
 
+<div class="record-backdrop" id="record-backdrop"></div>
+<div class="record" id="record" role="dialog" aria-modal="true" aria-labelledby="record-name">
+  <button class="record-close" id="record-close" aria-label="Close">Close ✕</button>
+  <div class="record-stage" id="record-stage"></div>
+  <div class="record-maker eyebrow" id="record-maker"></div>
+  <div class="record-name" id="record-name"></div>
+  <div class="record-blurb" id="record-blurb"></div>
+  <div class="record-sizes" id="record-sizes" style="display:none;">
+    <div class="eyebrow label">Size</div>
+    <div class="record-size-row" id="record-size-row"></div>
+  </div>
+  <div class="record-price">
+    <div class="amount" id="record-price-amount"></div>
+    <div class="eyebrow label">Recognized value</div>
+  </div>
+  <div class="record-note">Reference figure, drawn from current market comparables — not a listing.</div>
+</div>
+
 <footer>MANIFEST — objects, not products · attention is the product</footer>
 
 <audio id="ambient" src="assets/manifest-ambient.mp3" loop preload="metadata" style="display:none"></audio>
@@ -499,100 +594,100 @@ const AMBIENCE = (() => {
    CATALOG — confirmed admitted objects only. No fabricated photography.
 ========================================================================== */
 const OBJECTS = [
-  { id:'lv-city-of-stars', name:'City of Stars', maker:'Louis Vuitton', category:'Fragrance',
+  { id:'lv-city-of-stars', name:'City of Stars', maker:'Louis Vuitton', category:'Fragrance', price:310, sizes:null,
     blurb:'Naming still unresolved against "City of Nights" — the object stands, the title is pending.', asset:'assets/lv-city-of-stars.png' },
-  { id:'lv-murakami-charm', name:'Monogram Charm', maker:'Louis Vuitton × Takashi Murakami', category:'Jewelry',
+  { id:'lv-murakami-charm', name:'Monogram Charm', maker:'Louis Vuitton × Takashi Murakami', category:'Jewelry', price:850, sizes:null,
     blurb:'The collaboration reduced to a single wearable fragment.', asset:'assets/lv-murakami-charm.png' },
-  { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object',
+  { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
     blurb:'Evaluated and admitted on its own terms, separate from the grey release.', asset:'assets/murakami-cushion-pink.png' },
-  { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object',
+  { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
     blurb:'Same silhouette as the pink, its own admission decision.', asset:'assets/murakami-cushion-grey.png' },
-  { id:'youngboy-tee', name:'Graphic Tee', maker:'YoungBoy Never Broke Again', category:'Apparel',
+  { id:'youngboy-tee', name:'Graphic Tee', maker:'YoungBoy Never Broke Again', category:'Apparel', price:75, sizes:['XS','S','M','L','XL'],
     blurb:'Recoded through fan and resale culture rather than runway.', asset:'assets/youngboy-tee.png' },
-  { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object',
+  { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
     blurb:'Reads as a distinct BAPE object, not a graphic applied to homeware.', asset:'assets/bape-clock.png' },
-  { id:'coming-soon-titanic', name:'Titanic Hoodie', maker:'Coming Soon × Vetements', category:'Apparel',
+  { id:'coming-soon-titanic', name:'Titanic Hoodie', maker:'Coming Soon × Vetements', category:'Apparel', price:420, sizes:['XS','S','M','L','XL'],
     blurb:'The ironic bootleg-movie-graphic lineage Vetements itself trades in.', asset:'assets/coming-soon-titanic.png' },
-  { id:'storm-red', name:'Storm — Red', maker:'Revenge', category:'Footwear',
+  { id:'storm-red', name:'Storm — Red', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'The "is it cap or its own thing" debate on Grailed and Instagram — real recoding, argued in the open.', asset:'assets/storm-red.png' },
-  { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear',
+  { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same debate, same platforms, its own manifestation.', asset:'assets/storm-blue.png' },
-  { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear',
+  { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'Third colorway, admitted individually per the standing one-at-a-time process.', asset:'assets/storm-black.png' },
-  { id:'lv-imagination', name:'Imagination', maker:'Louis Vuitton Fragrance', category:'Fragrance',
+  { id:'lv-imagination', name:'Imagination', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:310, sizes:null,
     blurb:'A house best known for luggage, bottling a scent instead. Proof the canon isn\'t only bags and sneakers.', asset:'assets/lv-imagination.png' },
-  { id:'lv-limmensite', name:'L\'Immensité', maker:'Louis Vuitton Fragrance', category:'Fragrance',
+  { id:'lv-limmensite', name:'L\'Immensité', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:320, sizes:null,
     blurb:'Same house, same restraint, different register — amber where Imagination runs pale.', asset:'assets/lv-limmensite.png' },
-  { id:'lv-chain-bracelet', name:'Monogram Chain Bracelet', maker:'Louis Vuitton', category:'Jewelry',
+  { id:'lv-chain-bracelet', name:'Monogram Chain Bracelet', maker:'Louis Vuitton', category:'Jewelry', price:600, sizes:null,
     blurb:'The monogram reduced to a single link. Small enough to miss, unmistakable once you clock it.', asset:'assets/lv-chain-bracelet.png' },
-  { id:'lv-messenger-bag', name:'Trio Messenger', maker:'Louis Vuitton', category:'Bag',
+  { id:'lv-messenger-bag', name:'Trio Messenger', maker:'Louis Vuitton', category:'Bag', price:1900, sizes:null,
     blurb:'Utility read through a monogram — the house\'s answer to a bag built to actually be used daily.', asset:'assets/lv-messenger-bag.png' },
-  { id:'goyard-saint-louis-gm', name:'Saint Louis GM Tote', maker:'Goyard', category:'Bag',
+  { id:'goyard-saint-louis-gm', name:'Saint Louis GM Tote', maker:'Goyard', category:'Bag', price:2080, sizes:null,
     blurb:'The Chevron pattern in its most recognized carry — hand-painted, not printed, and the house still won\'t confirm which.', asset:'assets/goyard-saint-louis-gm.png' },
-  { id:'chrome-hearts-cemetery-ring', name:'Cemetery Cross Ring', maker:'Chrome Hearts', category:'Jewelry',
+  { id:'chrome-hearts-cemetery-ring', name:'Cemetery Cross Ring', maker:'Chrome Hearts', category:'Jewelry', price:650, sizes:null,
     blurb:'Sterling silver worn into culture by proximity — rock, skate, and now runway — rather than by campaign.', asset:'assets/chrome-hearts-cemetery-ring.png' },
-  { id:'supreme-box-logo-hoodie', name:'Box Logo Hoodie', maker:'Supreme', category:'Apparel',
+  { id:'supreme-box-logo-hoodie', name:'Box Logo Hoodie', maker:'Supreme', category:'Apparel', price:250, sizes:['XS','S','M','L','XL'],
     blurb:'A logo that became a unit of resale value before it became a garment people actually wear.', asset:'assets/supreme-box-logo-hoodie.png' },
-  { id:'bape-shark-hoodie', name:'Shark Full Zip Hoodie', maker:'A Bathing Ape', category:'Apparel',
+  { id:'bape-shark-hoodie', name:'Shark Full Zip Hoodie', maker:'A Bathing Ape', category:'Apparel', price:450, sizes:['XS','S','M','L','XL'],
     blurb:'The zip-through mouth turned a hood into a mask — one of the few graphics that changed how a garment is worn.', asset:'assets/bape-shark-hoodie.png' },
-  { id:'off-white-af1-university-blue', name:'Air Force 1 "University Blue"', maker:'Off-White × Nike', category:'Footwear',
+  { id:'off-white-af1-university-blue', name:'Air Force 1 "University Blue"', maker:'Off-White × Nike', category:'Footwear', price:1200, sizes:['7','8','9','10','11','12','13'],
     blurb:'Zip ties and quote marks as a design language — the deconstruction that made the collaboration format legible.', asset:'assets/off-white-af1-university-blue.png' },
 
   /* ---- everything below was pending a Bloodline/SRDP pass; hand-selected
      and released to stand alone, one object per colorway/variant ---- */
-  { id:'off-white-af1-black', name:'Air Force 1 "Black"', maker:'Off-White × Nike', category:'Footwear',
+  { id:'off-white-af1-black', name:'Air Force 1 "Black"', maker:'Off-White × Nike', category:'Footwear', price:950, sizes:['7','8','9','10','11','12','13'],
     blurb:'The same deconstruction, restated in black — quote marks and zip ties reading as language rather than color.', asset:'assets/off-white-af1-black.png' },
-  { id:'off-white-af1-green', name:'Air Force 1 "Green"', maker:'Off-White × Nike', category:'Footwear',
+  { id:'off-white-af1-green', name:'Air Force 1 "Green"', maker:'Off-White × Nike', category:'Footwear', price:850, sizes:['7','8','9','10','11','12','13'],
     blurb:'A quieter colorway of the same collaboration, still carrying the exposed foam and printed text.', asset:'assets/off-white-af1-green.png' },
-  { id:'goyard-cap-vert-crossbody', name:'Cap Vert Crossbody', maker:'Goyard', category:'Bag',
+  { id:'goyard-cap-vert-crossbody', name:'Cap Vert Crossbody', maker:'Goyard', category:'Bag', price:1850, sizes:null,
     blurb:'The Cap Vert scaled down to a body bag — same coated canvas, worn close rather than carried.', asset:'assets/goyard-cap-vert-crossbody.png' },
-  { id:'mm6-numbers-keyholder', name:'Numbers Keyholder', maker:'MM6 Maison Margiela', category:'Object',
+  { id:'mm6-numbers-keyholder', name:'Numbers Keyholder', maker:'MM6 Maison Margiela', category:'Object', price:170, sizes:null,
     blurb:'Margiela\'s anonymous numbering system, reduced to a small object that identifies nothing and everyone recognizes anyway.', asset:'assets/mm6-numbers-keyholder.png' },
-  { id:'lv-lv-charm', name:'"LV" Monogram Charm', maker:'Louis Vuitton', category:'Jewelry',
+  { id:'lv-lv-charm', name:'"LV" Monogram Charm', maker:'Louis Vuitton', category:'Jewelry', price:400, sizes:null,
     blurb:'Two letters, cast small enough to hang off a bag or a keyring — the house’s shortest possible signature.', asset:'assets/lv-lv-charm.png' },
-  { id:'palm-angels-track-pants', name:'Track Pants', maker:'Palm Angels', category:'Apparel',
+  { id:'palm-angels-track-pants', name:'Track Pants', maker:'Palm Angels', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
     blurb:'First Palm Angels admission — the side-stripe track silhouette that put the house on every off-duty rack.', asset:'assets/palm-angels-track-pants.png' },
-  { id:'vetements-hoodie-black', name:'Hoodie — Black', maker:'Vetements', category:'Apparel',
+  { id:'vetements-hoodie-black', name:'Hoodie — Black', maker:'Vetements', category:'Apparel', price:600, sizes:['XS','S','M','L','XL'],
     blurb:'Oversized, unadorned, deliberately anti-branding — the house\'s founding gesture stripped to its basic form.', asset:'assets/vetements-hoodie-black.png' },
-  { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel',
+  { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
     blurb:'Butterfly-sleeve track top, the house\'s signature silhouette in its loudest register.', asset:'assets/needles-track-jacket-purple.png' },
-  { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel',
+  { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
     blurb:'Same butterfly cut, cooler colorway — admitted separately per the one-colorway-one-object rule.', asset:'assets/needles-track-jacket-blue.png' },
-  { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object',
+  { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
     blurb:'The house\'s mascot rendered underfoot, in the camo that started it all.', asset:'assets/bape-ape-head-rug-camo.png' },
-  { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object',
+  { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
     blurb:'Same silhouette, a colorway built for visibility rather than camouflage.', asset:'assets/bape-ape-head-rug-pink.png' },
-  { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object',
+  { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
     blurb:'The smallest possible object still carrying full house recognition.', asset:'assets/bape-lighter-wordmark.png' },
-  { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object',
+  { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
     blurb:'Same form, the ape-head line art instead of the wordmark — a second, distinct admission.', asset:'assets/bape-lighter-camo-graphic.png' },
-  { id:'supreme-crewneck-blue', name:'Box Logo Crewneck — Blue', maker:'Supreme', category:'Apparel',
+  { id:'supreme-crewneck-blue', name:'Box Logo Crewneck — Blue', maker:'Supreme', category:'Apparel', price:200, sizes:['XS','S','M','L','XL'],
     blurb:'The plainest possible carrier for the most recognized logo in the archive.', asset:'assets/supreme-crewneck-blue.png' },
-  { id:'nike-cpfm-vapormax-2019', name:'Vapormax 2019', maker:'Nike × Cactus Plant Flea Market', category:'Footwear',
+  { id:'nike-cpfm-vapormax-2019', name:'Vapormax 2019', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:1100, sizes:['7','8','9','10','11','12','13'],
     blurb:'CPFM\'s tubing and hardware grafted onto the Vapormax sole — collaboration as visible surgery, not a colorway.', asset:'assets/nike-cpfm-vapormax-2019.png' },
-  { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear',
+  { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
     blurb:'First Adidas admission — the Human Race line in the colorway most tied to the collaboration\'s identity.', asset:'assets/adidas-nmd-human-race-green.png' },
-  { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear',
+  { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same line, the text-forward colorway that turned the shoe into a slogan.', asset:'assets/adidas-nmd-human-race-blue.png' },
-  { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object',
+  { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
     blurb:'Second colorway of the wall clock already in the archive, admitted on its own per house policy.', asset:'assets/bape-clock-blue.png' },
-  { id:'ambush-lighter-keychain', name:'Lighter Keychain', maker:'Ambush', category:'Accessory',
+  { id:'ambush-lighter-keychain', name:'Lighter Keychain', maker:'Ambush', category:'Accessory', price:180, sizes:null,
     blurb:'First Ambush admission — hardware-forward, the house\'s jewelry logic applied to something disposable.', asset:'assets/ambush-lighter-keychain.png' },
-  { id:'balenciaga-keychain', name:'Keychain', maker:'Balenciaga', category:'Accessory',
+  { id:'balenciaga-keychain', name:'Keychain', maker:'Balenciaga', category:'Accessory', price:290, sizes:null,
     blurb:'First Balenciaga admission, entering through an accessory rather than a headline piece.', asset:'assets/balenciaga-keychain.png' },
-  { id:'revenge-storm-velcro', name:'Storm Velcro Patch', maker:'Revenge', category:'Accessory',
+  { id:'revenge-storm-velcro', name:'Storm Velcro Patch', maker:'Revenge', category:'Accessory', price:90, sizes:null,
     blurb:'The removable panel from the Storm collaboration, admitted as its own small object.', asset:'assets/revenge-storm-velcro.png' },
-  { id:'bape-ashtray', name:'Ape Head Ashtray', maker:'A Bathing Ape', category:'Object',
+  { id:'bape-ashtray', name:'Ape Head Ashtray', maker:'A Bathing Ape', category:'Object', price:150, sizes:null,
     blurb:'Ceramic instead of textile — the house mascot moved onto a smoking accessory, still legible at a glance.', asset:'assets/bape-ashtray.png' },
-  { id:'palace-cherub-hoodie-brown', name:'Tri-Ferg Cherub Hoodie', maker:'Palace', category:'Apparel',
+  { id:'palace-cherub-hoodie-brown', name:'Tri-Ferg Cherub Hoodie', maker:'Palace', category:'Apparel', price:260, sizes:['XS','S','M','L','XL'],
     blurb:'First Palace admission — the tri-ferg run through Renaissance cherub imagery, skate lineage colliding with a baroque reference.', asset:'assets/palace-cherub-hoodie-brown.png' },
-  { id:'palace-wordmark-hoodie-grey', name:'Wordmark Hoodie — Grey', maker:'Palace', category:'Apparel',
+  { id:'palace-wordmark-hoodie-grey', name:'Wordmark Hoodie — Grey', maker:'Palace', category:'Apparel', price:220, sizes:['XS','S','M','L','XL'],
     blurb:'Second Palace admission, plainer register — the tri-ferg kept to the back, the wordmark doing the work up front.', asset:'assets/palace-wordmark-hoodie-grey.png' },
-  { id:'vivet-half-zip-sweater', name:'Beginner Half-Zip Sweater', maker:'VIVET', category:'Apparel',
+  { id:'vivet-half-zip-sweater', name:'Beginner Half-Zip Sweater', maker:'VIVET', category:'Apparel', price:180, sizes:['XS','S','M','L','XL'],
     blurb:'First VIVET admission — distressing built into the knit rather than added after, wear read as a manufacturing decision.', asset:'assets/vivet-half-zip-sweater.png' },
-  { id:'sicko-trail-runner-blue', name:'Trail Runner — Blue', maker:'Sicko', category:'Footwear',
+  { id:'sicko-trail-runner-blue', name:'Trail Runner — Blue', maker:'Sicko', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'First Sicko admission — technical trail construction pulled onto a lifestyle register, the house mark standing in for a swoosh.', asset:'assets/sicko-trail-runner-blue.png' },
-  { id:'sicko-ee-shorts-green', name:'Plaid Shorts — Green', maker:'Sicko × Eric Emanuel', category:'Apparel',
+  { id:'sicko-ee-shorts-green', name:'Plaid Shorts — Green', maker:'Sicko × Eric Emanuel', category:'Apparel', price:170, sizes:['XS','S','M','L','XL'],
     blurb:'Two houses that don\'t usually share a hangtag — EE\'s plaid mesh carrying a second mark instead of standing alone.', asset:'assets/sicko-ee-shorts-green.png' },
 ];
 const PENDING = [];
@@ -737,6 +832,68 @@ document.getElementById('field-search-input').addEventListener('input', function
     q ? (String(visibleCount).padStart(2,'0') + ' matching')
       : (String(OBJECTS.length).padStart(2,'0') + ' objects');
 });
+
+/* ---------- Record: click-to-view detail. Every object — arrival
+   and field alike — opens the same quiet panel: stage image, name,
+   the blurb it already carries, a size row when the category calls
+   for one, and a plainly stated price. No cart, no checkout, no
+   urgency language — this is "click in and see," not a storefront
+   page, per the current testing phase. ---------- */
+(function(){
+  const backdrop = document.getElementById('record-backdrop');
+  const panel = document.getElementById('record');
+  const stageEl = document.getElementById('record-stage');
+  const makerEl = document.getElementById('record-maker');
+  const nameEl = document.getElementById('record-name');
+  const blurbEl = document.getElementById('record-blurb');
+  const sizesWrap = document.getElementById('record-sizes');
+  const sizeRow = document.getElementById('record-size-row');
+  const priceEl = document.getElementById('record-price-amount');
+
+  function openRecord(o){
+    stageEl.innerHTML = renderStage(o);
+    makerEl.textContent = o.maker;
+    nameEl.textContent = o.name;
+    blurbEl.textContent = o.blurb;
+    priceEl.textContent = '$' + o.price.toLocaleString('en-US');
+    if (o.sizes && o.sizes.length){
+      sizesWrap.style.display = '';
+      sizeRow.innerHTML = o.sizes.map(s =>
+        `<button type="button" data-size="${s}">${s}</button>`
+      ).join('');
+      sizeRow.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          sizeRow.querySelectorAll('button').forEach(b => b.classList.remove('chosen'));
+          btn.classList.add('chosen');
+        });
+      });
+    } else {
+      sizesWrap.style.display = 'none';
+      sizeRow.innerHTML = '';
+    }
+    document.body.style.overflow = 'hidden';
+    backdrop.classList.add('open');
+    panel.classList.add('open');
+  }
+
+  function closeRecord(){
+    document.body.style.overflow = '';
+    backdrop.classList.remove('open');
+    panel.classList.remove('open');
+  }
+
+  backdrop.addEventListener('click', closeRecord);
+  document.getElementById('record-close').addEventListener('click', closeRecord);
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeRecord(); });
+
+  document.getElementById('arrival-obj').addEventListener('click', () => openRecord(arrivalObjData));
+  fieldObjectsEl.addEventListener('click', (e) => {
+    const el = e.target.closest('.field-obj');
+    if (!el) return;
+    const o = OBJECTS.find(x => x.id === el.dataset.id);
+    if (o) openRecord(o);
+  });
+})();
 
 document.getElementById('pending-btn').addEventListener('click', function(){
   const open = this.classList.toggle('open');
