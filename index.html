@@ -92,6 +92,18 @@
     z-index:1;
   }
 
+  /* A rare passing mood — the room drains toward black and lifts on its own.
+     Sits above the weather clouds but under the halos, so attention blooms
+     and all content stay lit; only the ambient field dims. */
+  .dusk-veil{
+    position:fixed; inset:0; z-index:1;
+    pointer-events:none;
+    background:#0B0906;
+    opacity:0;
+    mix-blend-mode:multiply;
+    will-change:opacity;
+  }
+
   nav{
     position:fixed; top:0; left:0; right:0; z-index:80;
     display:flex; align-items:center; justify-content:space-between;
@@ -416,6 +428,8 @@
   <div class="cloud cloud-4"></div>
   <div class="cloud cloud-5"></div>
 </div>
+
+<div class="dusk-veil" id="dusk-veil" aria-hidden="true"></div>
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
@@ -919,6 +933,56 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const RISE = 1.8;
   const DECAY = MAX / 133;
 
+  // Dusk — a rare passing episode, not a mode. The room drains toward black
+  // and lifts again on its own timeline, independent of anything the visitor
+  // does. Deep dim, not black-out: the wave field stays faintly visible.
+  const duskVeil = document.getElementById('dusk-veil');
+  const DUSK_MAX = 0.82;
+  const randRange = (a, b) => a + Math.random() * (b - a);
+  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+
+  let duskPhase = 'idle';        // idle -> rising -> holding -> falling -> idle
+  let duskPhaseStart = 0;
+  let duskPhaseEnd = randRange(240, 520); // first episode, several minutes out
+
+  function updateDusk(elapsed){
+    const span = duskPhaseEnd - duskPhaseStart;
+    const t = span > 0 ? Math.min(1, (elapsed - duskPhaseStart) / span) : 1;
+    let level = 0;
+
+    if (duskPhase === 'idle'){
+      level = 0;
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'rising';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(9, 15);
+      }
+    } else if (duskPhase === 'rising'){
+      level = DUSK_MAX * easeInOut(t);
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'holding';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(22, 38);
+      }
+    } else if (duskPhase === 'holding'){
+      level = DUSK_MAX;
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'falling';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(11, 18);
+      }
+    } else if (duskPhase === 'falling'){
+      level = DUSK_MAX * (1 - easeInOut(t));
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'idle';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(240, 520); // next episode, minutes away
+      }
+    }
+
+    duskVeil.style.opacity = level.toFixed(3);
+  }
+
   let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
   let curX = targetX, curY = targetY;
   let motionEnergy = 0;
@@ -987,6 +1051,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     lastFrame = now;
 
     const elapsed = (now - t0) / 1000;
+
+    updateDusk(elapsed);
 
     const bass = Math.sin(elapsed / 14.3 * Math.PI * 2) * 0.5 + 0.5;
 
