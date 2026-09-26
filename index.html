@@ -92,9 +92,6 @@
     z-index:1;
   }
 
-  /* A rare passing mood — the room drains toward black and lifts on its own.
-     Sits above the weather clouds but under the halos, so attention blooms
-     and all content stay lit; only the ambient field dims. */
   .dusk-veil{
     position:fixed; inset:0; z-index:1;
     pointer-events:none;
@@ -373,10 +370,22 @@
     font-family:'Fraunces', serif; font-size:20px; color:var(--ink);
   }
   .record-price .label{ margin-top:4px; }
+
+  /* NEW: archival “entry status” line under the price */
+  .record-status{
+    margin-top:10px;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:13px;
+    color:#3A382F;
+    line-height:1.5;
+  }
+
   .record-note{
     margin-top:16px; text-align:center; font-size:10px;
     color:var(--ink-soft); opacity:0.7; line-height:1.5;
   }
+
 </style>
 </head>
 <body>
@@ -491,8 +500,9 @@
   <div class="record-price">
     <div class="amount" id="record-price-amount"></div>
     <div class="eyebrow label">Recognized value</div>
+    <div class="record-status" id="record-status"></div>
   </div>
-  <div class="record-note">Reference figure, drawn from current market comparables — not a listing.</div>
+  <div class="record-note" id="record-note"></div>
 </div>
 
 <footer>MANIFEST — objects, not products · attention is the product</footer>
@@ -560,143 +570,288 @@ const AMBIENCE = (() => {
 <script>
 const OBJECTS = [
   { id:'lv-city-of-stars', name:'City of Stars', maker:'Louis Vuitton', category:'Fragrance', price:310, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Naming still unresolved against "City of Nights" — the object stands, the title is pending.', asset:'assets/lv-city-of-stars.png' },
   { id:'lv-murakami-charm', name:'Monogram Charm', maker:'Louis Vuitton × Takashi Murakami', category:'Jewelry', price:850, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The collaboration reduced to a single wearable fragment.', asset:'assets/lv-murakami-charm.png' },
   { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Evaluated and admitted on its own terms, separate from the grey release.', asset:'assets/murakami-cushion-pink.png' },
   { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same silhouette as the pink, its own admission decision.', asset:'assets/murakami-cushion-grey.png' },
   { id:'youngboy-tee', name:'Graphic Tee', maker:'YoungBoy Never Broke Again', category:'Apparel', price:75, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Recoded through fan and resale culture rather than runway.', asset:'assets/youngboy-tee.png' },
   { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Reads as a distinct BAPE object, not a graphic applied to homeware.', asset:'assets/bape-clock.png' },
   { id:'coming-soon-titanic', name:'Titanic Hoodie', maker:'Coming Soon × Vetements', category:'Apparel', price:420, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The ironic bootleg-movie-graphic lineage Vetements itself trades in.', asset:'assets/coming-soon-titanic.png' },
   { id:'storm-red', name:'Storm — Red', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The "is it cap or its own thing" debate on Grailed and Instagram — real recoding, argued in the open.', asset:'assets/storm-red.png' },
   { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same debate, same platforms, its own manifestation.', asset:'assets/storm-blue.png' },
   { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Third colorway, admitted individually per the standing one-at-a-time process.', asset:'assets/storm-black.png' },
   { id:'lv-imagination', name:'Imagination', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:310, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'A house best known for luggage, bottling a scent instead. Proof the canon isn\'t only bags and sneakers.', asset:'assets/lv-imagination.png' },
   { id:'lv-limmensite', name:'L\'Immensité', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:320, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same house, same restraint, different register — amber where Imagination runs pale.', asset:'assets/lv-limmensite.png' },
   { id:'lv-chain-bracelet', name:'Monogram Chain Bracelet', maker:'Louis Vuitton', category:'Jewelry', price:600, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The monogram reduced to a single link. Small enough to miss, unmistakable once you clock it.', asset:'assets/lv-chain-bracelet.png' },
   { id:'lv-messenger-bag', name:'Trio Messenger', maker:'Louis Vuitton', category:'Bag', price:1900, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Utility read through a monogram — the house\'s answer to a bag built to actually be used daily.', asset:'assets/lv-messenger-bag.png' },
   { id:'goyard-saint-louis-gm', name:'Saint Louis GM Tote', maker:'Goyard', category:'Bag', price:2080, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The Chevron pattern in its most recognized carry — hand-painted, not printed, and the house still won\'t confirm which.', asset:'assets/goyard-saint-louis-gm.png' },
   { id:'chrome-hearts-cemetery-ring', name:'Cemetery Cross Ring', maker:'Chrome Hearts', category:'Jewelry', price:650, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Sterling silver worn into culture by proximity — rock, skate, and now runway — rather than by campaign.', asset:'assets/chrome-hearts-cemetery-ring.png' },
   { id:'supreme-box-logo-hoodie', name:'Box Logo Hoodie', maker:'Supreme', category:'Apparel', price:250, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'A logo that became a unit of resale value before it became a garment people actually wear.', asset:'assets/supreme-box-logo-hoodie.png' },
   { id:'bape-shark-hoodie', name:'Shark Full Zip Hoodie', maker:'A Bathing Ape', category:'Apparel', price:450, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The zip-through mouth turned a hood into a mask — one of the few graphics that changed how a garment is worn.', asset:'assets/bape-shark-hoodie.png' },
   { id:'off-white-af1-university-blue', name:'Air Force 1 "University Blue"', maker:'Off-White × Nike', category:'Footwear', price:1200, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Zip ties and quote marks as a design language — the deconstruction that made the collaboration format legible.', asset:'assets/off-white-af1-university-blue.png' },
 
   { id:'off-white-af1-black', name:'Air Force 1 "Black"', maker:'Off-White × Nike', category:'Footwear', price:950, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The same deconstruction, restated in black — quote marks and zip ties reading as language rather than color.', asset:'assets/off-white-af1-black.png' },
   { id:'off-white-af1-green', name:'Air Force 1 "Green"', maker:'Off-White × Nike', category:'Footwear', price:850, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'A quieter colorway of the same collaboration, still carrying the exposed foam and printed text.', asset:'assets/off-white-af1-green.png' },
   { id:'goyard-cap-vert-crossbody', name:'Cap Vert Crossbody', maker:'Goyard', category:'Bag', price:1850, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The Cap Vert scaled down to a body bag — same coated canvas, worn close rather than carried.', asset:'assets/goyard-cap-vert-crossbody.png' },
   { id:'mm6-numbers-keyholder', name:'Numbers Keyholder', maker:'MM6 Maison Margiela', category:'Object', price:170, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Margiela\'s anonymous numbering system, reduced to a small object that identifies nothing and everyone recognizes anyway.', asset:'assets/mm6-numbers-keyholder.png' },
   { id:'lv-lv-charm', name:'"LV" Monogram Charm', maker:'Louis Vuitton', category:'Jewelry', price:400, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Two letters, cast small enough to hang off a bag or a keyring — the house’s shortest possible signature.', asset:'assets/lv-lv-charm.png' },
   { id:'palm-angels-track-pants', name:'Track Pants', maker:'Palm Angels', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'First Palm Angels admission — the side-stripe track silhouette that put the house on every off-duty rack.', asset:'assets/palm-angels-track-pants.png' },
   { id:'vetements-hoodie-black', name:'Hoodie — Black', maker:'Vetements', category:'Apparel', price:600, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Oversized, unadorned, deliberately anti-branding — the house\'s founding gesture stripped to its basic form.', asset:'assets/vetements-hoodie-black.png' },
   { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Butterfly-sleeve track top, the house\'s signature silhouette in its loudest register.', asset:'assets/needles-track-jacket-purple.png' },
   { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same butterfly cut, cooler colorway — admitted separately per the one-colorway-one-object rule.', asset:'assets/needles-track-jacket-blue.png' },
   { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The house\'s mascot rendered underfoot, in the camo that started it all.', asset:'assets/bape-ape-head-rug-camo.png' },
   { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same silhouette, a colorway built for visibility rather than camouflage.', asset:'assets/bape-ape-head-rug-pink.png' },
   { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The smallest possible object still carrying full house recognition.', asset:'assets/bape-lighter-wordmark.png' },
   { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same form, the ape-head line art instead of the wordmark — a second, distinct admission.', asset:'assets/bape-lighter-camo-graphic.png' },
   { id:'supreme-crewneck-blue', name:'Box Logo Crewneck — Blue', maker:'Supreme', category:'Apparel', price:200, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The plainest possible carrier for the most recognized logo in the archive.', asset:'assets/supreme-crewneck-blue.png' },
   { id:'nike-cpfm-vapormax-2019', name:'Vapormax 2019', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:1100, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'CPFM\'s tubing and hardware grafted onto the Vapormax sole — collaboration as visible surgery, not a colorway.', asset:'assets/nike-cpfm-vapormax-2019.png' },
   { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'First Adidas admission — the Human Race line in the colorway most tied to the collaboration\'s identity.', asset:'assets/adidas-nmd-human-race-green.png' },
   { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same line, the text-forward colorway that turned the shoe into a slogan.', asset:'assets/adidas-nmd-human-race-blue.png' },
   { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Second colorway of the wall clock already in the archive, admitted on its own per house policy.', asset:'assets/bape-clock-blue.png' },
   { id:'ambush-lighter-keychain', name:'Lighter Keychain', maker:'Ambush', category:'Accessory', price:180, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'First Ambush admission — hardware-forward, the house\'s jewelry logic applied to something disposable.', asset:'assets/ambush-lighter-keychain.png' },
-  { id:'balenciaga-keychain', name:'Keychain', maker:'Balenciaga', category:'Accessory', price:290, sizes:null,
-    blurb:'First Balenciaga admission, entering through an accessory rather than a headline piece.', asset:'assets/balenciaga-keychain.png' },
+
+  { id:'balenciaga-keychain',
+    name:'Keychain',
+    maker:'Balenciaga',
+    category:'Accessory',
+    price:290,
+    sizes:null,
+    blurb:'First Balenciaga admission, entering through an accessory rather than a headline piece.',
+    asset:'assets/balenciaga-keychain.png',
+    entryStatus:'First admission — single object',
+    statusNote:'This entry does not imply a complete Balenciaga shelf. Recognized value is a calibrated reference; not a listing.'
+  },
+
   { id:'revenge-storm-velcro', name:'Storm Velcro Patch', maker:'Revenge', category:'Accessory', price:90, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The removable panel from the Storm collaboration, admitted as its own small object.', asset:'assets/revenge-storm-velcro.png' },
   { id:'bape-ashtray', name:'Ape Head Ashtray', maker:'A Bathing Ape', category:'Object', price:150, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Ceramic instead of textile — the house mascot moved onto a smoking accessory, still legible at a glance.', asset:'assets/bape-ashtray.png' },
   { id:'palace-cherub-hoodie-brown', name:'Tri-Ferg Cherub Hoodie', maker:'Palace', category:'Apparel', price:260, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'First Palace admission — the tri-ferg run through Renaissance cherub imagery, skate lineage colliding with a baroque reference.', asset:'assets/palace-cherub-hoodie-brown.png' },
   { id:'palace-wordmark-hoodie-grey', name:'Wordmark Hoodie — Grey', maker:'Palace', category:'Apparel', price:220, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Second Palace admission, plainer register — the tri-ferg kept to the back, the wordmark doing the work up front.', asset:'assets/palace-wordmark-hoodie-grey.png' },
   { id:'vivet-half-zip-sweater', name:'Beginner Half-Zip Sweater', maker:'VIVET', category:'Apparel', price:180, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'First VIVET admission — distressing built into the knit rather than added after, wear read as a manufacturing decision.', asset:'assets/vivet-half-zip-sweater.png' },
   { id:'sicko-trail-runner-blue', name:'Trail Runner — Blue', maker:'Sicko', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'First Sicko admission — technical trail construction pulled onto a lifestyle register, the house mark standing in for a swoosh.', asset:'assets/sicko-trail-runner-blue.png' },
   { id:'sicko-ee-shorts-green', name:'Plaid Shorts — Green', maker:'Sicko × Eric Emanuel', category:'Apparel', price:170, sizes:['XS','S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Two houses that don\'t usually share a hangtag — EE\'s plaid mesh carrying a second mark instead of standing alone.', asset:'assets/sicko-ee-shorts-green.png' },
 
   { id:'balenciaga-gold-elisa-ring', name:'Eisa Ring', maker:'Balenciaga', category:'Jewelry', price:425, sizes:null,
-    blurb:'A twisted signet cast in gold-tone brass — the kind of object that reads as sculpture until it\'s on a hand.', asset:'assets/balenciaga-gold-elisa-ring.png',
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
+    blurb:'A twisted signet cast in gold-tone brass — the kind of object that reads as sculpture until it\'s on a hand.',
+    asset:'assets/balenciaga-gold-elisa-ring.png',
     assets:['assets/balenciaga-gold-elisa-ring.png','assets/gold-elisa-ring-angle-2.png'] },
   { id:'murakami-flower-og', name:'Flower Cushion', maker:'Takashi Murakami', category:'Object', price:320, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The smiling flower, twelve petals deep in its own rainbow, plush enough to forget it\'s a signature.', asset:'assets/murakami-flower-og.png' },
   { id:'beats-pill-red', name:'Pill', maker:'Beats by Dre', category:'Object', price:180, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Red, capsule-shaped, unmistakable from across a room — the shape became the signal before the sound did.', asset:'assets/beats-pill-red.png' },
   { id:'nike-vlone-af1', name:'Air Force 1 Low × VLONE', maker:'Nike × VLONE', category:'Footwear', price:950, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Black leather, orange Swoosh, "Friends Alone" stitched into the panel — a friendship turned into a colorway.', asset:'assets/nike-vlone-af1.png' },
   { id:'supreme-white-af1', name:'Air Force 1 Low × Supreme', maker:'Nike × Supreme', category:'Footwear', price:400, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'White leather, a heart stitched in red at the tongue — the most restrained thing Supreme ever put its name on.', asset:'assets/supreme-white-af1.png' },
   { id:'white-cpfm-nike-af1', name:'Air Force 1 Low × CPFM', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:340, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'White-on-white with the CPFM "AIR" tongue graphic — a quiet flex from a brand that usually shouts.', asset:'assets/white-cpfm-nike-af1.png' },
   { id:'white-ow-vapourmax', name:'Air VaporMax × Off-White', maker:'Nike × Off-White', category:'Footwear', price:850, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The visible air unit, the quotation marks around "AIR," the zip tie left dangling — Virgil\'s language distilled into one shoe.', asset:'assets/white-ow-vapourmax.png' },
   { id:'nike-off-white-nrg-hoodie-unreleased', name:'NRG Hoodie — Black (Unreleased Sample)', maker:'Nike × Off-White', category:'Apparel', price:1200, sizes:['S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Never made it to shelf. Diagonal sleeve stripes, the industrial stamp, a sample that exists because someone kept it.', asset:'assets/nike-off-white-nrg-hoodie-unreleased.png' },
   { id:'white-nike-ow-nrg-hoodie', name:'NRG Hoodie — White', maker:'Nike × Off-White', category:'Apparel', price:650, sizes:['S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The same architecture as the black sample, inverted — orange diagonal stripes on white.', asset:'assets/white-nike-ow-nrg-hoodie.png' },
   { id:'raf-simons-consumed-red-hoodie', name:'"Consumed" Hoodie', maker:'Raf Simons', category:'Apparel', price:1400, sizes:['S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'A horror-film still printed across black cotton — the graphic that made Raf\'s archive era a religion for the people who found it early.', asset:'assets/raf-simons-consumed-red-hoodie.png' },
   { id:'black-sup-bogo-hoodie', name:'Box Logo Hoodie — Black', maker:'Supreme', category:'Apparel', price:380, sizes:['S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Red box, white type, black fleece — the most counterfeited four letters in streetwear.', asset:'assets/black-sup-bogo-hoodie.png' },
   { id:'supreme-bogo-grey', name:'Box Logo Hoodie — Grey', maker:'Supreme', category:'Apparel', price:350, sizes:['S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Same logo, heather grey — the colorway that reads as understated in a lineup where nothing else is.', asset:'assets/supreme-bogo-grey.png' },
   { id:'bape-cdg-green-flannel', name:'Flannel Shirt × Comme des Garçons', maker:'BAPE × Comme des Garçons', category:'Apparel', price:260, sizes:['S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Blackwatch plaid with the CDG heart worked in — two very different design philosophies agreeing on a shirt.', asset:'assets/bape-cdg-green-flannel.png' },
   { id:'red-nmd', name:'NMD Human Race', maker:'Adidas × Pharrell Williams', category:'Footwear', price:280, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Boost sole, no laces to speak of, "HU" down the side — built to look unfinished on purpose.', asset:'assets/red-nmd.png' },
   { id:'yeezy-500-boot-black', name:'Yeezy 500 High — Black', maker:'Adidas Yeezy', category:'Footwear', price:180, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Military boot proportions dressed in a sneaker\'s materials, in Yeezy\'s darkest colorway.', asset:'assets/yeezy-500-boot-black.png' },
   { id:'yeezy-500-ag', name:'Yeezy 500 — Ash Grey', maker:'Adidas Yeezy', category:'Footwear', price:150, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Low-top 500 in a muted grey-tan, the mudguard doing its usual quiet work.', asset:'assets/yeezy-500-ag.png' },
   { id:'yeezy-500-salt-i-think', name:'Yeezy 500 — Salt', maker:'Adidas Yeezy', category:'Footwear', price:150, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'One of the earliest 500 colorways — stone and grey suede layered like sediment.', asset:'assets/yeezy-500-salt-i-think.png' },
   { id:'yeezy-500-dr-boot', name:'Yeezy 500 High — Sand', maker:'Adidas Yeezy', category:'Footwear', price:180, sizes:['7','8','9','10','11','12','13'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'High-top 500 in tan suede, boot-first in a way the low-tops never committed to.', asset:'assets/yeezy-500-dr-boot.png' },
   { id:'purple-bape-pillow', name:'Ape Head Cushion — Purple Camo', maker:'A Bathing Ape', category:'Object', price:90, sizes:null,
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'The Ursus Arctos face flattened into camo and stitched onto a cushion — merch that outlived its drop and became furniture instead.', asset:'assets/purple-bape-pillow.png' },
   { id:'sicko-luke-wav', name:'"Born Unwanted" Hoodie', maker:'Sicko', category:'Apparel', price:280, sizes:['S','M','L','XL'],
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
     blurb:'Pale yellow, an upside-down line, a sun with a sleeping face — Ian Connor\'s house running the same instinct Revenge trades in, on a hood instead of a boot.', asset:'assets/sicko-luke-wav.png' },
   { id:'sicko-2', name:'"SICK!!" Hoodie', maker:'Sicko', category:'Apparel', price:260, sizes:['S','M','L','XL'],
-    blurb:'Natural fleece, a running figure dragged through the wordmark — a second Sicko admission, same house as the Storm boot already in the Bloodline.', asset:'assets/sicko-2.png' },
+    entryStatus:'Reference figure — individual object',
+    statusNote:'Recognized value calibrated from current market comparables; not a listing.',
+    blurb:'Natural fleece, a running figure dragged through the wordmark — a second Sicko admission, same house as the Storm boot already in the Bloodline.', asset:'assets/sicko-2.png' }
 ];
+
 const PENDING = [];
 
 function renderPendingMark(){
@@ -832,6 +987,8 @@ document.getElementById('field-search-input').addEventListener('input', function
   const sizesWrap = document.getElementById('record-sizes');
   const sizeRow = document.getElementById('record-size-row');
   const priceEl = document.getElementById('record-price-amount');
+  const statusEl = document.getElementById('record-status');
+  const noteEl = document.getElementById('record-note');
 
   let recordAssets = [];
   let recordIndex = 0;
@@ -863,7 +1020,17 @@ document.getElementById('field-search-input').addEventListener('input', function
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
+
     priceEl.textContent = '$' + o.price.toLocaleString('en-US');
+
+    // NEW: archival entry status line
+    statusEl.textContent = o.entryStatus || 'Reference figure — individual object';
+
+    // NEW: keep the pricing disclaimer, but allow per-entry tuning
+    noteEl.textContent = o.statusNote
+      ? o.statusNote
+      : 'Reference figure, drawn from current market comparables — not a listing.';
+
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
       sizeRow.innerHTML = o.sizes.map(s =>
@@ -879,6 +1046,7 @@ document.getElementById('field-search-input').addEventListener('input', function
       sizesWrap.style.display = 'none';
       sizeRow.innerHTML = '';
     }
+
     document.body.style.overflow = 'hidden';
     backdrop.classList.add('open');
     panel.classList.add('open');
@@ -933,17 +1101,14 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const RISE = 1.8;
   const DECAY = MAX / 133;
 
-  // Dusk — a rare passing episode, not a mode. The room drains toward black
-  // and lifts again on its own timeline, independent of anything the visitor
-  // does. Deep dim, not black-out: the wave field stays faintly visible.
   const duskVeil = document.getElementById('dusk-veil');
   const DUSK_MAX = 0.82;
   const randRange = (a, b) => a + Math.random() * (b - a);
   const easeInOut = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
-  let duskPhase = 'idle';        // idle -> rising -> holding -> falling -> idle
+  let duskPhase = 'idle';
   let duskPhaseStart = 0;
-  let duskPhaseEnd = randRange(240, 520); // first episode, several minutes out
+  let duskPhaseEnd = randRange(240, 520);
 
   function updateDusk(elapsed){
     const span = duskPhaseEnd - duskPhaseStart;
@@ -976,7 +1141,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       if (elapsed >= duskPhaseEnd){
         duskPhase = 'idle';
         duskPhaseStart = elapsed;
-        duskPhaseEnd = elapsed + randRange(240, 520); // next episode, minutes away
+        duskPhaseEnd = elapsed + randRange(240, 520);
       }
     }
 
