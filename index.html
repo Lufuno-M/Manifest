@@ -50,33 +50,13 @@
     border-radius:50%;
     filter: url(#water-1);
     mix-blend-mode: multiply;
-    will-change: transform, filter;
+    will-change: transform, filter, background;
   }
-  .cloud-1{
-    top:-18vmax; left:-14vmax;
-    background: radial-gradient(circle, hsl(198 60% 82%) 0%, transparent 68%);
-    opacity:0.78;
-  }
-  .cloud-2{
-    top:10vmax; right:-20vmax;
-    background: radial-gradient(circle, hsl(190 55% 55%) 0%, transparent 68%);
-    opacity:0.72;
-  }
-  .cloud-3{
-    bottom:-24vmax; left:8vmax;
-    background: radial-gradient(circle, hsl(248 45% 42%) 0%, transparent 70%);
-    opacity:0.56;
-  }
-  .cloud-4{
-    bottom:6vmax; right:2vmax;
-    background: radial-gradient(circle, hsl(268 40% 68%) 0%, transparent 68%);
-    opacity:0.68;
-  }
-  .cloud-5{
-    top:38vmax; left:26vmax;
-    background: radial-gradient(circle, hsl(222 30% 50%) 0%, transparent 70%);
-    opacity:0.6;
-  }
+  .cloud-1{ top:-18vmax; left:-14vmax; opacity:0.78; }
+  .cloud-2{ top:10vmax; right:-20vmax; opacity:0.72; }
+  .cloud-3{ bottom:-24vmax; left:8vmax; opacity:0.56; }
+  .cloud-4{ bottom:6vmax; right:2vmax; opacity:0.68; }
+  .cloud-5{ top:38vmax; left:26vmax; opacity:0.6; }
 
   .halo{
     position:absolute;
@@ -92,9 +72,11 @@
     z-index:1;
   }
 
-  /* A rare passing mood — the room drains toward black and lifts on its own.
-     Sits above the weather clouds but under the halos, so attention blooms
-     and all content stay lit; only the ambient field dims. */
+  /* The room's own passing mood — the atmosphere drains toward black and
+     lifts again as part of the same continuous cycle as the cloud color
+     itself (see the macro-season loop in JS). Sits above the weather clouds
+     but under the halos, so attention blooms and all content stay lit; only
+     the ambient field dims. */
   .dusk-veil{
     position:fixed; inset:0; z-index:1;
     pointer-events:none;
@@ -365,22 +347,6 @@
   }
   .record-size-row button:hover{ border-color:var(--ink-soft); }
   .record-size-row button.chosen{ border-color:var(--ink); color:var(--ink); font-weight:600; }
-  .record-siblings{
-    margin-top:26px; text-align:center;
-  }
-  .record-siblings .label{ margin-bottom:10px; }
-  .record-sibling-row{
-    display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
-  }
-  .record-sibling-row button{
-    width:42px; height:42px;
-    border-radius:1px;
-    border:1px solid var(--hairline);
-    background-size:cover; background-position:center; background-repeat:no-repeat;
-    background-color:#F4F2ED;
-    transition: border-color 0.25s ease, transform 0.25s ease;
-  }
-  .record-sibling-row button:hover{ border-color:var(--ink-soft); transform:scale(1.05); }
   .record-price{
     margin-top:26px; text-align:center;
     padding-top:22px; border-top:1px solid var(--hairline);
@@ -504,10 +470,6 @@
     <div class="eyebrow label">Size</div>
     <div class="record-size-row" id="record-size-row"></div>
   </div>
-  <div class="record-siblings" id="record-siblings" style="display:none;">
-    <div class="eyebrow label">Also documented</div>
-    <div class="record-sibling-row" id="record-sibling-row"></div>
-  </div>
   <div class="record-price">
     <div class="amount" id="record-price-amount"></div>
     <div class="eyebrow label">Recognized value</div>
@@ -573,7 +535,23 @@ const AMBIENCE = (() => {
     if (!ready) return;
   }
 
-  return { toggle, setIntensity };
+  // The season calls this on every frame with warmth (1 = warm, 0 = black
+  // rest). Kept deliberately subtle and slow — not reactive to the audio
+  // itself, just a gentle open/close of the filter so the room's darkest
+  // stage feels a shade more distant, not a visualizer.
+  let lastMoodTarget = null;
+  function setMood(warmth){
+    if (!ready || !playing) return;
+    const targetFreq = 3200 + warmth * 16800; // ~3.2kHz (black) to 20kHz (warm)
+    if (lastMoodTarget !== null && Math.abs(targetFreq - lastMoodTarget) < 250) return;
+    lastMoodTarget = targetFreq;
+    const now = ctx.currentTime;
+    filterNode.frequency.cancelScheduledValues(now);
+    filterNode.frequency.setValueAtTime(filterNode.frequency.value, now);
+    filterNode.frequency.linearRampToValueAtTime(targetFreq, now + 4.5);
+  }
+
+  return { toggle, setIntensity, setMood };
 })();
 </script>
 
@@ -583,21 +561,21 @@ const OBJECTS = [
     blurb:'Naming still unresolved against "City of Nights" — the object stands, the title is pending.', asset:'assets/lv-city-of-stars.png' },
   { id:'lv-murakami-charm', name:'Monogram Charm', maker:'Louis Vuitton × Takashi Murakami', category:'Jewelry', price:850, sizes:null,
     blurb:'The collaboration reduced to a single wearable fragment.', asset:'assets/lv-murakami-charm.png' },
-  { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object', price:450, sizes:null, family:'murakami-flower-cushion',
+  { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
     blurb:'Evaluated and admitted on its own terms, separate from the grey release.', asset:'assets/murakami-cushion-pink.png' },
-  { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object', price:450, sizes:null, family:'murakami-flower-cushion',
+  { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
     blurb:'Same silhouette as the pink, its own admission decision.', asset:'assets/murakami-cushion-grey.png' },
   { id:'youngboy-tee', name:'Graphic Tee', maker:'YoungBoy Never Broke Again', category:'Apparel', price:75, sizes:['XS','S','M','L','XL'],
     blurb:'Recoded through fan and resale culture rather than runway.', asset:'assets/youngboy-tee.png' },
-  { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object', price:180, sizes:null, family:'bape-wall-clock',
+  { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
     blurb:'Reads as a distinct BAPE object, not a graphic applied to homeware.', asset:'assets/bape-clock.png' },
   { id:'coming-soon-titanic', name:'Titanic Hoodie', maker:'Coming Soon × Vetements', category:'Apparel', price:420, sizes:['XS','S','M','L','XL'],
     blurb:'The ironic bootleg-movie-graphic lineage Vetements itself trades in.', asset:'assets/coming-soon-titanic.png' },
-  { id:'storm-red', name:'Storm — Red', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'], family:'revenge-storm',
+  { id:'storm-red', name:'Storm — Red', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'The "is it cap or its own thing" debate on Grailed and Instagram — real recoding, argued in the open.', asset:'assets/storm-red.png' },
-  { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'], family:'revenge-storm',
+  { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same debate, same platforms, its own manifestation.', asset:'assets/storm-blue.png' },
-  { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'], family:'revenge-storm',
+  { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'Third colorway, admitted individually per the standing one-at-a-time process.', asset:'assets/storm-black.png' },
   { id:'lv-imagination', name:'Imagination', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:310, sizes:null,
     blurb:'A house best known for luggage, bottling a scent instead. Proof the canon isn\'t only bags and sneakers.', asset:'assets/lv-imagination.png' },
@@ -611,16 +589,16 @@ const OBJECTS = [
     blurb:'The Chevron pattern in its most recognized carry — hand-painted, not printed, and the house still won\'t confirm which.', asset:'assets/goyard-saint-louis-gm.png' },
   { id:'chrome-hearts-cemetery-ring', name:'Cemetery Cross Ring', maker:'Chrome Hearts', category:'Jewelry', price:650, sizes:null,
     blurb:'Sterling silver worn into culture by proximity — rock, skate, and now runway — rather than by campaign.', asset:'assets/chrome-hearts-cemetery-ring.png' },
-  { id:'supreme-box-logo-hoodie', name:'Box Logo Hoodie', maker:'Supreme', category:'Apparel', price:250, sizes:['XS','S','M','L','XL'], family:'supreme-box-logo-hoodie',
+  { id:'supreme-box-logo-hoodie', name:'Box Logo Hoodie', maker:'Supreme', category:'Apparel', price:250, sizes:['XS','S','M','L','XL'],
     blurb:'A logo that became a unit of resale value before it became a garment people actually wear.', asset:'assets/supreme-box-logo-hoodie.png' },
   { id:'bape-shark-hoodie', name:'Shark Full Zip Hoodie', maker:'A Bathing Ape', category:'Apparel', price:450, sizes:['XS','S','M','L','XL'],
     blurb:'The zip-through mouth turned a hood into a mask — one of the few graphics that changed how a garment is worn.', asset:'assets/bape-shark-hoodie.png' },
-  { id:'off-white-af1-university-blue', name:'Air Force 1 "University Blue"', maker:'Off-White × Nike', category:'Footwear', price:1200, sizes:['7','8','9','10','11','12','13'], family:'off-white-af1',
+  { id:'off-white-af1-university-blue', name:'Air Force 1 "University Blue"', maker:'Off-White × Nike', category:'Footwear', price:1200, sizes:['7','8','9','10','11','12','13'],
     blurb:'Zip ties and quote marks as a design language — the deconstruction that made the collaboration format legible.', asset:'assets/off-white-af1-university-blue.png' },
 
-  { id:'off-white-af1-black', name:'Air Force 1 "Black"', maker:'Off-White × Nike', category:'Footwear', price:950, sizes:['7','8','9','10','11','12','13'], family:'off-white-af1',
+  { id:'off-white-af1-black', name:'Air Force 1 "Black"', maker:'Off-White × Nike', category:'Footwear', price:950, sizes:['7','8','9','10','11','12','13'],
     blurb:'The same deconstruction, restated in black — quote marks and zip ties reading as language rather than color.', asset:'assets/off-white-af1-black.png' },
-  { id:'off-white-af1-green', name:'Air Force 1 "Green"', maker:'Off-White × Nike', category:'Footwear', price:850, sizes:['7','8','9','10','11','12','13'], family:'off-white-af1',
+  { id:'off-white-af1-green', name:'Air Force 1 "Green"', maker:'Off-White × Nike', category:'Footwear', price:850, sizes:['7','8','9','10','11','12','13'],
     blurb:'A quieter colorway of the same collaboration, still carrying the exposed foam and printed text.', asset:'assets/off-white-af1-green.png' },
   { id:'goyard-cap-vert-crossbody', name:'Cap Vert Crossbody', maker:'Goyard', category:'Bag', price:1850, sizes:null,
     blurb:'The Cap Vert scaled down to a body bag — same coated canvas, worn close rather than carried.', asset:'assets/goyard-cap-vert-crossbody.png' },
@@ -632,27 +610,27 @@ const OBJECTS = [
     blurb:'First Palm Angels admission — the side-stripe track silhouette that put the house on every off-duty rack.', asset:'assets/palm-angels-track-pants.png' },
   { id:'vetements-hoodie-black', name:'Hoodie — Black', maker:'Vetements', category:'Apparel', price:600, sizes:['XS','S','M','L','XL'],
     blurb:'Oversized, unadorned, deliberately anti-branding — the house\'s founding gesture stripped to its basic form.', asset:'assets/vetements-hoodie-black.png' },
-  { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'], family:'needles-track-jacket',
+  { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
     blurb:'Butterfly-sleeve track top, the house\'s signature silhouette in its loudest register.', asset:'assets/needles-track-jacket-purple.png' },
-  { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'], family:'needles-track-jacket',
+  { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
     blurb:'Same butterfly cut, cooler colorway — admitted separately per the one-colorway-one-object rule.', asset:'assets/needles-track-jacket-blue.png' },
-  { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object', price:260, sizes:null, family:'bape-ape-head-rug',
+  { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
     blurb:'The house\'s mascot rendered underfoot, in the camo that started it all.', asset:'assets/bape-ape-head-rug-camo.png' },
-  { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object', price:260, sizes:null, family:'bape-ape-head-rug',
+  { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
     blurb:'Same silhouette, a colorway built for visibility rather than camouflage.', asset:'assets/bape-ape-head-rug-pink.png' },
-  { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object', price:75, sizes:null, family:'bape-lighter',
+  { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
     blurb:'The smallest possible object still carrying full house recognition.', asset:'assets/bape-lighter-wordmark.png' },
-  { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object', price:75, sizes:null, family:'bape-lighter',
+  { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
     blurb:'Same form, the ape-head line art instead of the wordmark — a second, distinct admission.', asset:'assets/bape-lighter-camo-graphic.png' },
   { id:'supreme-crewneck-blue', name:'Box Logo Crewneck — Blue', maker:'Supreme', category:'Apparel', price:200, sizes:['XS','S','M','L','XL'],
     blurb:'The plainest possible carrier for the most recognized logo in the archive.', asset:'assets/supreme-crewneck-blue.png' },
   { id:'nike-cpfm-vapormax-2019', name:'Vapormax 2019', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:1100, sizes:['7','8','9','10','11','12','13'],
     blurb:'CPFM\'s tubing and hardware grafted onto the Vapormax sole — collaboration as visible surgery, not a colorway.', asset:'assets/nike-cpfm-vapormax-2019.png' },
-  { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'], family:'nmd-human-race',
+  { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
     blurb:'First Adidas admission — the Human Race line in the colorway most tied to the collaboration\'s identity.', asset:'assets/adidas-nmd-human-race-green.png' },
-  { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'], family:'nmd-human-race',
+  { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same line, the text-forward colorway that turned the shoe into a slogan.', asset:'assets/adidas-nmd-human-race-blue.png' },
-  { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object', price:180, sizes:null, family:'bape-wall-clock',
+  { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
     blurb:'Second colorway of the wall clock already in the archive, admitted on its own per house policy.', asset:'assets/bape-clock-blue.png' },
   { id:'ambush-lighter-keychain', name:'Lighter Keychain', maker:'Ambush', category:'Accessory', price:180, sizes:null,
     blurb:'First Ambush admission — hardware-forward, the house\'s jewelry logic applied to something disposable.', asset:'assets/ambush-lighter-keychain.png' },
@@ -676,7 +654,7 @@ const OBJECTS = [
   { id:'balenciaga-gold-elisa-ring', name:'Eisa Ring', maker:'Balenciaga', category:'Jewelry', price:425, sizes:null,
     blurb:'A twisted signet cast in gold-tone brass — the kind of object that reads as sculpture until it\'s on a hand.', asset:'assets/balenciaga-gold-elisa-ring.png',
     assets:['assets/balenciaga-gold-elisa-ring.png','assets/gold-elisa-ring-angle-2.png'] },
-  { id:'murakami-flower-og', name:'Flower Cushion', maker:'Takashi Murakami', category:'Object', price:320, sizes:null, family:'murakami-flower-cushion',
+  { id:'murakami-flower-og', name:'Flower Cushion', maker:'Takashi Murakami', category:'Object', price:320, sizes:null,
     blurb:'The smiling flower, twelve petals deep in its own rainbow, plush enough to forget it\'s a signature.', asset:'assets/murakami-flower-og.png' },
   { id:'beats-pill-red', name:'Pill', maker:'Beats by Dre', category:'Object', price:180, sizes:null,
     blurb:'Red, capsule-shaped, unmistakable from across a room — the shape became the signal before the sound did.', asset:'assets/beats-pill-red.png' },
@@ -688,27 +666,27 @@ const OBJECTS = [
     blurb:'White-on-white with the CPFM "AIR" tongue graphic — a quiet flex from a brand that usually shouts.', asset:'assets/white-cpfm-nike-af1.png' },
   { id:'white-ow-vapourmax', name:'Air VaporMax × Off-White', maker:'Nike × Off-White', category:'Footwear', price:850, sizes:['7','8','9','10','11','12','13'],
     blurb:'The visible air unit, the quotation marks around "AIR," the zip tie left dangling — Virgil\'s language distilled into one shoe.', asset:'assets/white-ow-vapourmax.png' },
-  { id:'nike-off-white-nrg-hoodie-unreleased', name:'NRG Hoodie — Black (Unreleased Sample)', maker:'Nike × Off-White', category:'Apparel', price:1200, sizes:['S','M','L','XL'], family:'off-white-nrg-hoodie',
+  { id:'nike-off-white-nrg-hoodie-unreleased', name:'NRG Hoodie — Black (Unreleased Sample)', maker:'Nike × Off-White', category:'Apparel', price:1200, sizes:['S','M','L','XL'],
     blurb:'Never made it to shelf. Diagonal sleeve stripes, the industrial stamp, a sample that exists because someone kept it.', asset:'assets/nike-off-white-nrg-hoodie-unreleased.png' },
-  { id:'white-nike-ow-nrg-hoodie', name:'NRG Hoodie — White', maker:'Nike × Off-White', category:'Apparel', price:650, sizes:['S','M','L','XL'], family:'off-white-nrg-hoodie',
+  { id:'white-nike-ow-nrg-hoodie', name:'NRG Hoodie — White', maker:'Nike × Off-White', category:'Apparel', price:650, sizes:['S','M','L','XL'],
     blurb:'The same architecture as the black sample, inverted — orange diagonal stripes on white.', asset:'assets/white-nike-ow-nrg-hoodie.png' },
   { id:'raf-simons-consumed-red-hoodie', name:'"Consumed" Hoodie', maker:'Raf Simons', category:'Apparel', price:1400, sizes:['S','M','L','XL'],
     blurb:'A horror-film still printed across black cotton — the graphic that made Raf\'s archive era a religion for the people who found it early.', asset:'assets/raf-simons-consumed-red-hoodie.png' },
-  { id:'black-sup-bogo-hoodie', name:'Box Logo Hoodie — Black', maker:'Supreme', category:'Apparel', price:380, sizes:['S','M','L','XL'], family:'supreme-box-logo-hoodie',
+  { id:'black-sup-bogo-hoodie', name:'Box Logo Hoodie — Black', maker:'Supreme', category:'Apparel', price:380, sizes:['S','M','L','XL'],
     blurb:'Red box, white type, black fleece — the most counterfeited four letters in streetwear.', asset:'assets/black-sup-bogo-hoodie.png' },
-  { id:'supreme-bogo-grey', name:'Box Logo Hoodie — Grey', maker:'Supreme', category:'Apparel', price:350, sizes:['S','M','L','XL'], family:'supreme-box-logo-hoodie',
+  { id:'supreme-bogo-grey', name:'Box Logo Hoodie — Grey', maker:'Supreme', category:'Apparel', price:350, sizes:['S','M','L','XL'],
     blurb:'Same logo, heather grey — the colorway that reads as understated in a lineup where nothing else is.', asset:'assets/supreme-bogo-grey.png' },
   { id:'bape-cdg-green-flannel', name:'Flannel Shirt × Comme des Garçons', maker:'BAPE × Comme des Garçons', category:'Apparel', price:260, sizes:['S','M','L','XL'],
     blurb:'Blackwatch plaid with the CDG heart worked in — two very different design philosophies agreeing on a shirt.', asset:'assets/bape-cdg-green-flannel.png' },
-  { id:'red-nmd', name:'NMD Human Race', maker:'Adidas × Pharrell Williams', category:'Footwear', price:280, sizes:['7','8','9','10','11','12','13'], family:'nmd-human-race',
+  { id:'red-nmd', name:'NMD Human Race', maker:'Adidas × Pharrell Williams', category:'Footwear', price:280, sizes:['7','8','9','10','11','12','13'],
     blurb:'Boost sole, no laces to speak of, "HU" down the side — built to look unfinished on purpose.', asset:'assets/red-nmd.png' },
-  { id:'yeezy-500-boot-black', name:'Yeezy 500 High — Black', maker:'Adidas Yeezy', category:'Footwear', price:180, sizes:['7','8','9','10','11','12','13'], family:'yeezy-500',
+  { id:'yeezy-500-boot-black', name:'Yeezy 500 High — Black', maker:'Adidas Yeezy', category:'Footwear', price:180, sizes:['7','8','9','10','11','12','13'],
     blurb:'Military boot proportions dressed in a sneaker\'s materials, in Yeezy\'s darkest colorway.', asset:'assets/yeezy-500-boot-black.png' },
-  { id:'yeezy-500-ag', name:'Yeezy 500 — Ash Grey', maker:'Adidas Yeezy', category:'Footwear', price:150, sizes:['7','8','9','10','11','12','13'], family:'yeezy-500',
+  { id:'yeezy-500-ag', name:'Yeezy 500 — Ash Grey', maker:'Adidas Yeezy', category:'Footwear', price:150, sizes:['7','8','9','10','11','12','13'],
     blurb:'Low-top 500 in a muted grey-tan, the mudguard doing its usual quiet work.', asset:'assets/yeezy-500-ag.png' },
-  { id:'yeezy-500-salt-i-think', name:'Yeezy 500 — Salt', maker:'Adidas Yeezy', category:'Footwear', price:150, sizes:['7','8','9','10','11','12','13'], family:'yeezy-500',
+  { id:'yeezy-500-salt-i-think', name:'Yeezy 500 — Salt', maker:'Adidas Yeezy', category:'Footwear', price:150, sizes:['7','8','9','10','11','12','13'],
     blurb:'One of the earliest 500 colorways — stone and grey suede layered like sediment.', asset:'assets/yeezy-500-salt-i-think.png' },
-  { id:'yeezy-500-dr-boot', name:'Yeezy 500 High — Sand', maker:'Adidas Yeezy', category:'Footwear', price:180, sizes:['7','8','9','10','11','12','13'], family:'yeezy-500',
+  { id:'yeezy-500-dr-boot', name:'Yeezy 500 High — Sand', maker:'Adidas Yeezy', category:'Footwear', price:180, sizes:['7','8','9','10','11','12','13'],
     blurb:'High-top 500 in tan suede, boot-first in a way the low-tops never committed to.', asset:'assets/yeezy-500-dr-boot.png' },
   { id:'purple-bape-pillow', name:'Ape Head Cushion — Purple Camo', maker:'A Bathing Ape', category:'Object', price:90, sizes:null,
     blurb:'The Ursus Arctos face flattened into camo and stitched onto a cushion — merch that outlived its drop and became furniture instead.', asset:'assets/purple-bape-pillow.png' },
@@ -726,23 +704,6 @@ function renderStage(o){
   return o.asset
     ? `<img src="${o.asset}" alt="${o.name}" loading="lazy">`
     : renderPendingMark();
-}
-
-// Reference conversion only — Manifest carries "recognized value" estimates,
-// never live listings, so this is deliberately a round, approximate rate
-// rather than a wired-up FX feed. Rounding to a clean denomination keeps
-// the figure reading like editorial judgment, not a currency-converter output.
-function formatValue(usdEstimate){
-  const rate = 17;
-  let rand = usdEstimate * rate;
-  const step = rand < 2000 ? 10 : rand < 10000 ? 50 : 100;
-  rand = Math.round(rand / step) * step;
-  return 'R' + rand.toLocaleString('en-ZA');
-}
-
-function getSiblings(o){
-  if (!o.family) return [];
-  return OBJECTS.filter(x => x.family === o.family && x.id !== o.id);
 }
 
 document.getElementById('field-count').textContent =
@@ -869,8 +830,6 @@ document.getElementById('field-search-input').addEventListener('input', function
   const sizesWrap = document.getElementById('record-sizes');
   const sizeRow = document.getElementById('record-size-row');
   const priceEl = document.getElementById('record-price-amount');
-  const siblingsWrap = document.getElementById('record-siblings');
-  const siblingRow = document.getElementById('record-sibling-row');
 
   let recordAssets = [];
   let recordIndex = 0;
@@ -895,25 +854,6 @@ document.getElementById('field-search-input').addEventListener('input', function
     }
   }
 
-  function paintSiblings(o){
-    const sibs = getSiblings(o);
-    if (!sibs.length){
-      siblingsWrap.style.display = 'none';
-      siblingRow.innerHTML = '';
-      return;
-    }
-    siblingsWrap.style.display = '';
-    siblingRow.innerHTML = sibs.map(s =>
-      `<button type="button" data-id="${s.id}" title="${s.name}" aria-label="${s.name}" style="background-image:url('${s.asset}')"></button>`
-    ).join('');
-    siblingRow.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sib = OBJECTS.find(x => x.id === btn.dataset.id);
-        if (sib) openRecord(sib);
-      });
-    });
-  }
-
   function openRecord(o){
     recordAssets = (o.assets && o.assets.length) ? o.assets : [o.asset];
     recordIndex = 0;
@@ -921,7 +861,7 @@ document.getElementById('field-search-input').addEventListener('input', function
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
-    priceEl.textContent = formatValue(o.price);
+    priceEl.textContent = '$' + o.price.toLocaleString('en-US');
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
       sizeRow.innerHTML = o.sizes.map(s =>
@@ -937,11 +877,9 @@ document.getElementById('field-search-input').addEventListener('input', function
       sizesWrap.style.display = 'none';
       sizeRow.innerHTML = '';
     }
-    paintSiblings(o);
     document.body.style.overflow = 'hidden';
     backdrop.classList.add('open');
     panel.classList.add('open');
-    panel.scrollTop = 0;
   }
 
   function closeRecord(){
@@ -976,16 +914,47 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) return;
 
-  const hues = [
-    'hsl(198 55% 80%)',
-    'hsl(190 50% 58%)',
-    'hsl(248 42% 52%)',
-    'hsl(268 38% 66%)',
-    'hsl(222 28% 54%)'
-  ];
+  const randRange = (a, b) => a + Math.random() * (b - a);
+  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+
+  // ---- The season: one continuous atmosphere, not a palette switch ----
+  // V1's warm City of Stars register (citrus-white / champagne-gold /
+  // blood-orange / tiaré cream / sandalwood dust) breathes forward into
+  // the room the way it used to, then drifts through a paling light-blue,
+  // into the existing deeper blue field, down into a near-black rest, and
+  // back to warmth again — on its own clock, endlessly. Every well's halo
+  // draws its color from whichever stage the room is in, so the whole
+  // environment (clouds, attention blooms, the dusk-deep rest) reads as one
+  // weather system instead of five independently-animated parts.
+  const SEASON = {
+    warm:      ['hsl(45 70% 90%)', 'hsl(42 58% 70%)', 'hsl(14 66% 50%)', 'hsl(38 48% 80%)', 'hsl(28 32% 56%)'],
+    lightBlue: ['hsl(200 46% 86%)', 'hsl(195 42% 76%)', 'hsl(206 36% 68%)', 'hsl(210 32% 78%)', 'hsl(200 26% 70%)'],
+    blue:      ['hsl(198 55% 80%)', 'hsl(190 50% 58%)', 'hsl(248 42% 52%)', 'hsl(268 38% 66%)', 'hsl(222 28% 54%)'],
+    deepBlue:  ['hsl(215 55% 36%)', 'hsl(205 60% 28%)', 'hsl(255 50% 22%)', 'hsl(260 45% 32%)', 'hsl(225 40% 24%)']
+  };
+  const SEASON_STEPS = ['warm', 'lightBlue', 'blue', 'deepBlue']; // then the room rests toward black and returns to warm
+
+  function parseHSL(s){
+    const m = s.match(/hsl\(([-\d.]+)\s+([\d.]+)%\s+([\d.]+)%\)/);
+    return [parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])];
+  }
+  function lerpHSL(a, b, t){
+    const [h1, s1, l1] = parseHSL(a), [h2, s2, l2] = parseHSL(b);
+    let dh = h2 - h1;
+    if (dh > 180) dh -= 360; else if (dh < -180) dh += 360;
+    const h = (((h1 + dh * t) % 360) + 360) % 360;
+    return `hsl(${h.toFixed(1)} ${(s1 + (s2 - s1) * t).toFixed(1)}% ${(l1 + (l2 - l1) * t).toFixed(1)}%)`;
+  }
+  // currentSeasonHues: the 5 hues (one per cloud/well-position) the room is
+  // actually showing right now — interpolated live, read by both the cloud
+  // paint and the well halo-picker below.
+  let currentSeasonHues = SEASON.warm.slice();
+  let seasonWarmth = 1; // 1 = full warm, 0 = full black rest — also drives the ambient filter
+
   function pickHue(w){
+    const pool = currentSeasonHues;
     let next;
-    do { next = hues[Math.floor(Math.random() * hues.length)]; } while (next === w.hue && hues.length > 1);
+    do { next = pool[Math.floor(Math.random() * pool.length)]; } while (next === w.hue && pool.length > 1);
     w.hue = next;
   }
 
@@ -993,54 +962,83 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const RISE = 1.8;
   const DECAY = MAX / 133;
 
-  // Dusk — a rare passing episode, not a mode. The room drains toward black
-  // and lifts again on its own timeline, independent of anything the visitor
-  // does. Deep dim, not black-out: the wave field stays faintly visible.
+  // The season's own state machine: hold a stage, ease to the next, and —
+  // between deepBlue and the return to warm — let the room rest at black
+  // (the dusk-veil takes over as the room's true dark, not a separate mood).
   const duskVeil = document.getElementById('dusk-veil');
-  const DUSK_MAX = 0.82;
-  const randRange = (a, b) => a + Math.random() * (b - a);
-  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+  const DUSK_MAX = 0.86;
 
-  let duskPhase = 'idle';        // idle -> rising -> holding -> falling -> idle
-  let duskPhaseStart = 0;
-  let duskPhaseEnd = randRange(240, 520); // first episode, several minutes out
+  let stepIndex = 0;               // index into SEASON_STEPS for the *current held* stage
+  let seasonPhase = 'hold';         // hold -> advance -> hold -> ... -> toBlack -> black -> toWarm -> hold(warm)
+  let seasonPhaseStart = 0;
+  let seasonPhaseEnd = randRange(45, 75); // first warm hold
 
-  function updateDusk(elapsed){
-    const span = duskPhaseEnd - duskPhaseStart;
-    const t = span > 0 ? Math.min(1, (elapsed - duskPhaseStart) / span) : 1;
-    let level = 0;
+  function updateSeason(elapsed){
+    const span = seasonPhaseEnd - seasonPhaseStart;
+    const t = span > 0 ? Math.min(1, (elapsed - seasonPhaseStart) / span) : 1;
+    let veil = 0;
 
-    if (duskPhase === 'idle'){
-      level = 0;
-      if (elapsed >= duskPhaseEnd){
-        duskPhase = 'rising';
-        duskPhaseStart = elapsed;
-        duskPhaseEnd = elapsed + randRange(9, 15);
+    if (seasonPhase === 'hold'){
+      currentSeasonHues = SEASON[SEASON_STEPS[stepIndex]];
+      seasonWarmth = 1 - stepIndex / (SEASON_STEPS.length - 1);
+      veil = 0;
+      if (elapsed >= seasonPhaseEnd){
+        if (stepIndex < SEASON_STEPS.length - 1){
+          seasonPhase = 'advance';
+          seasonPhaseStart = elapsed;
+          seasonPhaseEnd = elapsed + randRange(24, 40);
+        } else {
+          seasonPhase = 'toBlack';
+          seasonPhaseStart = elapsed;
+          seasonPhaseEnd = elapsed + randRange(16, 24);
+        }
       }
-    } else if (duskPhase === 'rising'){
-      level = DUSK_MAX * easeInOut(t);
-      if (elapsed >= duskPhaseEnd){
-        duskPhase = 'holding';
-        duskPhaseStart = elapsed;
-        duskPhaseEnd = elapsed + randRange(22, 38);
+    } else if (seasonPhase === 'advance'){
+      const from = SEASON[SEASON_STEPS[stepIndex]];
+      const to = SEASON[SEASON_STEPS[stepIndex + 1]];
+      const e = easeInOut(t);
+      currentSeasonHues = from.map((c, i) => lerpHSL(c, to[i], e));
+      seasonWarmth = 1 - (stepIndex + e) / (SEASON_STEPS.length - 1);
+      veil = 0;
+      if (elapsed >= seasonPhaseEnd){
+        stepIndex += 1;
+        seasonPhase = 'hold';
+        seasonPhaseStart = elapsed;
+        seasonPhaseEnd = elapsed + randRange(45, 75);
       }
-    } else if (duskPhase === 'holding'){
-      level = DUSK_MAX;
-      if (elapsed >= duskPhaseEnd){
-        duskPhase = 'falling';
-        duskPhaseStart = elapsed;
-        duskPhaseEnd = elapsed + randRange(11, 18);
+    } else if (seasonPhase === 'toBlack'){
+      currentSeasonHues = SEASON.deepBlue;
+      seasonWarmth = 0.05;
+      veil = DUSK_MAX * easeInOut(t);
+      if (elapsed >= seasonPhaseEnd){
+        seasonPhase = 'black';
+        seasonPhaseStart = elapsed;
+        seasonPhaseEnd = elapsed + randRange(30, 50);
       }
-    } else if (duskPhase === 'falling'){
-      level = DUSK_MAX * (1 - easeInOut(t));
-      if (elapsed >= duskPhaseEnd){
-        duskPhase = 'idle';
-        duskPhaseStart = elapsed;
-        duskPhaseEnd = elapsed + randRange(240, 520); // next episode, minutes away
+    } else if (seasonPhase === 'black'){
+      currentSeasonHues = SEASON.deepBlue;
+      seasonWarmth = 0;
+      veil = DUSK_MAX;
+      if (elapsed >= seasonPhaseEnd){
+        seasonPhase = 'toWarm';
+        seasonPhaseStart = elapsed;
+        seasonPhaseEnd = elapsed + randRange(26, 42);
+      }
+    } else if (seasonPhase === 'toWarm'){
+      const e = easeInOut(t);
+      currentSeasonHues = SEASON.deepBlue.map((c, i) => lerpHSL(c, SEASON.warm[i], e));
+      seasonWarmth = e;
+      veil = DUSK_MAX * (1 - e);
+      if (elapsed >= seasonPhaseEnd){
+        stepIndex = 0;
+        seasonPhase = 'hold';
+        seasonPhaseStart = elapsed;
+        seasonPhaseEnd = elapsed + randRange(45, 75);
       }
     }
 
-    duskVeil.style.opacity = level.toFixed(3);
+    duskVeil.style.opacity = veil.toFixed(3);
+    if (window.AMBIENCE && AMBIENCE.setMood) AMBIENCE.setMood(seasonWarmth);
   }
 
   let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
@@ -1075,6 +1073,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const cloudEls = Array.from(document.querySelectorAll('.weather .cloud'));
   const waveParams = cloudEls.map((el, i) => ({
     el,
+    i,
     filterId: `water-${i + 1}`,
     baseOpacity: [0.78, 0.72, 0.56, 0.68, 0.6][i],
     ax: 6 + i * 1.4,
@@ -1094,6 +1093,12 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     huePhase: i * 2.3
   }));
 
+  // Paint the clouds warm immediately — don't wait for the first animation
+  // frame, so the room opens in V1's register rather than a blank flash.
+  waveParams.forEach(p => {
+    p.el.style.background = `radial-gradient(circle, ${currentSeasonHues[p.i]} 0%, transparent 68%)`;
+  });
+
   function applyWell(w, energy, opacityCap, isArrival, presence){
     const opacity = Math.min(opacityCap, energy * opacityCap * 1.05);
     const scale = 0.5 + Math.min(1, energy) * 1.0;
@@ -1112,7 +1117,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 
     const elapsed = (now - t0) / 1000;
 
-    updateDusk(elapsed);
+    updateSeason(elapsed);
 
     const bass = Math.sin(elapsed / 14.3 * Math.PI * 2) * 0.5 + 0.5;
 
@@ -1127,8 +1132,11 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       const s = baseScale + bass * 0.025;
       p.el.style.transform = `translate(${x.toFixed(2)}vmax, ${y.toFixed(2)}vmax) scale(${s.toFixed(3)})`;
       p.el.style.opacity = (p.baseOpacity * (1 - bass * 0.06)).toFixed(3);
-      const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
+      // Small wobble on top of the season's own, much larger color travel —
+      // keeps the surface alive without fighting the macro hue movement.
+      const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * (p.hueAmp * 0.4);
       p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
+      p.el.style.background = `radial-gradient(circle, ${currentSeasonHues[p.i]} 0%, transparent 68%)`;
     });
 
     motionEnergy *= 0.93;
