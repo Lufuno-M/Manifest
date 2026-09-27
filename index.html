@@ -821,21 +821,15 @@ document.getElementById('field-search-input').addEventListener('input', function
       : (String(OBJECTS.length).padStart(2,'0') + ' objects');
 });
 
-// Reference prices in OBJECTS stay USD. Display-only conversion + range below.
+// Reference prices in OBJECTS stay USD. Display-only conversion below.
+// Recognized value shown is 60% of the reference price, as one figure —
+// no range, no visible tie back to the reference, so it reads as the
+// object's value rather than a markdown off something higher.
 const USD_TO_ZAR = 17;
-function toZARRange(usdPrice){
-  const lowUSD = usdPrice * 0.6;
-  const highUSD = usdPrice * 1.0;
+function formatRecognizedValue(usdPrice){
+  const recognizedUSD = usdPrice * 0.6;
   const round = (n) => Math.round(n / 10) * 10; // clean denomination
-  return {
-    low: round(lowUSD * USD_TO_ZAR),
-    high: round(highUSD * USD_TO_ZAR)
-  };
-}
-function formatZARRange(usdPrice){
-  const { low, high } = toZARRange(usdPrice);
-  const fmt = (n) => 'R' + n.toLocaleString('en-ZA');
-  return low === high ? fmt(low) : `${fmt(low)}\u2013${fmt(high)}`;
+  return 'R' + round(recognizedUSD * USD_TO_ZAR).toLocaleString('en-ZA');
 }
 
 (function(){
@@ -880,7 +874,7 @@ function formatZARRange(usdPrice){
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
-    priceEl.textContent = formatZARRange(o.price);
+    priceEl.textContent = formatRecognizedValue(o.price);
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
       sizeRow.innerHTML = o.sizes.map(s =>
