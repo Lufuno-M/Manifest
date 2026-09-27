@@ -50,13 +50,33 @@
     border-radius:50%;
     filter: url(#water-1);
     mix-blend-mode: multiply;
-    will-change: transform, filter, background;
+    will-change: transform, filter;
   }
-  .cloud-1{ top:-18vmax; left:-14vmax; opacity:0.78; }
-  .cloud-2{ top:10vmax; right:-20vmax; opacity:0.72; }
-  .cloud-3{ bottom:-24vmax; left:8vmax; opacity:0.56; }
-  .cloud-4{ bottom:6vmax; right:2vmax; opacity:0.68; }
-  .cloud-5{ top:38vmax; left:26vmax; opacity:0.6; }
+  .cloud-1{
+    top:-18vmax; left:-14vmax;
+    background: radial-gradient(circle, hsl(198 60% 82%) 0%, transparent 68%);
+    opacity:0.78;
+  }
+  .cloud-2{
+    top:10vmax; right:-20vmax;
+    background: radial-gradient(circle, hsl(190 55% 55%) 0%, transparent 68%);
+    opacity:0.72;
+  }
+  .cloud-3{
+    bottom:-24vmax; left:8vmax;
+    background: radial-gradient(circle, hsl(248 45% 42%) 0%, transparent 70%);
+    opacity:0.56;
+  }
+  .cloud-4{
+    bottom:6vmax; right:2vmax;
+    background: radial-gradient(circle, hsl(268 40% 68%) 0%, transparent 68%);
+    opacity:0.68;
+  }
+  .cloud-5{
+    top:38vmax; left:26vmax;
+    background: radial-gradient(circle, hsl(222 30% 50%) 0%, transparent 70%);
+    opacity:0.6;
+  }
 
   .halo{
     position:absolute;
@@ -72,11 +92,9 @@
     z-index:1;
   }
 
-  /* The room's own passing mood — the atmosphere drains toward black and
-     lifts again as part of the same continuous cycle as the cloud color
-     itself (see the macro-season loop in JS). Sits above the weather clouds
-     but under the halos, so attention blooms and all content stay lit; only
-     the ambient field dims. */
+  /* A rare passing mood — the room drains toward black and lifts on its own.
+     Sits above the weather clouds but under the halos, so attention blooms
+     and all content stay lit; only the ambient field dims. */
   .dusk-veil{
     position:fixed; inset:0; z-index:1;
     pointer-events:none;
@@ -535,23 +553,7 @@ const AMBIENCE = (() => {
     if (!ready) return;
   }
 
-  // The season calls this on every frame with warmth (1 = warm, 0 = black
-  // rest). Kept deliberately subtle and slow — not reactive to the audio
-  // itself, just a gentle open/close of the filter so the room's darkest
-  // stage feels a shade more distant, not a visualizer.
-  let lastMoodTarget = null;
-  function setMood(warmth){
-    if (!ready || !playing) return;
-    const targetFreq = 3200 + warmth * 16800; // ~3.2kHz (black) to 20kHz (warm)
-    if (lastMoodTarget !== null && Math.abs(targetFreq - lastMoodTarget) < 250) return;
-    lastMoodTarget = targetFreq;
-    const now = ctx.currentTime;
-    filterNode.frequency.cancelScheduledValues(now);
-    filterNode.frequency.setValueAtTime(filterNode.frequency.value, now);
-    filterNode.frequency.linearRampToValueAtTime(targetFreq, now + 4.5);
-  }
-
-  return { toggle, setIntensity, setMood };
+  return { toggle, setIntensity };
 })();
 </script>
 
@@ -819,6 +821,23 @@ document.getElementById('field-search-input').addEventListener('input', function
       : (String(OBJECTS.length).padStart(2,'0') + ' objects');
 });
 
+// Reference prices in OBJECTS stay USD. Display-only conversion + range below.
+const USD_TO_ZAR = 17;
+function toZARRange(usdPrice){
+  const lowUSD = usdPrice * 0.6;
+  const highUSD = usdPrice * 1.0;
+  const round = (n) => Math.round(n / 10) * 10; // clean denomination
+  return {
+    low: round(lowUSD * USD_TO_ZAR),
+    high: round(highUSD * USD_TO_ZAR)
+  };
+}
+function formatZARRange(usdPrice){
+  const { low, high } = toZARRange(usdPrice);
+  const fmt = (n) => 'R' + n.toLocaleString('en-ZA');
+  return low === high ? fmt(low) : `${fmt(low)}\u2013${fmt(high)}`;
+}
+
 (function(){
   const backdrop = document.getElementById('record-backdrop');
   const panel = document.getElementById('record');
@@ -861,7 +880,7 @@ document.getElementById('field-search-input').addEventListener('input', function
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
-    priceEl.textContent = '$' + o.price.toLocaleString('en-US');
+    priceEl.textContent = formatZARRange(o.price);
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
       sizeRow.innerHTML = o.sizes.map(s =>
@@ -914,47 +933,16 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) return;
 
-  const randRange = (a, b) => a + Math.random() * (b - a);
-  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
-
-  // ---- The season: one continuous atmosphere, not a palette switch ----
-  // V1's warm City of Stars register (citrus-white / champagne-gold /
-  // blood-orange / tiaré cream / sandalwood dust) breathes forward into
-  // the room the way it used to, then drifts through a paling light-blue,
-  // into the existing deeper blue field, down into a near-black rest, and
-  // back to warmth again — on its own clock, endlessly. Every well's halo
-  // draws its color from whichever stage the room is in, so the whole
-  // environment (clouds, attention blooms, the dusk-deep rest) reads as one
-  // weather system instead of five independently-animated parts.
-  const SEASON = {
-    warm:      ['hsl(45 70% 90%)', 'hsl(42 58% 70%)', 'hsl(14 66% 50%)', 'hsl(38 48% 80%)', 'hsl(28 32% 56%)'],
-    lightBlue: ['hsl(200 46% 86%)', 'hsl(195 42% 76%)', 'hsl(206 36% 68%)', 'hsl(210 32% 78%)', 'hsl(200 26% 70%)'],
-    blue:      ['hsl(198 55% 80%)', 'hsl(190 50% 58%)', 'hsl(248 42% 52%)', 'hsl(268 38% 66%)', 'hsl(222 28% 54%)'],
-    deepBlue:  ['hsl(215 55% 36%)', 'hsl(205 60% 28%)', 'hsl(255 50% 22%)', 'hsl(260 45% 32%)', 'hsl(225 40% 24%)']
-  };
-  const SEASON_STEPS = ['warm', 'lightBlue', 'blue', 'deepBlue']; // then the room rests toward black and returns to warm
-
-  function parseHSL(s){
-    const m = s.match(/hsl\(([-\d.]+)\s+([\d.]+)%\s+([\d.]+)%\)/);
-    return [parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])];
-  }
-  function lerpHSL(a, b, t){
-    const [h1, s1, l1] = parseHSL(a), [h2, s2, l2] = parseHSL(b);
-    let dh = h2 - h1;
-    if (dh > 180) dh -= 360; else if (dh < -180) dh += 360;
-    const h = (((h1 + dh * t) % 360) + 360) % 360;
-    return `hsl(${h.toFixed(1)} ${(s1 + (s2 - s1) * t).toFixed(1)}% ${(l1 + (l2 - l1) * t).toFixed(1)}%)`;
-  }
-  // currentSeasonHues: the 5 hues (one per cloud/well-position) the room is
-  // actually showing right now — interpolated live, read by both the cloud
-  // paint and the well halo-picker below.
-  let currentSeasonHues = SEASON.warm.slice();
-  let seasonWarmth = 1; // 1 = full warm, 0 = full black rest — also drives the ambient filter
-
+  const hues = [
+    'hsl(198 55% 80%)',
+    'hsl(190 50% 58%)',
+    'hsl(248 42% 52%)',
+    'hsl(268 38% 66%)',
+    'hsl(222 28% 54%)'
+  ];
   function pickHue(w){
-    const pool = currentSeasonHues;
     let next;
-    do { next = pool[Math.floor(Math.random() * pool.length)]; } while (next === w.hue && pool.length > 1);
+    do { next = hues[Math.floor(Math.random() * hues.length)]; } while (next === w.hue && hues.length > 1);
     w.hue = next;
   }
 
@@ -962,83 +950,54 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const RISE = 1.8;
   const DECAY = MAX / 133;
 
-  // The season's own state machine: hold a stage, ease to the next, and —
-  // between deepBlue and the return to warm — let the room rest at black
-  // (the dusk-veil takes over as the room's true dark, not a separate mood).
+  // Dusk — a rare passing episode, not a mode. The room drains toward black
+  // and lifts again on its own timeline, independent of anything the visitor
+  // does. Deep dim, not black-out: the wave field stays faintly visible.
   const duskVeil = document.getElementById('dusk-veil');
-  const DUSK_MAX = 0.86;
+  const DUSK_MAX = 0.82;
+  const randRange = (a, b) => a + Math.random() * (b - a);
+  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
-  let stepIndex = 0;               // index into SEASON_STEPS for the *current held* stage
-  let seasonPhase = 'hold';         // hold -> advance -> hold -> ... -> toBlack -> black -> toWarm -> hold(warm)
-  let seasonPhaseStart = 0;
-  let seasonPhaseEnd = randRange(45, 75); // first warm hold
+  let duskPhase = 'idle';        // idle -> rising -> holding -> falling -> idle
+  let duskPhaseStart = 0;
+  let duskPhaseEnd = randRange(240, 520); // first episode, several minutes out
 
-  function updateSeason(elapsed){
-    const span = seasonPhaseEnd - seasonPhaseStart;
-    const t = span > 0 ? Math.min(1, (elapsed - seasonPhaseStart) / span) : 1;
-    let veil = 0;
+  function updateDusk(elapsed){
+    const span = duskPhaseEnd - duskPhaseStart;
+    const t = span > 0 ? Math.min(1, (elapsed - duskPhaseStart) / span) : 1;
+    let level = 0;
 
-    if (seasonPhase === 'hold'){
-      currentSeasonHues = SEASON[SEASON_STEPS[stepIndex]];
-      seasonWarmth = 1 - stepIndex / (SEASON_STEPS.length - 1);
-      veil = 0;
-      if (elapsed >= seasonPhaseEnd){
-        if (stepIndex < SEASON_STEPS.length - 1){
-          seasonPhase = 'advance';
-          seasonPhaseStart = elapsed;
-          seasonPhaseEnd = elapsed + randRange(24, 40);
-        } else {
-          seasonPhase = 'toBlack';
-          seasonPhaseStart = elapsed;
-          seasonPhaseEnd = elapsed + randRange(16, 24);
-        }
+    if (duskPhase === 'idle'){
+      level = 0;
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'rising';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(9, 15);
       }
-    } else if (seasonPhase === 'advance'){
-      const from = SEASON[SEASON_STEPS[stepIndex]];
-      const to = SEASON[SEASON_STEPS[stepIndex + 1]];
-      const e = easeInOut(t);
-      currentSeasonHues = from.map((c, i) => lerpHSL(c, to[i], e));
-      seasonWarmth = 1 - (stepIndex + e) / (SEASON_STEPS.length - 1);
-      veil = 0;
-      if (elapsed >= seasonPhaseEnd){
-        stepIndex += 1;
-        seasonPhase = 'hold';
-        seasonPhaseStart = elapsed;
-        seasonPhaseEnd = elapsed + randRange(45, 75);
+    } else if (duskPhase === 'rising'){
+      level = DUSK_MAX * easeInOut(t);
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'holding';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(22, 38);
       }
-    } else if (seasonPhase === 'toBlack'){
-      currentSeasonHues = SEASON.deepBlue;
-      seasonWarmth = 0.05;
-      veil = DUSK_MAX * easeInOut(t);
-      if (elapsed >= seasonPhaseEnd){
-        seasonPhase = 'black';
-        seasonPhaseStart = elapsed;
-        seasonPhaseEnd = elapsed + randRange(30, 50);
+    } else if (duskPhase === 'holding'){
+      level = DUSK_MAX;
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'falling';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(11, 18);
       }
-    } else if (seasonPhase === 'black'){
-      currentSeasonHues = SEASON.deepBlue;
-      seasonWarmth = 0;
-      veil = DUSK_MAX;
-      if (elapsed >= seasonPhaseEnd){
-        seasonPhase = 'toWarm';
-        seasonPhaseStart = elapsed;
-        seasonPhaseEnd = elapsed + randRange(26, 42);
-      }
-    } else if (seasonPhase === 'toWarm'){
-      const e = easeInOut(t);
-      currentSeasonHues = SEASON.deepBlue.map((c, i) => lerpHSL(c, SEASON.warm[i], e));
-      seasonWarmth = e;
-      veil = DUSK_MAX * (1 - e);
-      if (elapsed >= seasonPhaseEnd){
-        stepIndex = 0;
-        seasonPhase = 'hold';
-        seasonPhaseStart = elapsed;
-        seasonPhaseEnd = elapsed + randRange(45, 75);
+    } else if (duskPhase === 'falling'){
+      level = DUSK_MAX * (1 - easeInOut(t));
+      if (elapsed >= duskPhaseEnd){
+        duskPhase = 'idle';
+        duskPhaseStart = elapsed;
+        duskPhaseEnd = elapsed + randRange(240, 520); // next episode, minutes away
       }
     }
 
-    duskVeil.style.opacity = veil.toFixed(3);
-    if (window.AMBIENCE && AMBIENCE.setMood) AMBIENCE.setMood(seasonWarmth);
+    duskVeil.style.opacity = level.toFixed(3);
   }
 
   let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
@@ -1073,7 +1032,6 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const cloudEls = Array.from(document.querySelectorAll('.weather .cloud'));
   const waveParams = cloudEls.map((el, i) => ({
     el,
-    i,
     filterId: `water-${i + 1}`,
     baseOpacity: [0.78, 0.72, 0.56, 0.68, 0.6][i],
     ax: 6 + i * 1.4,
@@ -1093,12 +1051,6 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     huePhase: i * 2.3
   }));
 
-  // Paint the clouds warm immediately — don't wait for the first animation
-  // frame, so the room opens in V1's register rather than a blank flash.
-  waveParams.forEach(p => {
-    p.el.style.background = `radial-gradient(circle, ${currentSeasonHues[p.i]} 0%, transparent 68%)`;
-  });
-
   function applyWell(w, energy, opacityCap, isArrival, presence){
     const opacity = Math.min(opacityCap, energy * opacityCap * 1.05);
     const scale = 0.5 + Math.min(1, energy) * 1.0;
@@ -1117,7 +1069,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 
     const elapsed = (now - t0) / 1000;
 
-    updateSeason(elapsed);
+    updateDusk(elapsed);
 
     const bass = Math.sin(elapsed / 14.3 * Math.PI * 2) * 0.5 + 0.5;
 
@@ -1132,11 +1084,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       const s = baseScale + bass * 0.025;
       p.el.style.transform = `translate(${x.toFixed(2)}vmax, ${y.toFixed(2)}vmax) scale(${s.toFixed(3)})`;
       p.el.style.opacity = (p.baseOpacity * (1 - bass * 0.06)).toFixed(3);
-      // Small wobble on top of the season's own, much larger color travel —
-      // keeps the surface alive without fighting the macro hue movement.
-      const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * (p.hueAmp * 0.4);
+      const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
       p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
-      p.el.style.background = `radial-gradient(circle, ${currentSeasonHues[p.i]} 0%, transparent 68%)`;
     });
 
     motionEnergy *= 0.93;
