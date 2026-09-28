@@ -1,4 +1,4 @@
-[README (1).md](https://github.com/user-attachments/files/32778868/README.1.md)
+
 # Manifest
 
 *The archive of attention.*
