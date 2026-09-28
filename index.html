@@ -377,6 +377,35 @@
     margin-top:16px; text-align:center; font-size:10px;
     color:var(--ink-soft); opacity:0.7; line-height:1.5;
   }
+/* ---- the wall ---- */
+.nav-right{ display:flex; align-items:center; gap:18px; }
+.wall-open{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); border-bottom:1px solid var(--ink-soft); padding:2px 0; }
+.wall{ position:fixed; inset:0; z-index:300; overflow-y:auto; background:rgba(9,8,12,.92);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); color:#EDEAF2;
+  opacity:0; pointer-events:none; transition:opacity .6s var(--ease); }
+.wall.open{ opacity:1; pointer-events:auto; }
+.wall-glow{ position:fixed; inset:0; pointer-events:none; color:transparent; opacity:.3;
+  background:radial-gradient(circle at 50% 38%, currentColor 0%, transparent 62%); transition:color 1.8s ease; }
+.wall-close{ position:fixed; top:20px; right:clamp(20px,4vw,52px); z-index:2; font-family:'JetBrains Mono',monospace;
+  font-size:11px; letter-spacing:.1em; color:#EDEAF2; padding:6px 8px; }
+.wall-head{ position:relative; text-align:center; padding:16vh 24px 0; }
+.wall-head h2{ margin:0; font-family:'Fraunces',serif; font-weight:400; font-size:clamp(34px,6vw,64px); letter-spacing:.02em; }
+.wall-head p{ margin:12px 0 0; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#9c98a8; }
+.wall-hang{ position:relative; max-width:1400px; margin:0 auto; padding:12vh 5vw 10vh; display:flex; flex-wrap:wrap;
+  justify-content:center; align-items:flex-start; gap:10vh 6vw; }
+.piece{ width:min(var(--w),86vw); margin-top:var(--dy,0); cursor:zoom-in; }
+.piece img{ display:block; width:100%; height:auto; box-shadow:0 30px 60px rgba(0,0,0,.55); outline:1px solid rgba(255,255,255,.08);
+  transition:filter .5s ease, transform .5s var(--ease); }
+.piece:hover img, .piece:focus-visible img{ filter:brightness(1.1); transform:translateY(-3px); }
+.piece figcaption{ margin-top:14px; opacity:.6; transition:opacity .4s ease; }
+.piece:hover figcaption, .piece:focus-visible figcaption{ opacity:1; }
+.piece .t{ font-family:'Fraunces',serif; font-style:italic; font-size:14px; }
+.piece .n{ margin-top:3px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#9c98a8; line-height:1.5; }
+.wall-foot{ position:relative; text-align:center; padding:0 24px 12vh; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.08em; color:#7d7989; }
+.wall-zoom{ position:fixed; inset:0; z-index:310; display:none; align-items:center; justify-content:center; background:rgba(5,4,8,.94); cursor:zoom-out; padding:4vh 4vw; }
+.wall-zoom.open{ display:flex; }
+.wall-zoom img{ max-width:100%; max-height:100%; object-fit:contain; }
+@media (prefers-reduced-motion: reduce){ .wall, .wall-glow, .piece img, .piece figcaption{ transition:none; } }
 </style>
 </head>
 <body>
@@ -433,12 +462,12 @@
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
-  <div class="nav-right"><span id="field-count">— objects</span></div>
+  <div class="nav-right"><button class="wall-open" id="wall-open">the wall</button><span id="field-count">— objects</span></div>
 </nav>
 
 <section class="arrival" id="arrival">
   <div class="wordmark display">Manifest</div>
-  <div class="thesis">An archive of attention</div>
+  <div class="thesis">the archive of attention</div>
   <div class="arrival-obj-wrap" id="arrival-obj">
     <div class="halo" id="arrival-halo"></div>
     <div class="stage" id="arrival-stage"></div>
@@ -453,18 +482,18 @@
 </section>
 
 <section class="field-note">
-  <p>Nothing here is sorted. Stay a while — the room remembers where you've been.</p>
+  <p>nothing's sorted. stay a minute — the room clocks where you've been.</p>
 </section>
 
 <section class="field-search">
-  <input type="text" id="field-search-input" placeholder="Find by name or maker" autocomplete="off" aria-label="Search the catalog by name, maker, or category">
+  <input type="text" id="field-search-input" placeholder="search the archive" autocomplete="off" aria-label="Search the catalog by name, maker, or category">
 </section>
 
 <section class="field" id="field">
   <div id="field-objects" style="position:relative;"></div>
 </section>
 
-<div class="field-outro">End of record — for now</div>
+<div class="field-outro">that's the drop — for now</div>
 
 <div class="pending-toggle">
   <button id="pending-btn" aria-expanded="false">
@@ -492,10 +521,19 @@
     <div class="amount" id="record-price-amount"></div>
     <div class="eyebrow label">Recognized value</div>
   </div>
-  <div class="record-note">Reference figure, drawn from current market comparables — not a listing.</div>
+  <div class="record-note">reference figure only. not a listing, not a shop.</div>
 </div>
 
-<footer>MANIFEST — objects, not products · attention is the product</footer>
+<footer>MANIFEST — objects, not products · attention is the currency</footer>
+
+<div class="wall" id="wall" role="dialog" aria-modal="true" aria-label="The wall">
+  <div class="wall-glow" id="wall-glow"></div>
+  <button class="wall-close" id="wall-close" aria-label="Close the wall">Close ✕</button>
+  <div class="wall-head"><h2>the wall</h2><p>not for sale · not in the catalog · just up</p></div>
+  <div class="wall-hang" id="wall-hang"></div>
+  <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
+</div>
+<div class="wall-zoom" id="wall-zoom"><img alt=""></div>
 
 <audio id="ambient" src="assets/manifest-ambient.mp3" loop preload="metadata" style="display:none"></audio>
 <button id="ambience-toggle" aria-label="sound" onclick="AMBIENCE.toggle()"
@@ -696,6 +734,43 @@ const OBJECTS = [
     blurb:'Pale yellow, an upside-down line, a sun with a sleeping face — Ian Connor\'s house running the same instinct Revenge trades in, on a hood instead of a boot.', asset:'assets/sicko-luke-wav.png' },
   { id:'sicko-2', name:'"SICK!!" Hoodie', maker:'Sicko', category:'Apparel', price:260, sizes:['S','M','L','XL'],
     blurb:'Natural fleece, a running figure dragged through the wordmark — a second Sicko admission, same house as the Storm boot already in the Bloodline.', asset:'assets/sicko-2.png' },
+  {"id": "skull-wappen-rib-zip", "name": "Skull Wappen Zip Bomber", "maker": "Number (N)ine", "category": "Apparel", "price": 520, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "twin skulls, zero explanation. the graphic does the talking.", "asset": "assets/skull-wappen-rib-zip.png"},
+  {"id": "sicko-bfp-red-hoodie", "name": "Born From Pain Hoodie — Red", "maker": "Sicko", "category": "Apparel", "price": 260, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "red on red on red. the slogan is the whole flex.", "asset": "assets/sicko-bfp-red-hoodie.png"},
+  {"id": "sicko-ee-plaid-runner-red", "name": "Plaid Trail Runner — Black/Red", "maker": "Sicko × Eric Emanuel", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "trail sole, tartan upper. built for mud, worn for the timeline.", "asset": "assets/sicko-ee-plaid-runner-red.png"},
+  {"id": "sicko-ee-gingham-runner-white-pink", "name": "Gingham Trail Runner — White/Pink", "maker": "Sicko × Eric Emanuel", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "same chassis, sweeter register. pink that means it.", "asset": "assets/sicko-ee-gingham-runner-white-pink.png"},
+  {"id": "sicko-ee-gingham-runner-black-pink", "name": "Gingham Trail Runner — Black/Pink", "maker": "Sicko × Eric Emanuel", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "black base turns the pink up to eleven.", "asset": "assets/sicko-ee-gingham-runner-black-pink.png"},
+  {"id": "supreme-jesus-5-panel", "name": "Jesus Five-Panel — Black", "maker": "Supreme", "category": "Accessory", "price": 300, "sizes": null, "blurb": "washed cap, halo, cherubs, money in frame. sacred and sarcastic.", "asset": "assets/supreme-jesus-5-panel.png"},
+  {"id": "supreme-nike-track-jacket-black", "name": "Track Jacket — Black", "maker": "Nike × Supreme", "category": "Apparel", "price": 380, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "piped edges, oval on the back. quiet from the front, loud when it leaves.", "asset": "assets/supreme-nike-track-jacket-black.png", "assets": ["assets/supreme-nike-track-jacket-black.png", "assets/supreme-nike-track-jacket-black-angle-2.png"]},
+  {"id": "supreme-pillows-tee-black", "name": "Pillows Tee — Black", "maker": "Supreme", "category": "Apparel", "price": 120, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "logo built out of pastel pillows. soft flex.", "asset": "assets/supreme-pillows-tee-black.png"},
+  {"id": "supreme-brick", "name": "Brick", "maker": "Supreme", "category": "Object", "price": 150, "sizes": null, "blurb": "an actual brick that sold out. the logo did the work, not the object.", "asset": "assets/supreme-brick.png"},
+  {"id": "off-white-arrows-case", "name": "Arrows Phone Case", "maker": "Off-White", "category": "Accessory", "price": 150, "sizes": null, "blurb": "arrows, quote marks, neon type. virgil's language, pocket-sized.", "asset": "assets/off-white-arrows-case.png"},
+  {"id": "awake-grey-hoodie", "name": "Classic Logo Hoodie — Grey", "maker": "Awake NY", "category": "Apparel", "price": 200, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "serif wordmark across the back. no noise.", "asset": "assets/awake-grey-hoodie.png"},
+  {"id": "awake-black-hoodie", "name": "Hoodie — Black", "maker": "Awake NY", "category": "Apparel", "price": 200, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "washed black, contrast stitching, wordmark kept small.", "asset": "assets/awake-black-hoodie.png"},
+  {"id": "awake-zip-up", "name": "Zip-Up — Black", "maker": "Awake NY", "category": "Apparel", "price": 220, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "electric-blue script on black. the zip frames it.", "asset": "assets/awake-zip-up.png"},
+  {"id": "awake-classic-logo-hoodie-navy", "name": "Classic Logo Hoodie — Navy", "maker": "Awake NY", "category": "Apparel", "price": 200, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "navy, cream wordmark. the default they keep getting right.", "asset": "assets/awake-classic-logo-hoodie-navy.png"},
+  {"id": "awake-wordmark-hoodie-navy", "name": "Wordmark Hoodie — Navy", "maker": "Awake NY", "category": "Apparel", "price": 200, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "same navy family, louder wordmark. its own entry, no bundling.", "asset": "assets/awake-wordmark-hoodie-navy.png"},
+  {"id": "bape-cdg-crewneck", "name": "Crewneck — Grey", "maker": "BAPE × Comme des Garçons", "category": "Apparel", "price": 220, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "three apes, one CDG line. grey crew, zero fuss.", "asset": "assets/bape-cdg-crewneck.png"},
+  {"id": "cdg-bape-black-hoodie", "name": "Hoodie — Black", "maker": "BAPE × Comme des Garçons", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "black hood, three-ape row. the collab at its most wearable.", "asset": "assets/cdg-bape-black-hoodie.png"},
+  {"id": "bape-sta-shearling-brown", "name": "Sta Shearling — Brown", "maker": "A Bathing Ape", "category": "Footwear", "price": 350, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "suede, shearling, heavy sole. the star in winter mode.", "asset": "assets/bape-sta-shearling-brown.png"},
+  {"id": "beats-pill-blue", "name": "Pill — Blue", "maker": "Beats by Dre", "category": "Object", "price": 150, "sizes": null, "blurb": "deep blue capsule. sits next to the red one like a sequel.", "asset": "assets/beats-pill-blue.png", "assets": ["assets/beats-pill-blue.png", "assets/beats-pill-blue-angle-2.png"]},
+  {"id": "chrome-hearts-ugg-cross", "name": "Cross Boots — Black", "maker": "Chrome Hearts × UGG", "category": "Footwear", "price": 1800, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "shearling boots, silver crosses. cozy meets cursed.", "asset": "assets/chrome-hearts-ugg-cross.png"},
+  {"id": "chrome-hearts-ugg-fleur", "name": "Fleur Boots — Black", "maker": "Chrome Hearts × UGG", "category": "Footwear", "price": 1800, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "fleur plaque on worn suede. gets better beat up.", "asset": "assets/chrome-hearts-ugg-fleur.png"},
+  {"id": "firm-cotton-pocket-pants-black", "name": "Six-Pocket Pants — Black", "maker": "Unattributed", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "six pockets, heavy drape. cargo, rewritten.", "asset": "assets/firm-cotton-pocket-pants-black.png", "assets": ["assets/firm-cotton-pocket-pants-black.png", "assets/firm-cotton-pocket-pants-black-angle-2.png"]},
+  {"id": "firm-cotton-pocket-pants-grey", "name": "Six-Pocket Pants — Grey", "maker": "Unattributed", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "same cut, heather grey. its own entry.", "asset": "assets/firm-cotton-pocket-pants-grey.png", "assets": ["assets/firm-cotton-pocket-pants-grey.png", "assets/firm-cotton-pocket-pants-grey-angle-2.png"]},
+  {"id": "givenchy-paris-case", "name": "Paris Phone Case", "maker": "Givenchy", "category": "Accessory", "price": 120, "sizes": null, "blurb": "outlined block letters, stacked. paris, pocket-sized.", "asset": "assets/givenchy-paris-case.png"},
+  {"id": "hermes-kelly-messenger-noir", "name": "Kelly Messenger — Noir", "maker": "Hermès", "category": "Bag", "price": 9500, "sizes": null, "blurb": "togo leather, palladium turnlock. the quiet end of the archive.", "asset": "assets/hermes-kelly-messenger-noir.png"},
+  {"id": "heron-preston-hoodie-black", "name": "Herons Hoodie — Black", "maker": "Heron Preston", "category": "Apparel", "price": 480, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "birds printed like a doc still, orange tab like a warning label.", "asset": "assets/heron-preston-hoodie-black.png"},
+  {"id": "lv-silver-chain-bracelet", "name": "Monogram Chain Bracelet — Silver", "maker": "Louis Vuitton", "category": "Jewelry", "price": 700, "sizes": null, "blurb": "flat silver links, monogram cut through. two angles, one piece.", "asset": "assets/lv-silver-chain-bracelet.png", "assets": ["assets/lv-silver-chain-bracelet.png", "assets/lv-silver-chain-bracelet-angle-2.png"]},
+  {"id": "margiela-future-high-black", "name": "Future High — Black", "maker": "Maison Margiela", "category": "Footwear", "price": 850, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "velcro strap, tabi-clean sole. the sneaker that isn't one.", "asset": "assets/margiela-future-high-black.png"},
+  {"id": "nylon-belted-easy-pants", "name": "Belted Nylon Easy Pants — Black", "maker": "Unattributed", "category": "Apparel", "price": 280, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "techy nylon, cinched waist, cuffed ankle. built to move.", "asset": "assets/nylon-belted-easy-pants.png", "assets": ["assets/nylon-belted-easy-pants.png", "assets/nylon-belted-easy-pants-angle-2.png", "assets/nylon-belted-easy-pants-angle-3.png"]},
+  {"id": "palm-angels-track-pants-black", "name": "Track Pants — Black", "maker": "Palm Angels", "category": "Apparel", "price": 400, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "white side stripes, logo down the leg.", "asset": "assets/palm-angels-track-pants-black.png"},
+  {"id": "palm-angels-track-pants-light-blue", "name": "Track Pants — Light Blue", "maker": "Palm Angels", "category": "Apparel", "price": 400, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "powder blue, cream stripes. the sunny one.", "asset": "assets/palm-angels-track-pants-light-blue.png"},
+  {"id": "palm-angels-track-pants-red", "name": "Track Pants — Red", "maker": "Palm Angels", "category": "Apparel", "price": 400, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "red, white stripes. the loud one.", "asset": "assets/palm-angels-track-pants-red.png"},
+  {"id": "sicko-bfp-black-hoodie", "name": "Born From Pain Hoodie — Black", "maker": "Sicko", "category": "Apparel", "price": 260, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "chrome wordmark on black. same slogan, colder.", "asset": "assets/sicko-bfp-black-hoodie.png"},
+  {"id": "sicko-trail-runner-yellow", "name": "Trail Runner — Black/Yellow", "maker": "Sicko", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "caution-tape yellow, clear strap, ready for anything.", "asset": "assets/sicko-trail-runner-yellow.png"},
+  {"id": "supreme-gems-tee-black", "name": "Gems Tee — Black", "maker": "Supreme", "category": "Apparel", "price": 130, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "the script logo drawn in rhinestone dust.", "asset": "assets/supreme-gems-tee-black.png"},
+  {"id": "supreme-nike-corduroy-jacket-black", "name": "Corduroy Hooded Jacket — Black", "maker": "Nike × Supreme", "category": "Apparel", "price": 420, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "cord texture, arc logo across the back. clean front, poster back.", "asset": "assets/supreme-nike-corduroy-jacket-black.png", "assets": ["assets/supreme-nike-corduroy-jacket-black.png", "assets/supreme-nike-corduroy-jacket-black-angle-2.png"]},
+  {"id": "supreme-tyler-tee-white", "name": "Tyler Tee — White", "maker": "Supreme", "category": "Apparel", "price": 150, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "portrait print on a plain white blank. the collab as a photograph.", "asset": "assets/supreme-tyler-tee-white.png"},
 ];
 const PENDING = [];
 
@@ -1136,5 +1211,47 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 })();
 </script>
 
+<script>
+(function(){
+  const PIECES = [
+    { src:'assets/wall-three-in-red.jpg',  t:'Three in Red',        n:'lip gloss, horns, one red field · artist unattributed', w:520, dy:0,   tint:'#e0202c' },
+    { src:'assets/wall-ovo-owl-camo.jpg',  t:'OVO Owl — Camo',      n:'gold, camo pavé, V-O eyes · source unattributed',       w:300, dy:60,  tint:'#b8a24a' },
+    { src:'assets/wall-six.jpg',           t:'6',                   n:'one glyph, no explanation · source unattributed',        w:300, dy:20,  tint:'#9aa0a6' },
+    { src:'assets/wall-ovo-owl-ice.jpg',   t:'OVO Owl — Ice',       n:'ice-blue pavé, engraved back · source unattributed',     w:380, dy:80,  tint:'#6fd0d8' },
+    { src:'assets/wall-keef-box-logo.jpg', t:'Box Logo, Doubled',   n:'Chief Keef in Supreme · photographer unattributed',      w:400, dy:10,  tint:'#d8384a' },
+    { src:'assets/wall-ovo-owl-pair.jpg',  t:'OVO Owl — Pair',      n:'two owls, two chains · source unattributed',             w:340, dy:120, tint:'#2a7f9c' },
+    { src:'assets/wall-skulls-tee.jpg',    t:'Skulls, Powder Bleach', n:'Number (N)ine tee · source unattributed',              w:300, dy:30,  tint:'#8a8a94' },
+    { src:'assets/wall-ovo-owl-story.jpg', t:'OVO Owl — Story',     n:'seen via @jmanziel2 on Instagram',                       w:280, dy:70,  tint:'#aab4c0' }
+  ];
+  const wall = document.getElementById('wall'), hang = document.getElementById('wall-hang'),
+        glow = document.getElementById('wall-glow'), zoom = document.getElementById('wall-zoom'),
+        zimg = zoom.querySelector('img'), openBtn = document.getElementById('wall-open');
+  let built = false;
+  function build(){
+    if (built) return; built = true;
+    PIECES.forEach(p => {
+      const f = document.createElement('figure');
+      f.className = 'piece'; f.tabIndex = 0; f.style.setProperty('--w', p.w + 'px'); f.style.setProperty('--dy', p.dy + 'px');
+      f.innerHTML = '<img src="' + p.src + '" alt="' + p.t + '" loading="lazy"><figcaption><div class="t">' + p.t + '</div><div class="n">' + p.n + '</div></figcaption>';
+      const on = () => { glow.style.color = p.tint; }, off = () => { glow.style.color = 'transparent'; };
+      f.addEventListener('mouseenter', on); f.addEventListener('focus', on);
+      f.addEventListener('mouseleave', off); f.addEventListener('blur', off);
+      const show = () => { zimg.src = p.src; zimg.alt = p.t; zoom.classList.add('open'); };
+      f.addEventListener('click', show);
+      f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(); } });
+      hang.appendChild(f);
+    });
+  }
+  function openWall(){ build(); wall.classList.add('open'); wall.scrollTop = 0; document.body.style.overflow = 'hidden'; }
+  function closeWall(){ zoom.classList.remove('open'); wall.classList.remove('open'); glow.style.color = 'transparent'; document.body.style.overflow = ''; }
+  openBtn.addEventListener('click', openWall);
+  document.getElementById('wall-close').addEventListener('click', closeWall);
+  zoom.addEventListener('click', () => zoom.classList.remove('open'));
+  window.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (zoom.classList.contains('open')) zoom.classList.remove('open'); else if (wall.classList.contains('open')) closeWall();
+  });
+})();
+</script>
 </body>
 </html>
