@@ -316,7 +316,7 @@
     opacity:0; pointer-events:none;
     transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
   }
-  .record-backdrop.open + .record, .record.open{ opacity:1; transform:translate(-50%,-50%); pointer-events:auto; }
+  .record.open{ opacity:1; transform:translate(-50%,-50%); pointer-events:auto; }
   .record-close{
     position:absolute; top:18px; right:20px;
     font-family:'JetBrains Mono', monospace; font-size:11px;
@@ -372,14 +372,113 @@
   .record-price .amount{
     font-family:'Fraunces', serif; font-size:20px; color:var(--ink);
   }
-  .record-price .label{ margin-top:4px; }
-  .record-note{
-    margin-top:16px; text-align:center; font-size:10px;
-    color:var(--ink-soft); opacity:0.7; line-height:1.5;
+
+  /* ---- bag + wallet buttons ---- */
+  .record-actions{ margin-top:20px; }
+  .action-row{ display:flex; gap:10px; }
+  .btn-black{
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    height:48px; width:100%;
+    background:#000; color:#fff; border-radius:6px;
+    font-family:'Archivo', sans-serif; font-size:15px; font-weight:500;
+    transition: opacity 0.25s ease;
   }
+  .btn-black:hover{ opacity:0.85; }
+  .btn-black:disabled{ opacity:0.3; cursor:default; }
+  .action-row .btn-black:first-child{ flex:1; }
+  .action-row .btn-pay{ flex:0 0 38%; }
+  .applepay-mark{
+    display:inline-flex; align-items:center; gap:3px;
+    font-family:'Archivo', sans-serif; font-size:20px; font-weight:600; letter-spacing:-0.01em;
+  }
+  .applepay-mark svg{ width:16px; height:19px; fill:#fff; margin-top:-2px; }
+  .gpay-note, .gpay-link{
+    margin-top:10px; text-align:center;
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
+  }
+  .gpay-link{ width:100%; padding:6px; }
+
+  .bag{
+    position:fixed; top:0; right:0; bottom:0; z-index:202;
+    width:min(400px, 100vw);
+    background:#FCFBF8;
+    box-shadow:-20px 0 50px rgba(20,18,26,0.2);
+    display:flex; flex-direction:column;
+    padding:28px 28px 24px;
+    transform:translateX(100%);
+    transition: transform 0.4s var(--ease);
+  }
+  .bag.open{ transform:none; }
+  .bag-head{ display:flex; justify-content:space-between; align-items:center; }
+  .bag-items{ flex:1; overflow-y:auto; margin-top:24px; }
+  .bag-empty{
+    margin-top:40px; text-align:center;
+    font-family:'Fraunces', serif; font-style:italic; color:var(--ink-soft);
+  }
+  .bag-row{
+    display:flex; gap:14px; align-items:center;
+    padding:14px 0; border-bottom:1px solid var(--hairline);
+  }
+  .bag-row img{ width:64px; height:64px; object-fit:contain; }
+  .bag-row .info{ flex:1; }
+  .bag-row .n{ font-family:'Fraunces', serif; font-size:15px; }
+  .bag-row .s{
+    font-family:'JetBrains Mono', monospace; font-size:10px;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); margin-top:3px;
+  }
+  .bag-row .rm{ font-size:11px; color:var(--ink-soft); padding:6px; }
+  .bag-foot{ padding-top:18px; }
+  .bag-total{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px; }
+  .bag-total .amount{ font-family:'Fraunces', serif; font-size:20px; }
+  .bag-msg{
+    margin-top:10px; min-height:14px; text-align:center;
+    font-size:10px; color:var(--ink-soft);
+  }
+
+/* ---- blue wallet (Google Pay / Samsung Pay) + pay sheet ---- */
+.btn-blue{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  height:44px; width:100%;
+  background:#1a73e8; color:#fff; border-radius:6px;
+  font-family:'Archivo', sans-serif; font-size:14px; font-weight:500;
+  transition: opacity 0.25s ease;
+}
+.btn-blue:hover{ opacity:0.9; }
+.btn-blue:disabled{ opacity:0.3; cursor:default; }
+.btn-blue .chev{ font-size:11px; transition: transform 0.25s var(--ease); }
+.wallet-alt{ margin-top:10px; }
+.wallet-alt.open .btn-blue .chev{ transform:rotate(180deg); }
+.wallet-menu{ display:none; margin-top:6px; border:1px solid rgba(26,115,232,0.35); border-radius:6px; overflow:hidden; }
+.wallet-alt.open .wallet-menu{ display:grid; }
+.wallet-menu button{ padding:12px 14px; text-align:left; font-family:'Archivo', sans-serif; font-size:14px; color:#1a4fa0; }
+.wallet-menu button + button{ border-top:1px solid rgba(26,115,232,0.2); }
+.wallet-menu button:hover{ background:rgba(26,115,232,0.08); }
+
+.pay-sheet-backdrop{
+  position:fixed; inset:0; z-index:400; background:rgba(20,18,26,0.45);
+  opacity:0; pointer-events:none; transition: opacity 0.3s var(--ease);
+}
+.pay-sheet-backdrop.open{ opacity:1; pointer-events:auto; }
+.pay-sheet{
+  position:fixed; z-index:401; left:50%; bottom:0; width:min(420px, 100vw);
+  background:#F5F5F7; color:#111; border-radius:14px 14px 0 0;
+  padding:20px 22px 26px;
+  transform:translate(-50%, 100%); transition: transform 0.4s var(--ease);
+}
+.pay-sheet.open{ transform:translate(-50%, 0); }
+.ps-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-family:'Archivo', sans-serif; font-weight:600; font-size:17px; }
+.ps-head .applepay-mark{ color:#000; }
+.ps-head .applepay-mark svg{ fill:#000; }
+.ps-head button{ font-size:14px; color:#1a73e8; font-weight:400; }
+.ps-row{ display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.08); font-size:14px; }
+.ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
+.ps-msg{ margin-top:10px; min-height:14px; text-align:center; font-size:11px; color:#6b6b73; }
+
 /* ---- the wall ---- */
 .nav-right{ display:flex; align-items:center; gap:18px; }
 .wall-open{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); border-bottom:1px solid var(--ink-soft); padding:2px 0; }
+.bag-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
 .wall{ position:fixed; inset:0; z-index:300; overflow-y:auto; background:rgba(9,8,12,.92);
   -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); color:#EDEAF2;
   opacity:0; pointer-events:none; transition:opacity .6s var(--ease); }
@@ -462,7 +561,7 @@
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
-  <div class="nav-right"><button class="wall-open" id="wall-open">the wall</button><span id="field-count">— objects</span></div>
+  <div class="nav-right"><button class="wall-open" id="wall-open">the wall</button><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
 </nav>
 
 <section class="arrival" id="arrival">
@@ -519,12 +618,52 @@
   </div>
   <div class="record-price">
     <div class="amount" id="record-price-amount"></div>
-    <div class="eyebrow label">Recognized value</div>
   </div>
-  <div class="record-note">reference figure only. not a listing, not a shop.</div>
+  <div class="record-actions">
+    <div class="action-row">
+      <button class="btn-black" id="record-add">Add to Bag</button>
+      <button class="btn-black btn-pay" id="record-applepay" aria-label="Buy with Apple Pay"></button>
+    </div>
+    <div class="wallet-alt">
+      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false">Google Pay · Samsung Pay <span class="chev">▾</span></button>
+      <div class="wallet-menu" role="menu">
+        <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
+        <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<footer>MANIFEST — objects, not products · attention is the currency</footer>
+<aside class="bag" id="bag" aria-label="Bag">
+  <div class="bag-head">
+    <span class="eyebrow">Bag</span>
+    <button class="eyebrow" id="bag-close">Close ✕</button>
+  </div>
+  <div class="bag-items" id="bag-items"></div>
+  <div class="bag-foot">
+    <div class="bag-total"><span class="eyebrow">Total</span><span class="amount" id="bag-total"></span></div>
+    <button class="btn-black" id="bag-applepay" aria-label="Pay with Apple Pay"></button>
+    <div class="wallet-alt">
+      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false">Google Pay · Samsung Pay <span class="chev">▾</span></button>
+      <div class="wallet-menu" role="menu">
+        <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
+        <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
+      </div>
+    </div>
+    <div class="bag-msg" id="bag-msg"></div>
+  </div>
+</aside>
+
+<div class="pay-sheet-backdrop" id="pay-backdrop"></div>
+<div class="pay-sheet" id="pay-sheet" role="dialog" aria-modal="true" aria-label="Payment">
+  <div class="ps-head"><span id="ps-wallet"></span><button type="button" id="ps-cancel">Cancel</button></div>
+  <div id="ps-rows"></div>
+  <div class="ps-total"><span>Total</span><span id="ps-total"></span></div>
+  <button class="btn-black" id="ps-confirm"></button>
+  <div class="ps-msg" id="ps-msg"></div>
+</div>
+
+<footer>MANIFEST — the archive of attention</footer>
 
 <div class="wall" id="wall" role="dialog" aria-modal="true" aria-label="The wall">
   <div class="wall-glow" id="wall-glow"></div>
@@ -755,8 +894,8 @@ const OBJECTS = [
   {"id": "beats-pill-blue", "name": "Pill — Blue", "maker": "Beats by Dre", "category": "Object", "price": 150, "sizes": null, "blurb": "deep blue capsule. sits next to the red one like a sequel.", "asset": "assets/beats-pill-blue.png", "assets": ["assets/beats-pill-blue.png", "assets/beats-pill-blue-angle-2.png"]},
   {"id": "chrome-hearts-ugg-cross", "name": "Cross Boots — Black", "maker": "Chrome Hearts × UGG", "category": "Footwear", "price": 1800, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "shearling boots, silver crosses. cozy meets cursed.", "asset": "assets/chrome-hearts-ugg-cross.png"},
   {"id": "chrome-hearts-ugg-fleur", "name": "Fleur Boots — Black", "maker": "Chrome Hearts × UGG", "category": "Footwear", "price": 1800, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "fleur plaque on worn suede. gets better beat up.", "asset": "assets/chrome-hearts-ugg-fleur.png"},
-  {"id": "firm-cotton-pocket-pants-black", "name": "Six-Pocket Pants — Black", "maker": "Unattributed", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "six pockets, heavy drape. cargo, rewritten.", "asset": "assets/firm-cotton-pocket-pants-black.png", "assets": ["assets/firm-cotton-pocket-pants-black.png", "assets/firm-cotton-pocket-pants-black-angle-2.png"]},
-  {"id": "firm-cotton-pocket-pants-grey", "name": "Six-Pocket Pants — Grey", "maker": "Unattributed", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "same cut, heather grey. its own entry.", "asset": "assets/firm-cotton-pocket-pants-grey.png", "assets": ["assets/firm-cotton-pocket-pants-grey.png", "assets/firm-cotton-pocket-pants-grey-angle-2.png"]},
+  {"id": "firm-cotton-pocket-pants-black", "name": "Six-Pocket Pants — Black", "maker": "Unattributed", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "six pockets, nylon shell. cargo, rewritten.", "asset": "assets/firm-cotton-pocket-pants-black.png", "assets": ["assets/firm-cotton-pocket-pants-black.png", "assets/firm-cotton-pocket-pants-black-angle-2.png"]},
+  {"id": "firm-cotton-pocket-pants-grey", "name": "Six-Pocket Pants — Grey", "maker": "Unattributed", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "same cut, same nylon, in grey. its own entry.", "asset": "assets/firm-cotton-pocket-pants-grey.png", "assets": ["assets/firm-cotton-pocket-pants-grey.png", "assets/firm-cotton-pocket-pants-grey-angle-2.png"]},
   {"id": "givenchy-paris-case", "name": "Paris Phone Case", "maker": "Givenchy", "category": "Accessory", "price": 120, "sizes": null, "blurb": "outlined block letters, stacked. paris, pocket-sized.", "asset": "assets/givenchy-paris-case.png"},
   {"id": "hermes-kelly-messenger-noir", "name": "Kelly Messenger — Noir", "maker": "Hermès", "category": "Bag", "price": 9500, "sizes": null, "blurb": "togo leather, palladium turnlock. the quiet end of the archive.", "asset": "assets/hermes-kelly-messenger-noir.png"},
   {"id": "heron-preston-hoodie-black", "name": "Herons Hoodie — Black", "maker": "Heron Preston", "category": "Apparel", "price": 480, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "birds printed like a doc still, orange tab like a warning label.", "asset": "assets/heron-preston-hoodie-black.png"},
@@ -919,8 +1058,19 @@ function formatRecognizedValue(usdPrice){
   const sizeRow = document.getElementById('record-size-row');
   const priceEl = document.getElementById('record-price-amount');
 
+  const bagEl = document.getElementById('bag');
+  const addBtn = document.getElementById('record-add');
+  const payBtn = document.getElementById('record-applepay');
+  const bagPay = document.getElementById('bag-applepay');
+  const bagMsg = document.getElementById('bag-msg');
+  const BAG = [];
+  const APPLE = '<span class="applepay-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Pay</span>';
+  payBtn.innerHTML = APPLE;
+  bagPay.innerHTML = APPLE;
+
   let recordAssets = [];
   let recordIndex = 0;
+  let current = null;
 
   function paintRecordStage(name){
     const src = recordAssets[recordIndex];
@@ -943,6 +1093,8 @@ function formatRecognizedValue(usdPrice){
   }
 
   function openRecord(o){
+    current = o;
+    addBtn.textContent = 'Add to Bag';
     recordAssets = (o.assets && o.assets.length) ? o.assets : [o.asset];
     recordIndex = 0;
     paintRecordStage(o.name);
@@ -974,11 +1126,130 @@ function formatRecognizedValue(usdPrice){
     document.body.style.overflow = '';
     backdrop.classList.remove('open');
     panel.classList.remove('open');
+    bagEl.classList.remove('open');
+    closeSheet();
   }
+
+  // Bag uses the same formatRecognizedValue as the record, so the figure
+  // in the bag always matches what was on the record. Totals add up those
+  // displayed figures (digits only), so no second price formula exists.
+  const zarNumber = (label) => parseInt(label.replace(/\D/g, ''), 10) || 0;
+  const zarFormat = (n) => 'R' + n.toLocaleString('en-ZA');
+
+  const chosenSize = () => {
+    const b = sizeRow.querySelector('.chosen');
+    return b ? b.dataset.size : null;
+  };
+  function flash(btn, text){
+    btn.textContent = text;
+    setTimeout(() => { btn.textContent = 'Add to Bag'; }, 1400);
+  }
+  function addCurrent(){
+    if (current.sizes && current.sizes.length && !chosenSize()){
+      flash(addBtn, 'Select a size');
+      return false;
+    }
+    BAG.push({
+      name: current.name, maker: current.maker, asset: current.asset,
+      label: formatRecognizedValue(current.price), size: chosenSize()
+    });
+    paintBag();
+    return true;
+  }
+  function paintBag(){
+    document.getElementById('bag-count').textContent = BAG.length;
+    const items = document.getElementById('bag-items');
+    items.innerHTML = BAG.length
+      ? BAG.map((b, i) => `
+        <div class="bag-row">
+          <img src="${b.asset}" alt="">
+          <div class="info"><div class="n">${b.name}</div><div class="s">${b.maker}${b.size ? ' · ' + b.size : ''}</div></div>
+          <div class="mono">${b.label}</div>
+          <button class="rm" data-i="${i}" aria-label="Remove">✕</button>
+        </div>`).join('')
+      : '<div class="bag-empty">Nothing here yet.</div>';
+    items.querySelectorAll('.rm').forEach(btn => btn.addEventListener('click', () => {
+      BAG.splice(parseInt(btn.dataset.i, 10), 1);
+      paintBag();
+    }));
+    document.getElementById('bag-total').textContent =
+      zarFormat(BAG.reduce((s, b) => s + zarNumber(b.label), 0));
+    bagPay.disabled = !BAG.length;
+    document.querySelector('.bag .btn-blue').disabled = !BAG.length;
+    bagMsg.textContent = '';
+  }
+  function openBag(){
+    panel.classList.remove('open');
+    backdrop.classList.add('open');
+    bagEl.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  addBtn.addEventListener('click', () => {
+    if (addCurrent()) flash(addBtn, 'Added ✓');
+  });
+  document.getElementById('bag-open').addEventListener('click', openBag);
+  document.getElementById('bag-close').addEventListener('click', closeRecord);
+
+  // Pay sheet — the shortcut that slides up after a wallet is tapped (mock).
+  const sheet = document.getElementById('pay-sheet');
+  const sheetBack = document.getElementById('pay-backdrop');
+  const psConfirm = document.getElementById('ps-confirm');
+  const psMsg = document.getElementById('ps-msg');
+
+  function openSheet(name){
+    const head = document.getElementById('ps-wallet');
+    if (name === 'Apple Pay'){
+      head.innerHTML = APPLE;
+      psConfirm.className = 'btn-black';
+      psConfirm.textContent = 'Pay with Side Button';
+    } else {
+      head.textContent = name;
+      psConfirm.className = 'btn-blue';
+      psConfirm.textContent = 'Confirm';
+    }
+    document.getElementById('ps-rows').innerHTML = BAG.map(b =>
+      `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
+    ).join('');
+    document.getElementById('ps-total').textContent = document.getElementById('bag-total').textContent;
+    psMsg.textContent = '';
+    sheetBack.classList.add('open');
+    sheet.classList.add('open');
+  }
+  function closeSheet(){
+    sheetBack.classList.remove('open');
+    sheet.classList.remove('open');
+  }
+  function startPay(name, fromRecord){
+    if (fromRecord){ if (!addCurrent()) return; openBag(); }
+    else if (!BAG.length) return;
+    openSheet(name);
+  }
+  payBtn.addEventListener('click', () => startPay('Apple Pay', true));
+  bagPay.addEventListener('click', () => startPay('Apple Pay', false));
+  document.querySelectorAll('.wallet-alt').forEach(w => {
+    const btn = w.querySelector('.btn-blue');
+    btn.addEventListener('click', () => {
+      const open = w.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    });
+    w.querySelectorAll('.wallet-menu button').forEach(m => m.addEventListener('click', () => {
+      w.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      startPay(m.dataset.wallet, !!w.closest('.record'));
+    }));
+  });
+  psConfirm.addEventListener('click', () => { psMsg.textContent = 'Payments open at launch.'; });
+  document.getElementById('ps-cancel').addEventListener('click', closeSheet);
+  sheetBack.addEventListener('click', closeSheet);
+  paintBag();
 
   backdrop.addEventListener('click', closeRecord);
   document.getElementById('record-close').addEventListener('click', closeRecord);
-  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeRecord(); });
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (sheet.classList.contains('open')) closeSheet(); else closeRecord();
+  });
 
   document.getElementById('arrival-obj').addEventListener('click', () => openRecord(arrivalObjData));
   fieldObjectsEl.addEventListener('click', (e) => {
@@ -1221,7 +1492,12 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     { src:'assets/wall-keef-box-logo.jpg', t:'Box Logo, Doubled',   n:'Chief Keef in Supreme · photographer unattributed',      w:400, dy:10,  tint:'#d8384a' },
     { src:'assets/wall-ovo-owl-pair.jpg',  t:'OVO Owl — Pair',      n:'two owls, two chains · source unattributed',             w:340, dy:120, tint:'#2a7f9c' },
     { src:'assets/wall-skulls-tee.jpg',    t:'Skulls, Powder Bleach', n:'Number (N)ine tee · source unattributed',              w:300, dy:30,  tint:'#8a8a94' },
-    { src:'assets/wall-ovo-owl-story.jpg', t:'OVO Owl — Story',     n:'seen via @jmanziel2 on Instagram',                       w:280, dy:70,  tint:'#aab4c0' }
+    { src:'assets/wall-ovo-owl-story.jpg', t:'OVO Owl — Story',     n:'seen via @jmanziel2 on Instagram',                       w:280, dy:70,  tint:'#aab4c0' },
+    { src:'assets/wall-ovo-owl-rosegold.jpg', t:'OVO Owl — Rose Gold', n:'rose gold and white pavé, marquise perch · watermark reads Iceman Nick', w:400, dy:40, tint:'#d9a074' },
+    { src:'assets/wall-ovo-owl-concrete.jpg', t:'OVO Owl — Concrete',  n:'baguette-set owl over two more pendants, held in hand · source unattributed', w:300, dy:90, tint:'#aab4c0' },
+    { src:'assets/wall-ovo-owl-pink.jpg',     t:'OVO Owl — Pink',      n:'pink pavé, white-stone eyes · source unattributed',      w:300, dy:20, tint:'#d94fa8' },
+    { src:'assets/wall-ovo-owl-cuban.jpg',    t:'OVO Owl — Cuban',     n:'white pavé on a pavé Cuban link · source unattributed',  w:380, dy:70, tint:'#c9ccd2' },
+    { src:'assets/wall-virgil-chillidays.jpg', t:'Cracked Glass',      n:'Virgil Abloh, titled per file name · source unattributed', w:340, dy:10, tint:'#8a93a0' }
   ];
   const wall = document.getElementById('wall'), hang = document.getElementById('wall-hang'),
         glow = document.getElementById('wall-glow'), zoom = document.getElementById('wall-zoom'),
