@@ -364,6 +364,8 @@
     transition: border-color 0.25s ease, color 0.25s ease;
   }
   .record-size-row button:hover{ border-color:var(--ink-soft); }
+  .record-size-row button.out{ opacity:0.35; text-decoration:line-through; cursor:default; }
+  .record-size-row button.out:hover{ border-color:var(--hairline); }
   .record-size-row button.chosen{ border-color:var(--ink); color:var(--ink); font-weight:600; }
   .record-price{
     margin-top:26px; text-align:center;
@@ -627,7 +629,7 @@
   <button class="wall-gate" id="wall-open" aria-label="Enter the wall">
     <span class="gate-eyebrow">past the catalog</span>
     <span class="gate-title">the wall</span>
-    <span class="gate-sub">not for sale · just up</span>
+    <span class="gate-sub">what we're looking at</span>
   </button>
 </section>
 
@@ -650,7 +652,7 @@
   <div class="record-name" id="record-name"></div>
   <div class="record-blurb" id="record-blurb"></div>
   <div class="record-sizes" id="record-sizes" style="display:none;">
-    <div class="eyebrow label">Size</div>
+    <div class="eyebrow label">Sizes</div>
     <div class="record-size-row" id="record-size-row"></div>
   </div>
   <div class="record-price">
@@ -705,7 +707,7 @@
 <div class="wall" id="wall" role="dialog" aria-modal="true" aria-label="The wall">
   <div class="wall-glow" id="wall-glow"></div>
   <button class="wall-close" id="wall-close" aria-label="Close the wall">Close ✕</button>
-  <div class="wall-head"><h2>the wall</h2><p>not for sale · not in the catalog · just up</p></div>
+  <div class="wall-head"><h2>the wall</h2><p>what we're looking at · not in the catalog</p></div>
   <div class="wall-hang" id="wall-hang"></div>
   <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
 </div>
@@ -1146,9 +1148,11 @@ function formatRecognizedValue(usdPrice){
     priceEl.textContent = formatRecognizedValue(o.price);
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
-      sizeRow.innerHTML = o.sizes.map(s =>
-        `<button type="button" data-size="${s}">${s}</button>`
-      ).join('');
+      // Optional per-object `out:['S','XL']` marks sizes we don't have right now.
+      sizeRow.innerHTML = o.sizes.map(s => {
+        const out = o.out && o.out.includes(s);
+        return `<button type="button" data-size="${s}"${out ? ' disabled class="out" aria-label="' + s + ', unavailable"' : ''}>${s}</button>`;
+      }).join('');
       sizeRow.querySelectorAll('button').forEach(btn => {
         btn.addEventListener('click', () => {
           sizeRow.querySelectorAll('button').forEach(b => b.classList.remove('chosen'));
