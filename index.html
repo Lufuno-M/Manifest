@@ -451,7 +451,13 @@
 .wallet-alt.open .btn-blue .chev{ transform:rotate(180deg); }
 .wallet-menu{ display:none; margin-top:6px; border:1px solid rgba(26,115,232,0.35); border-radius:6px; overflow:hidden; }
 .wallet-alt.open .wallet-menu{ display:grid; }
-.wallet-menu button{ padding:12px 14px; text-align:left; font-family:'Archivo', sans-serif; font-size:14px; color:#1a4fa0; }
+.wallet-menu button{ display:flex; align-items:center; padding:13px 14px; text-align:left; font-family:'Archivo', sans-serif; font-size:14px; color:#1a4fa0; }
+.wm{ display:inline-flex; align-items:center; gap:6px; font-family:'Archivo', sans-serif; font-weight:500; letter-spacing:0.01em; line-height:1; }
+.wm svg{ width:16px; height:16px; fill:currentColor; }
+.wm-pay{ font-size:15px; font-weight:500; }
+.wm-samsung{ font-weight:700; font-size:12px; letter-spacing:0.16em; gap:0; }
+.wm-samsung .wm-pay{ letter-spacing:0.01em; margin-left:6px; }
+.btn-blue .wl{ font-size:14px; }
 .wallet-menu button + button{ border-top:1px solid rgba(26,115,232,0.2); }
 .wallet-menu button:hover{ background:rgba(26,115,232,0.08); }
 
@@ -625,7 +631,7 @@
       <button class="btn-black btn-pay" id="record-applepay" aria-label="Buy with Apple Pay"></button>
     </div>
     <div class="wallet-alt">
-      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false">Google Pay · Samsung Pay <span class="chev">▾</span></button>
+      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false"><span class="wl">Google Pay · Samsung Pay</span> <span class="chev">▾</span></button>
       <div class="wallet-menu" role="menu">
         <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
         <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
@@ -644,7 +650,7 @@
     <div class="bag-total"><span class="eyebrow">Total</span><span class="amount" id="bag-total"></span></div>
     <button class="btn-black" id="bag-applepay" aria-label="Pay with Apple Pay"></button>
     <div class="wallet-alt">
-      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false">Google Pay · Samsung Pay <span class="chev">▾</span></button>
+      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false"><span class="wl">Google Pay · Samsung Pay</span> <span class="chev">▾</span></button>
       <div class="wallet-menu" role="menu">
         <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
         <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
@@ -1065,6 +1071,11 @@ function formatRecognizedValue(usdPrice){
   const bagMsg = document.getElementById('bag-msg');
   const BAG = [];
   const APPLE = '<span class="applepay-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Pay</span>';
+  const G_PATH = 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z';
+  const MARKS = {
+    'Google Pay': '<span class="wm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + G_PATH + '"/></svg><span class="wm-pay">Pay</span></span>',
+    'Samsung Pay': '<span class="wm wm-samsung">SAMSUNG<span class="wm-pay">Pay</span></span>'
+  };
   payBtn.innerHTML = APPLE;
   bagPay.innerHTML = APPLE;
 
@@ -1204,7 +1215,7 @@ function formatRecognizedValue(usdPrice){
       psConfirm.className = 'btn-black';
       psConfirm.textContent = 'Pay with Side Button';
     } else {
-      head.textContent = name;
+      head.innerHTML = MARKS[name];
       psConfirm.className = 'btn-blue';
       psConfirm.textContent = 'Confirm';
     }
@@ -1227,17 +1238,32 @@ function formatRecognizedValue(usdPrice){
   }
   payBtn.addEventListener('click', () => startPay('Apple Pay', true));
   bagPay.addEventListener('click', () => startPay('Apple Pay', false));
-  document.querySelectorAll('.wallet-alt').forEach(w => {
+  // Blue wallet: shows both names until one is chosen, then wears that
+  // wallet's mark (in both the record and the bag) and stays switchable.
+  const walletEls = Array.from(document.querySelectorAll('.wallet-alt'));
+  function showChosen(name){
+    walletEls.forEach(w => {
+      w.querySelector('.wl').innerHTML = MARKS[name];
+      w.querySelector('.btn-blue').setAttribute('aria-label', name + ', change wallet');
+    });
+  }
+  walletEls.forEach(w => {
     const btn = w.querySelector('.btn-blue');
     btn.addEventListener('click', () => {
       const open = w.classList.toggle('open');
       btn.setAttribute('aria-expanded', open);
     });
-    w.querySelectorAll('.wallet-menu button').forEach(m => m.addEventListener('click', () => {
-      w.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-      startPay(m.dataset.wallet, !!w.closest('.record'));
-    }));
+    w.querySelectorAll('.wallet-menu button').forEach(m => {
+      const name = m.dataset.wallet;
+      m.innerHTML = MARKS[name];
+      m.setAttribute('aria-label', name);
+      m.addEventListener('click', () => {
+        w.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        showChosen(name);
+        startPay(name, !!w.closest('.record'));
+      });
+    });
   });
   psConfirm.addEventListener('click', () => { psMsg.textContent = 'Payments open at launch.'; });
   document.getElementById('ps-cancel').addEventListener('click', closeSheet);
