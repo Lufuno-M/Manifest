@@ -348,6 +348,10 @@
     font-family:'Fraunces', serif; font-style:italic;
     font-size:14px; line-height:1.6; color:#3A382F;
   }
+  .record-scarcity{
+    margin-top:14px; text-align:center;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft);
+  }
   .record-sizes{
     margin-top:26px; text-align:center;
   }
@@ -651,6 +655,7 @@
   <div class="record-maker eyebrow" id="record-maker"></div>
   <div class="record-name" id="record-name"></div>
   <div class="record-blurb" id="record-blurb"></div>
+  <div class="record-scarcity" id="record-scarcity" style="display:none;"></div>
   <div class="record-sizes" id="record-sizes" style="display:none;">
     <div class="eyebrow label">Sizes</div>
     <div class="record-size-row" id="record-size-row"></div>
@@ -877,7 +882,8 @@ const OBJECTS = [
   { id:'beats-pill-red', name:'Pill', maker:'Beats by Dre', category:'Object', price:180, sizes:null,
     blurb:'Red, capsule-shaped, unmistakable from across a room — the shape became the signal before the sound did.', asset:'assets/beats-pill-red.png' },
   { id:'nike-vlone-af1', name:'Air Force 1 Low × VLONE', maker:'Nike × VLONE', category:'Footwear', price:950, sizes:['7','8','9','10','11','12','13'],
-    blurb:'Black leather, orange Swoosh, "Friends Alone" stitched into the panel — a friendship turned into a colorway.', asset:'assets/nike-vlone-af1.png' },
+    blurb:'Black leather, orange Swoosh, "Friends Alone" stitched into the panel — a friendship turned into a colorway.', asset:'assets/nike-vlone-af1.png',
+    scarcity:'hyper-limited at ComplexCon 2016, then a Harlem-only release in 2017' },
   { id:'supreme-white-af1', name:'Air Force 1 Low × Supreme', maker:'Nike × Supreme', category:'Footwear', price:400, sizes:['7','8','9','10','11','12','13'],
     blurb:'White leather, a heart stitched in red at the tongue — the most restrained thing Supreme ever put its name on.', asset:'assets/supreme-white-af1.png' },
   { id:'white-cpfm-nike-af1', name:'Air Force 1 Low × CPFM', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:340, sizes:['7','8','9','10','11','12','13'],
@@ -1145,6 +1151,9 @@ function formatRecognizedValue(usdPrice){
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
+    const scarcityEl = document.getElementById('record-scarcity');
+    scarcityEl.textContent = o.scarcity || '';
+    scarcityEl.style.display = o.scarcity ? '' : 'none';
     priceEl.textContent = formatRecognizedValue(o.price);
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
