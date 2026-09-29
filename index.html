@@ -538,6 +538,49 @@
 .wall-zoom.open{ display:flex; }
 .wall-zoom img{ max-width:100%; max-height:100%; object-fit:contain; }
 @media (prefers-reduced-motion: reduce){ .wall, .wall-glow, .piece img, .piece figcaption{ transition:none; } }
+
+/* ---- the wall, as an issue ---- */
+.mag{ position:relative; }
+.mag-cover{ position:relative; min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:14vh 24px 10vh; }
+.mag-issue{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#9c98a8; }
+.mag-title{ margin:22px 0 0; font-family:'Fraunces',serif; font-weight:300; text-transform:uppercase;
+  font-size:clamp(46px,13vw,168px); line-height:.95; letter-spacing:.06em; }
+.mag-dek{ margin:22px 0 0; font-family:'Fraunces',serif; font-style:italic; font-size:clamp(15px,2vw,19px); color:#cfcad9; }
+.mag-rule{ width:min(420px,70vw); height:1px; background:rgba(255,255,255,.16); margin:44px 0 26px; }
+.mag-toc{ list-style:none; margin:0; padding:0; display:grid; gap:8px; text-align:left; }
+.mag-toc button{ display:flex; gap:18px; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase; color:#9c98a8; padding:2px 0; transition:color .3s ease; }
+.mag-toc button:hover, .mag-toc button:focus-visible{ color:#EDEAF2; }
+.mag-toc .tn{ opacity:.55; min-width:2ch; }
+
+.spread{ position:relative; max-width:1200px; margin:0 auto; padding:14vh 5vw;
+  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:6vw; align-items:center; }
+.spread.flip .frame{ order:2; }
+.spread .frame{ margin:0; cursor:zoom-in; }
+.spread .frame img{ display:block; width:100%; height:auto; box-shadow:0 30px 60px rgba(0,0,0,.55);
+  outline:1px solid rgba(255,255,255,.08); }
+.spread .text .no{ font-family:'Fraunces',serif; font-style:italic; font-size:clamp(48px,7vw,84px); line-height:1; color:rgba(237,234,242,.22); }
+.spread .kicker{ margin-top:14px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#9c98a8; }
+.spread h3{ margin:10px 0 0; font-family:'Fraunces',serif; font-weight:400; font-size:clamp(28px,4vw,50px); line-height:1.08; letter-spacing:.01em; }
+.spread .deck{ margin:14px 0 0; font-family:'Fraunces',serif; font-style:italic; font-size:clamp(16px,1.6vw,19px); line-height:1.5; color:#cfcad9; }
+.spread .body{ margin-top:22px; padding-top:22px; border-top:1px solid rgba(255,255,255,.12); }
+.spread .body p{ margin:0 0 14px; font-family:'Archivo',sans-serif; font-size:15px; line-height:1.75; color:#b9b5c4; }
+.spread .body p:first-child::first-letter{ float:left; font-family:'Fraunces',serif; font-size:3.3em; line-height:.85; padding:6px 10px 0 0; color:#EDEAF2; }
+.spread .credit{ margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#7d7989; line-height:1.6; }
+.spread .see{ margin-top:18px; display:flex; flex-wrap:wrap; gap:6px 16px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
+.spread .see span{ color:#7d7989; }
+.spread .see a{ color:#9c98a8; border-bottom:1px solid rgba(255,255,255,.14); transition:color .3s ease; cursor:pointer; }
+.spread .see a:hover, .spread .see a:focus-visible{ color:#EDEAF2; }
+.mag-run-head{ text-align:center; padding:10vh 24px 0; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#9c98a8; }
+.piece .pn{ font-family:'JetBrains Mono',monospace; font-style:normal; font-size:10px; letter-spacing:.1em; color:#7d7989; margin-right:10px; }
+.reveal{ opacity:0; transform:translateY(18px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
+.reveal.in{ opacity:1; transform:none; }
+@media (max-width:820px){
+  .spread{ grid-template-columns:1fr; gap:34px; padding:10vh 6vw; }
+  .spread.flip .frame{ order:0; }
+}
+@media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
 </style>
 </head>
 <body>
@@ -712,8 +755,15 @@
 <div class="wall" id="wall" role="dialog" aria-modal="true" aria-label="The wall">
   <div class="wall-glow" id="wall-glow"></div>
   <button class="wall-close" id="wall-close" aria-label="Close the wall">Close ✕</button>
-  <div class="wall-head"><h2>the wall</h2><p>what we're looking at · not in the catalog</p></div>
-  <div class="wall-hang" id="wall-hang"></div>
+  <div class="mag" id="wall-hang">
+    <header class="mag-cover" id="mag-cover">
+      <div class="mag-issue">Manifest · Issue 01</div>
+      <h2 class="mag-title">The Wall</h2>
+      <p class="mag-dek">what we're looking at · not in the catalog</p>
+      <div class="mag-rule"></div>
+      <ol class="mag-toc" id="mag-toc"></ol>
+    </header>
+  </div>
   <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
 </div>
 <div class="wall-zoom" id="wall-zoom"><img alt=""></div>
@@ -1554,39 +1604,129 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 
 <script>
 (function(){
+  // Each piece is a plate. Pieces with a `story` run as full spreads; the rest
+  // hang as plates. `see` links a plate to others by id.
+  // CONFIRM (Lufuno): every claim in the stories below is yours, not verified here.
   const PIECES = [
-    { src:'assets/wall-three-in-red.jpg',  t:'Three in Red',        n:'lip gloss, horns, one red field · artist unattributed', w:520, dy:0,   tint:'#e0202c' },
-    { src:'assets/wall-ovo-owl-camo.jpg',  t:'OVO Owl — Camo',      n:'gold, camo pavé, V-O eyes · source unattributed',       w:300, dy:60,  tint:'#b8a24a' },
-    { src:'assets/wall-six.jpg',           t:'6',                   n:'one glyph, no explanation · source unattributed',        w:300, dy:20,  tint:'#9aa0a6' },
-    { src:'assets/wall-ovo-owl-ice.jpg',   t:'OVO Owl — Ice',       n:'ice-blue pavé, engraved back · source unattributed',     w:380, dy:80,  tint:'#6fd0d8' },
-    { src:'assets/wall-keef-box-logo.jpg', t:'Box Logo, Doubled',   n:'Chief Keef in Supreme · photographer unattributed',      w:400, dy:10,  tint:'#d8384a' },
-    { src:'assets/wall-ovo-owl-pair.jpg',  t:'OVO Owl — Pair',      n:'two owls, two chains · source unattributed',             w:340, dy:120, tint:'#2a7f9c' },
-    { src:'assets/wall-skulls-tee.jpg',    t:'Skulls, Powder Bleach', n:'Number (N)ine tee · source unattributed',              w:300, dy:30,  tint:'#8a8a94' },
-    { src:'assets/wall-ovo-owl-story.jpg', t:'OVO Owl — Story',     n:'seen via @jmanziel2 on Instagram',                       w:280, dy:70,  tint:'#aab4c0' },
-    { src:'assets/wall-ovo-owl-rosegold.jpg', t:'OVO Owl — Rose Gold', n:'rose gold and white pavé, marquise perch · watermark reads Iceman Nick', w:400, dy:40, tint:'#d9a074' },
-    { src:'assets/wall-ovo-owl-concrete.jpg', t:'OVO Owl — Concrete',  n:'baguette-set owl over two more pendants, held in hand · source unattributed', w:300, dy:90, tint:'#aab4c0' },
-    { src:'assets/wall-ovo-owl-pink.jpg',     t:'OVO Owl — Pink',      n:'pink pavé, white-stone eyes · source unattributed',      w:300, dy:20, tint:'#d94fa8' },
-    { src:'assets/wall-ovo-owl-cuban.jpg',    t:'OVO Owl — Cuban',     n:'white pavé on a pavé Cuban link · source unattributed',  w:380, dy:70, tint:'#c9ccd2' },
-    { src:'assets/wall-virgil-chillidays.jpg', t:'Cracked Glass',      n:'Virgil Abloh · “centered, hopeful & thankful AF” · receipts c/o @chilldays', w:340, dy:10, tint:'#8a93a0' }
+    { id:'keef', src:'assets/wall-keef-box-logo.jpg', t:'Box Logo, Doubled', n:'Chief Keef in Supreme · photographer unattributed', w:400, dy:10, tint:'#d8384a',
+      kicker:'Lead story',
+      deck:'Chief Keef, twice over, in a box logo that never shipped.',
+      story:[
+        "As Manifest has it, this is an unreleased Supreme box logo, by Virgil \u2014 and the shoot around it wasn\u2019t a session so much as a project. Virgil is Virgil: the hand behind much of what hangs on this wall, rarely the one in front of it.",
+        "Pull the frame outward and it lands in Toronto \u2014 the 6, which is Drake\u2019s name for his city \u2014 and in the summer people still just call Summer Sixteen: the tour, the plane, the diss.",
+        "Around then Drake was also putting his weight behind 21 Savage, and the circle he built, October\u2019s Very Own, hasn\u2019t gone anywhere. It\u2019s still OVO now. Keep following the thread and it runs through the owls on this wall."
+      ],
+      see:['virgil','six','owl-camo'] },
+    { id:'virgil', src:'assets/wall-virgil-chillidays.jpg', t:'Cracked Glass', n:'Virgil Abloh \u00b7 \u201ccentered, hopeful & thankful AF\u201d \u00b7 receipts c/o @chilldays', w:340, dy:10, tint:'#8a93a0',
+      kicker:'Reference',
+      deck:'Virgil is Virgil.',
+      story:[
+        "The same name that stands behind the unreleased box logo in the lead story, shown the way it reached Manifest: cracked glass, and a caption \u2014 \u201ccentered, hopeful & thankful AF\u201d \u2014 via @chilldays."
+      ],
+      see:['keef'] },
+    { id:'six', src:'assets/wall-six.jpg', t:'6', n:'one glyph, no explanation \u00b7 source unattributed', w:300, dy:20, tint:'#9aa0a6',
+      kicker:'Glyph',
+      deck:'One glyph, no explanation.',
+      story:[
+        "In Toronto it doesn\u2019t need one. The 6 is Drake\u2019s shorthand for the city \u2014 the same 6 the Box Logo frame points toward."
+      ],
+      see:['keef'] },
+    { id:'owl-camo', src:'assets/wall-ovo-owl-camo.jpg', t:'OVO Owl \u2014 Camo', n:'gold, camo pav\u00e9, V-O eyes \u00b7 source unattributed', w:300, dy:60, tint:'#b8a24a',
+      kicker:'The owl',
+      deck:'A pendant worn like a membership.',
+      story:[
+        "The owl is OVO \u2014 October\u2019s Very Own, Drake\u2019s label and the circle that formed around it. This one is gold and camo pav\u00e9, V-O in the eyes.",
+        "Chains are where the owl travels now. When you see them on a neck today, Lil Yachty is part of the picture: he\u2019s easy inside that circle. The pieces that follow are the same bird in other stones."
+      ],
+      see:['keef'] },
+    { id:'owl-ice',  src:'assets/wall-ovo-owl-ice.jpg',   t:'OVO Owl \u2014 Ice',       n:'ice-blue pav\u00e9, engraved back \u00b7 source unattributed',     w:380, dy:80,  tint:'#6fd0d8' },
+    { id:'owl-pair', src:'assets/wall-ovo-owl-pair.jpg',  t:'OVO Owl \u2014 Pair',      n:'two owls, two chains \u00b7 source unattributed',             w:340, dy:120, tint:'#2a7f9c' },
+    { id:'owl-story',src:'assets/wall-ovo-owl-story.jpg', t:'OVO Owl \u2014 Story',     n:'seen via @jmanziel2 on Instagram',                       w:280, dy:70,  tint:'#aab4c0' },
+    { id:'owl-rose', src:'assets/wall-ovo-owl-rosegold.jpg', t:'OVO Owl \u2014 Rose Gold', n:'rose gold and white pav\u00e9, marquise perch \u00b7 watermark reads Iceman Nick', w:400, dy:40, tint:'#d9a074' },
+    { id:'owl-concrete', src:'assets/wall-ovo-owl-concrete.jpg', t:'OVO Owl \u2014 Concrete',  n:'baguette-set owl over two more pendants, held in hand \u00b7 source unattributed', w:300, dy:90, tint:'#aab4c0' },
+    { id:'owl-pink', src:'assets/wall-ovo-owl-pink.jpg',     t:'OVO Owl \u2014 Pink',      n:'pink pav\u00e9, white-stone eyes \u00b7 source unattributed',      w:300, dy:20, tint:'#d94fa8' },
+    { id:'owl-cuban',src:'assets/wall-ovo-owl-cuban.jpg',    t:'OVO Owl \u2014 Cuban',     n:'white pav\u00e9 on a pav\u00e9 Cuban link \u00b7 source unattributed',  w:380, dy:70, tint:'#c9ccd2' },
+    { id:'red',      src:'assets/wall-three-in-red.jpg',  t:'Three in Red',        n:'lip gloss, horns, one red field \u00b7 artist unattributed', w:520, dy:0,   tint:'#e0202c' },
+    { id:'skulls',   src:'assets/wall-skulls-tee.jpg',    t:'Skulls, Powder Bleach', n:'Number (N)ine tee \u00b7 source unattributed',              w:300, dy:30,  tint:'#8a8a94' }
   ];
   const wall = document.getElementById('wall'), hang = document.getElementById('wall-hang'),
         glow = document.getElementById('wall-glow'), zoom = document.getElementById('wall-zoom'),
         zimg = zoom.querySelector('img'), openBtn = document.getElementById('wall-open');
   let built = false;
+  const pad = i => String(i + 1).padStart(2, '0');
+  const showZoom = p => { zimg.src = p.src; zimg.alt = p.t; zoom.classList.add('open'); };
+  const jumpTo = id => { const el = document.getElementById('plate-' + id); if (el) el.scrollIntoView({ behavior:'smooth', block:'start' }); };
   function build(){
     if (built) return; built = true;
+    const toc = document.getElementById('mag-toc');
+    const byId = {};
+    PIECES.forEach((p, i) => { p.no = pad(i); byId[p.id] = p; });
+
     PIECES.forEach(p => {
-      const f = document.createElement('figure');
-      f.className = 'piece'; f.tabIndex = 0; f.style.setProperty('--w', p.w + 'px'); f.style.setProperty('--dy', p.dy + 'px');
-      f.innerHTML = '<img src="' + p.src + '" alt="' + p.t + '" loading="lazy"><figcaption><div class="t">' + p.t + '</div><div class="n">' + p.n + '</div></figcaption>';
-      const on = () => { glow.style.color = p.tint; }, off = () => { glow.style.color = 'transparent'; };
-      f.addEventListener('mouseenter', on); f.addEventListener('focus', on);
-      f.addEventListener('mouseleave', off); f.addEventListener('blur', off);
-      const show = () => { zimg.src = p.src; zimg.alt = p.t; zoom.classList.add('open'); };
-      f.addEventListener('click', show);
-      f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); show(); } });
-      hang.appendChild(f);
+      const li = document.createElement('li');
+      li.innerHTML = '<button type="button"><span class="tn">' + p.no + '</span><span>' + p.t + '</span></button>';
+      li.firstChild.addEventListener('click', () => jumpTo(p.id));
+      toc.appendChild(li);
     });
+
+    const watch = [];
+    let run = null, spreads = 0;
+    PIECES.forEach(p => {
+      if (p.story){
+        run = null;
+        const a = document.createElement('article');
+        a.className = 'spread reveal' + (spreads++ % 2 ? ' flip' : '');
+        a.id = 'plate-' + p.id;
+        const see = (p.see || []).map(id => '<a data-see="' + id + '">' + byId[id].no + ' \u00b7 ' + byId[id].t + '</a>').join('');
+        a.innerHTML =
+          '<figure class="frame"><img src="' + p.src + '" alt="' + p.t + '" loading="lazy"></figure>' +
+          '<div class="text">' +
+            '<div class="no">' + p.no + '</div>' +
+            '<div class="kicker">' + (p.kicker || '') + '</div>' +
+            '<h3>' + p.t + '</h3>' +
+            '<p class="deck">' + p.deck + '</p>' +
+            '<div class="body">' + p.story.map(s => '<p>' + s + '</p>').join('') + '</div>' +
+            '<div class="credit">' + p.n + '</div>' +
+            (see ? '<div class="see"><span>see also</span>' + see + '</div>' : '') +
+          '</div>';
+        a.querySelector('.frame').addEventListener('click', () => showZoom(p));
+        hang.appendChild(a); a.dataset.tint = p.tint; watch.push(a);
+      } else {
+        if (!run){
+          const h = document.createElement('div');
+          h.className = 'mag-run-head'; h.textContent = 'Further plates';
+          hang.appendChild(h);
+          run = document.createElement('div'); run.className = 'wall-hang';
+          hang.appendChild(run);
+        }
+        const f = document.createElement('figure');
+        f.className = 'piece reveal'; f.id = 'plate-' + p.id; f.tabIndex = 0;
+        f.style.setProperty('--w', p.w + 'px'); f.style.setProperty('--dy', p.dy + 'px');
+        f.innerHTML = '<img src="' + p.src + '" alt="' + p.t + '" loading="lazy"><figcaption><div class="t"><span class="pn">' + p.no + '</span>' + p.t + '</div><div class="n">' + p.n + '</div></figcaption>';
+        f.addEventListener('click', () => showZoom(p));
+        f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showZoom(p); } });
+        run.appendChild(f); f.dataset.tint = p.tint; watch.push(f);
+      }
+    });
+
+    hang.addEventListener('click', e => {
+      const a = e.target.closest('a[data-see]');
+      if (a){ e.preventDefault(); jumpTo(a.dataset.see); }
+    });
+
+    // As a spread enters the room it surfaces, and the room takes on its tint.
+    if ('IntersectionObserver' in window){
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (!en.isIntersecting) return;
+          en.target.classList.add('in');
+          glow.style.color = en.target.dataset.tint;
+        });
+      }, { root: wall, threshold: 0.12 });
+      watch.forEach(el => io.observe(el));
+    } else {
+      watch.forEach(el => el.classList.add('in'));
+    }
   }
   // The gate: sits past the last object. As it scrolls into view the room dims
   // toward the wall's palette, and its glow drifts through the wall's own tints.
