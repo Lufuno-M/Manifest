@@ -581,6 +581,25 @@
   .spread.flip .frame{ order:0; }
 }
 @media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+/* ---- cover + inserts ---- */
+.mag-title{ font-size:clamp(40px,10vw,120px); margin-top:14px; }
+.cover-stage{ position:relative; display:block; width:min(80vw,440px); height:min(54vh,540px); margin-top:30px; cursor:pointer; }
+.cover-stage .ci{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 1.4s ease;
+  filter:drop-shadow(0 30px 40px rgba(0,0,0,.55)); }
+.cover-stage .ci.show{ opacity:1; }
+.cover-line{ margin-top:20px; min-height:14px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9c98a8; transition:opacity .5s ease; }
+.mag .mag-dek{ margin-top:14px; }
+.mag-contents{ display:flex; flex-direction:column; align-items:center; gap:22px; padding:8vh 24px 4vh; }
+.insert-wrap{ display:flex; justify-content:center; padding:10vh 6vw; }
+.insert{ width:min(var(--w,320px),80vw); margin:0; cursor:zoom-in; transform:rotate(-1.2deg); }
+.insert:nth-of-type(even){ transform:rotate(1deg); }
+.insert .kicker{ margin-bottom:12px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#9c98a8; text-align:center; }
+.insert img{ display:block; width:100%; height:auto; padding:10px; background:#EDEAF2; box-shadow:0 30px 60px rgba(0,0,0,.55); }
+.insert figcaption{ margin-top:14px; text-align:center; }
+.insert .t{ font-family:'Fraunces',serif; font-style:italic; font-size:15px; }
+.insert .n{ margin-top:4px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#9c98a8; line-height:1.5; }
+@media (prefers-reduced-motion: reduce){ .cover-stage .ci{ transition:none; } }
 </style>
 </head>
 <body>
@@ -759,10 +778,14 @@
     <header class="mag-cover" id="mag-cover">
       <div class="mag-issue">Manifest · Issue 01</div>
       <h2 class="mag-title">The Wall</h2>
+      <button class="cover-stage" id="cover-stage" type="button" aria-label="Go to the cover plate"><img class="ci" alt=""><img class="ci" alt=""></button>
+      <div class="cover-line" id="cover-line"></div>
       <p class="mag-dek">what we're looking at · not in the catalog</p>
-      <div class="mag-rule"></div>
-      <ol class="mag-toc" id="mag-toc"></ol>
     </header>
+    <section class="mag-contents">
+      <div class="mag-issue">Contents</div>
+      <ol class="mag-toc" id="mag-toc"></ol>
+    </section>
   </div>
   <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
 </div>
@@ -1607,6 +1630,9 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   // Each piece is a plate. Pieces with a `story` run as full spreads; the rest
   // hang as plates. `see` links a plate to others by id.
   // CONFIRM (Lufuno): every claim in the stories below is yours, not verified here.
+  // INSERTS: a tipped-in card between spreads. Add with insert:true, e.g.
+  //   { id:'tyler-supreme', insert:true, src:'assets/wall-tyler-supreme.jpg', t:'Title', n:'credit \u00b7 source', w:320, tint:'#8a8a94' }
+  // Optional: kicker:'Insert', cover:false (keeps it out of the cover rotation).
   const PIECES = [
     { id:'keef', src:'assets/wall-keef-box-logo.jpg', t:'Box Logo, Doubled', n:'Chief Keef in Supreme · photographer unattributed', w:400, dy:10, tint:'#d8384a',
       kicker:'Lead story',
@@ -1660,7 +1686,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     if (built) return; built = true;
     const toc = document.getElementById('mag-toc');
     const byId = {};
-    PIECES.forEach((p, i) => { p.no = pad(i); byId[p.id] = p; });
+    let plateN = 0;
+    PIECES.forEach(p => { p.no = p.insert ? '+' : String(++plateN).padStart(2, '0'); byId[p.id] = p; });
 
     PIECES.forEach(p => {
       const li = document.createElement('li');
@@ -1669,9 +1696,42 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       toc.appendChild(li);
     });
 
+    // Cover: alternates through whatever is actually in the issue.
+    const covers = PIECES.filter(p => p.cover !== false);
+    const layers = Array.from(document.querySelectorAll('#cover-stage .ci'));
+    const line = document.getElementById('cover-line');
+    let ci = 0, front = 1;
+    function setCover(k){
+      const p = covers[k], im = new Image();
+      im.onload = () => {
+        const next = layers[1 - front];
+        next.src = p.src; next.alt = p.t;
+        next.classList.add('show'); layers[front].classList.remove('show');
+        front = 1 - front; ci = k;
+        line.textContent = (p.insert ? 'Insert' : 'Plate ' + p.no) + ' \u2014 ' + p.t;
+        if (wall.scrollTop < window.innerHeight * 0.6) glow.style.color = p.tint;
+      };
+      im.src = p.src;
+    }
+    document.getElementById('cover-stage').addEventListener('click', () => jumpTo(covers[ci].id));
+    setCover(0);
+    if (covers.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      setInterval(() => { if (wall.classList.contains('open')) setCover((ci + 1) % covers.length); }, 6500);
+    }
+
     const watch = [];
     let run = null, spreads = 0;
     PIECES.forEach(p => {
+      if (p.insert){
+        run = null;
+        const w = document.createElement('div'); w.className = 'insert-wrap';
+        const f = document.createElement('figure'); f.className = 'insert reveal'; f.id = 'plate-' + p.id;
+        f.style.setProperty('--w', (p.w || 320) + 'px');
+        f.innerHTML = '<div class="kicker">' + (p.kicker || 'Insert') + '</div><img src="' + p.src + '" alt="' + p.t + '" loading="lazy"><figcaption><div class="t">' + p.t + '</div><div class="n">' + p.n + '</div></figcaption>';
+        f.addEventListener('click', () => showZoom(p));
+        w.appendChild(f); hang.appendChild(w); f.dataset.tint = p.tint; watch.push(f);
+        return;
+      }
       if (p.story){
         run = null;
         const a = document.createElement('article');
