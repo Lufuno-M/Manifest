@@ -600,6 +600,18 @@
 .insert .t{ font-family:'Fraunces',serif; font-style:italic; font-size:15px; }
 .insert .n{ margin-top:4px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#9c98a8; line-height:1.5; }
 @media (prefers-reduced-motion: reduce){ .cover-stage .ci{ transition:none; } }
+
+/* ---- the wall is now part of the scroll, not an overlay ---- */
+.wall{ position:relative; inset:auto; z-index:2; overflow:visible; background:none; -webkit-backdrop-filter:none; backdrop-filter:none;
+  opacity:1; pointer-events:auto; transition:none; color:#EDEAF2; }
+.wall-fade-in{ height:45vh; background:linear-gradient(180deg, rgba(9,8,12,0), #09080C); }
+.wall-fade-out{ height:32vh; background:linear-gradient(0deg, rgba(9,8,12,0), #09080C); }
+.wall-body{ position:relative; background:#09080C; }
+.wall-glow{ position:sticky; top:0; inset:auto; height:100vh; margin-bottom:-100vh; z-index:0; }
+.wall-body .mag, .wall-body .wall-foot{ position:relative; z-index:1; }
+.mag-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
+.wordmark-nav, .nav-right, .bag-btn, .mag-btn{ transition:color .5s ease; }
+body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body.on-dark .mag-btn{ color:#EDEAF2; }
 </style>
 </head>
 <body>
@@ -653,11 +665,10 @@
 </div>
 
 <div class="dusk-veil" id="dusk-veil" aria-hidden="true"></div>
-<div class="gate-veil" id="gate-veil" aria-hidden="true"></div>
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
-  <div class="nav-right"><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
+  <div class="nav-right"><button class="mag-btn" id="mag-open" aria-label="Jump to the magazine">Magazine</button><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
 </nav>
 
 <section class="arrival" id="arrival">
@@ -690,13 +701,26 @@
 
 <div class="field-outro">that's the drop — for now</div>
 
-<section class="wall-gate-wrap" id="wall-gate-wrap">
-  <div class="gate-glow" id="gate-glow" aria-hidden="true"></div>
-  <button class="wall-gate" id="wall-open" aria-label="Enter the wall">
-    <span class="gate-eyebrow">past the catalog</span>
-    <span class="gate-title">the wall</span>
-    <span class="gate-sub">what we're looking at</span>
-  </button>
+<section class="wall" id="wall" aria-label="The wall — Issue 01">
+  <div class="wall-fade-in" aria-hidden="true"></div>
+  <div class="wall-body">
+    <div class="wall-glow" id="wall-glow" aria-hidden="true"></div>
+    <div class="mag" id="wall-hang">
+    <header class="mag-cover" id="mag-cover">
+      <div class="mag-issue">Manifest · Issue 01</div>
+      <h2 class="mag-title">The Wall</h2>
+      <button class="cover-stage" id="cover-stage" type="button" aria-label="Go to the cover plate"><img class="ci" alt=""><img class="ci" alt=""></button>
+      <div class="cover-line" id="cover-line"></div>
+      <p class="mag-dek">what we're looking at · not in the catalog</p>
+    </header>
+    <section class="mag-contents">
+      <div class="mag-issue">Contents</div>
+      <ol class="mag-toc" id="mag-toc"></ol>
+    </section>
+  </div>
+    <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
+  </div>
+  <div class="wall-fade-out" aria-hidden="true"></div>
 </section>
 
 <div class="pending-toggle">
@@ -771,24 +795,6 @@
 
 <footer>MANIFEST — the archive of attention</footer>
 
-<div class="wall" id="wall" role="dialog" aria-modal="true" aria-label="The wall">
-  <div class="wall-glow" id="wall-glow"></div>
-  <button class="wall-close" id="wall-close" aria-label="Close the wall">Close ✕</button>
-  <div class="mag" id="wall-hang">
-    <header class="mag-cover" id="mag-cover">
-      <div class="mag-issue">Manifest · Issue 01</div>
-      <h2 class="mag-title">The Wall</h2>
-      <button class="cover-stage" id="cover-stage" type="button" aria-label="Go to the cover plate"><img class="ci" alt=""><img class="ci" alt=""></button>
-      <div class="cover-line" id="cover-line"></div>
-      <p class="mag-dek">what we're looking at · not in the catalog</p>
-    </header>
-    <section class="mag-contents">
-      <div class="mag-issue">Contents</div>
-      <ol class="mag-toc" id="mag-toc"></ol>
-    </section>
-  </div>
-  <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
-</div>
 <div class="wall-zoom" id="wall-zoom"><img alt=""></div>
 
 <audio id="ambient" src="assets/manifest-ambient.mp3" loop preload="metadata" style="display:none"></audio>
@@ -1677,8 +1683,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   ];
   const wall = document.getElementById('wall'), hang = document.getElementById('wall-hang'),
         glow = document.getElementById('wall-glow'), zoom = document.getElementById('wall-zoom'),
-        zimg = zoom.querySelector('img'), openBtn = document.getElementById('wall-open');
-  let built = false;
+        zimg = zoom.querySelector('img');
+  let built = false, wallInView = false;
   const pad = i => String(i + 1).padStart(2, '0');
   const showZoom = p => { zimg.src = p.src; zimg.alt = p.t; zoom.classList.add('open'); };
   const jumpTo = id => { const el = document.getElementById('plate-' + id); if (el) el.scrollIntoView({ behavior:'smooth', block:'start' }); };
@@ -1709,14 +1715,14 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
         next.classList.add('show'); layers[front].classList.remove('show');
         front = 1 - front; ci = k;
         line.textContent = (p.insert ? 'Insert' : 'Plate ' + p.no) + ' \u2014 ' + p.t;
-        if (wall.scrollTop < window.innerHeight * 0.6) glow.style.color = p.tint;
+        if (document.getElementById('mag-cover').getBoundingClientRect().bottom > window.innerHeight * 0.4) glow.style.color = p.tint;
       };
       im.src = p.src;
     }
     document.getElementById('cover-stage').addEventListener('click', () => jumpTo(covers[ci].id));
     setCover(0);
     if (covers.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      setInterval(() => { if (wall.classList.contains('open')) setCover((ci + 1) % covers.length); }, 6500);
+      setInterval(() => { if (wallInView) setCover((ci + 1) % covers.length); }, 6500);
     }
 
     const watch = [];
@@ -1782,42 +1788,33 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
           en.target.classList.add('in');
           glow.style.color = en.target.dataset.tint;
         });
-      }, { root: wall, threshold: 0.12 });
+      }, { root: null, threshold: 0.12 });
       watch.forEach(el => io.observe(el));
     } else {
       watch.forEach(el => el.classList.add('in'));
     }
   }
-  // The gate: sits past the last object. As it scrolls into view the room dims
-  // toward the wall's palette, and its glow drifts through the wall's own tints.
-  const gateWrap = document.getElementById('wall-gate-wrap'),
-        gateGlow = document.getElementById('gate-glow'),
-        gateVeil = document.getElementById('gate-veil'),
-        tints = PIECES.map(p => p.tint);
-  let ti = 0;
-  gateGlow.style.color = tints[0];
-  function gateProgress(){
-    const r = gateWrap.getBoundingClientRect(), vh = window.innerHeight;
-    const p = Math.max(0, Math.min(1, (vh - r.top) / (vh * 0.95)));
-    const e = p * p * (3 - 2 * p);
-    gateWrap.style.setProperty('--gate-p', e.toFixed(3));
-    gateVeil.style.opacity = (e * 0.4).toFixed(3);
+  // The wall is part of the same scroll. As it approaches, the page fades toward
+  // its palette; the nav turns light while it sits over the dark.
+  const wallBody = wall.querySelector('.wall-body');
+  function navTone(){
+    const r = wallBody.getBoundingClientRect();
+    document.body.classList.toggle('on-dark', r.top < 36 && r.bottom > 36);
   }
-  window.addEventListener('scroll', gateProgress, { passive:true });
-  window.addEventListener('resize', gateProgress);
-  gateProgress();
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    setInterval(() => { ti = (ti + 1) % tints.length; gateGlow.style.color = tints[ti]; }, 4500);
+  window.addEventListener('scroll', navTone, { passive:true });
+  window.addEventListener('resize', navTone);
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(en => { wallInView = en[0].isIntersecting; }, { threshold: 0 }).observe(wall);
   }
-  function openWall(){ build(); glow.style.color = gateGlow.style.color; wall.classList.add('open'); wall.scrollTop = 0; document.body.style.overflow = 'hidden'; }
-  function closeWall(){ zoom.classList.remove('open'); wall.classList.remove('open'); glow.style.color = 'transparent'; document.body.style.overflow = ''; }
-  openBtn.addEventListener('click', openWall);
-  document.getElementById('wall-close').addEventListener('click', closeWall);
+  document.getElementById('mag-open').addEventListener('click', () => {
+    document.getElementById('mag-cover').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
   zoom.addEventListener('click', () => zoom.classList.remove('open'));
   window.addEventListener('keydown', e => {
-    if (e.key !== 'Escape') return;
-    if (zoom.classList.contains('open')) zoom.classList.remove('open'); else if (wall.classList.contains('open')) closeWall();
+    if (e.key === 'Escape' && zoom.classList.contains('open')) zoom.classList.remove('open');
   });
+  build();
+  navTone();
 })();
 </script>
 </body>
