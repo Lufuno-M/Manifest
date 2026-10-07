@@ -720,7 +720,7 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
-  <div class="nav-right"><button class="mag-btn" id="mag-open" aria-label="Jump to the magazine">Magazine</button><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
+  <div class="nav-right"><a class="mag-btn" id="mag-open" href="magazine.html" aria-label="Open the magazine">Magazine</a><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
 </nav>
 
 <section class="arrival" id="arrival">
@@ -1963,9 +1963,6 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   if ('IntersectionObserver' in window){
     new IntersectionObserver(en => { wallInView = en[0].isIntersecting; }, { threshold: 0 }).observe(wall);
   }
-  document.getElementById('mag-open').addEventListener('click', () => {
-    document.getElementById('mag-cover').scrollIntoView({ behavior:'smooth', block:'start' });
-  });
   zoom.addEventListener('click', () => zoom.classList.remove('open'));
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape' && zoom.classList.contains('open')) zoom.classList.remove('open');
