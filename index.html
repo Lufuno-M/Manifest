@@ -487,6 +487,58 @@
 .ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
 .ps-msg{ margin-top:10px; min-height:14px; text-align:center; font-size:11px; color:#6b6b73; }
 
+/* ---- receipts: printed after payment (mock) ---- */
+.rcpt-stage{
+  position:fixed; inset:0; z-index:500; overflow-y:auto; overflow-x:hidden;
+  background:rgba(11,9,6,0.975); opacity:0; pointer-events:none;
+  transition:opacity .45s var(--ease);
+}
+.rcpt-stage.open{ opacity:1; pointer-events:auto; }
+.rcpt-slot{
+  position:sticky; top:0; z-index:5; width:min(330px,88vw); height:12px; margin:0 auto;
+  background:linear-gradient(#000,#17130d); border-radius:0 0 8px 8px;
+  box-shadow:0 6px 18px rgba(0,0,0,.6);
+}
+.rcpt-pile{ display:flex; flex-direction:column; align-items:center; padding:0 0 18vh; }
+.rcpt-slip{
+  position:relative; width:min(290px,80vw); margin-top:-40px;
+  filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));
+  clip-path:inset(0 0 100% 0);
+}
+.rcpt-slip:first-child{ margin-top:6px; }
+.rcpt-slip.main{ width:min(320px,86vw); margin-top:-22px; }
+.rcpt-slip.printing{ animation:rcptPrint 1.7s steps(30,end) forwards; }
+@keyframes rcptPrint{ from{ clip-path:inset(0 0 100% 0); } to{ clip-path:inset(-20px -20px -20px -20px); } }
+.rcpt-paper{
+  background:#fbfbf8; color:#161616; padding:22px 20px 36px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; line-height:17px;
+  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 7px) no-repeat,radial-gradient(circle at 5px 7px,transparent 4px,#000 4.5px) bottom/10px 7px repeat-x;
+          mask:linear-gradient(#000 0 0) top/100% calc(100% - 7px) no-repeat,radial-gradient(circle at 5px 7px,transparent 4px,#000 4.5px) bottom/10px 7px repeat-x;
+}
+.rcpt-word{ text-align:center; font-family:'Archivo',sans-serif; font-weight:800; font-size:25px; letter-spacing:5px; }
+.rcpt-tag{ text-align:center; font-size:8.5px; letter-spacing:1.4px; text-transform:uppercase; color:#777; margin:4px 0 14px; }
+.rcpt-row{ display:flex; justify-content:space-between; gap:12px; }
+.rcpt-row span{ color:#555; }
+.rcpt-row b{ font-weight:400; text-align:right; }
+.rcpt-rule{ border-top:1px dashed #999; margin:11px 0; }
+.rcpt-label{ color:#555; }
+.rcpt-house{ font-weight:700; font-size:13px; }
+.rcpt-item{ font-weight:700; margin-top:6px; }
+.rcpt-group{ margin-top:9px; font-size:9px; letter-spacing:1.4px; text-transform:uppercase; color:#777; }
+.rcpt-total{ font-weight:700; font-size:13px; border-top:1px solid #161616; padding-top:6px; margin-top:6px; }
+.rcpt-total span{ color:#161616; }
+.rcpt-note{ margin-top:12px; text-align:center; font-size:10px; line-height:15px; color:#444; }
+.rcpt-foot{ margin-top:12px; text-align:center; font-size:8.5px; letter-spacing:2px; text-transform:uppercase; color:#888; }
+.rcpt-done{
+  position:fixed; top:14px; right:16px; z-index:6; color:#EDEAF2; font-family:'JetBrains Mono',monospace;
+  font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:8px 10px; opacity:.7;
+}
+.rcpt-done:hover{ opacity:1; }
+@media (prefers-reduced-motion: reduce){
+  .rcpt-slip{ clip-path:none; }
+  .rcpt-slip.printing{ animation:none; }
+}
+
 /* ---- the wall ---- */
 .nav-right{ display:flex; align-items:center; gap:18px; }
 .gate-veil{ position:fixed; inset:0; z-index:1; pointer-events:none; background:#0B0906; opacity:0; mix-blend-mode:multiply; }
@@ -791,6 +843,12 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body
   <div class="ps-total"><span>Total</span><span id="ps-total"></span></div>
   <button class="btn-black" id="ps-confirm"></button>
   <div class="ps-msg" id="ps-msg"></div>
+</div>
+
+<div class="rcpt-stage" id="rcpt-stage" role="dialog" aria-modal="true" aria-label="Receipts">
+  <div class="rcpt-slot"></div>
+  <button type="button" class="rcpt-done" id="rcpt-done">Done ✕</button>
+  <div class="rcpt-pile" id="rcpt-pile"></div>
 </div>
 
 <footer>MANIFEST — the archive of attention</footer>
@@ -1331,7 +1389,9 @@ function formatRecognizedValue(usdPrice){
   const psConfirm = document.getElementById('ps-confirm');
   const psMsg = document.getElementById('ps-msg');
 
+  let lastWallet = 'Apple Pay';
   function openSheet(name){
+    lastWallet = name;
     const head = document.getElementById('ps-wallet');
     if (name === 'Apple Pay'){
       head.innerHTML = APPLE;
@@ -1388,7 +1448,103 @@ function formatRecognizedValue(usdPrice){
       });
     });
   });
-  psConfirm.addEventListener('click', () => { psMsg.textContent = 'Payments open at launch.'; });
+  // ---- Receipts (mock): after payment, slips print out of a slot. ----
+  // RECEIPT_MODE: 'both'     = one Manifest slip per house, then the Manifest receipt
+  //               'houses'   = only the per-house slips (see the mess)
+  //               'manifest' = only the single Manifest receipt (the end goal)
+  const RECEIPT_MODE = 'both';
+  const stageR = document.getElementById('rcpt-stage');
+  const pileR = document.getElementById('rcpt-pile');
+  const ROTS = [-3.2, 2.4, -1.6, 3.6, -2.6, 1.8];
+  const DXS = [-24, 20, -12, 28, -28, 10];
+  let rcptRun = 0, rcptTimers = [];
+
+  function rcptHouseSlip(house, items, no, date){
+    const sub = zarFormat(items.reduce((t, b) => t + zarNumber(b.label), 0));
+    return `<div class="rcpt-paper">
+      <div class="rcpt-word">MANIFEST</div><div class="rcpt-tag">a record of recognized objects</div>
+      <div class="rcpt-row"><span>Slip No.</span><b>${no}</b></div>
+      <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
+      <div class="rcpt-rule"></div>
+      <div class="rcpt-label">House</div><div class="rcpt-house">${house}</div>
+      <div class="rcpt-rule"></div>
+      ${items.map(b => `<div class="rcpt-item">${b.name}</div><div class="rcpt-row"><span>${b.size ? 'Size ' + b.size : '&nbsp;'}</span><b>${b.label}</b></div>`).join('')}
+      <div class="rcpt-rule"></div>
+      <div class="rcpt-row rcpt-total"><span>Subtotal</span><b>${sub}</b></div>
+      <div class="rcpt-note">Packed with the rest of your order.</div>
+      <div class="rcpt-foot">Issued by Manifest</div></div>`;
+  }
+  function rcptMainSlip(groups, no, date, wallet){
+    const total = zarFormat([...groups.values()].flat().reduce((t, b) => t + zarNumber(b.label), 0));
+    return `<div class="rcpt-paper">
+      <div class="rcpt-word">MANIFEST</div><div class="rcpt-tag">a record of recognized objects</div>
+      <div class="rcpt-row"><span>Receipt No.</span><b>${no}</b></div>
+      <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
+      <div class="rcpt-row"><span>Paid with</span><b>${wallet}</b></div>
+      <div class="rcpt-rule"></div>
+      ${[...groups].map(([h, items]) => `<div class="rcpt-group">${h}</div>` +
+        items.map(b => `<div class="rcpt-item">${b.name}</div><div class="rcpt-row"><span>${b.size ? 'Size ' + b.size : '&nbsp;'}</span><b>${b.label}</b></div>`).join('')
+      ).join('')}
+      <div class="rcpt-rule"></div>
+      <div class="rcpt-row rcpt-total"><span>Total</span><b>${total}</b></div>
+      <div class="rcpt-note">It has been recognized, and it is yours to keep.</div>
+      <div class="rcpt-foot">Issued by Manifest</div></div>`;
+  }
+  function closeReceipts(){
+    rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
+    if (!stageR.classList.contains('open')) return;
+    stageR.classList.remove('open');
+    document.body.style.overflow = '';
+    BAG.length = 0; paintBag();           // the order is complete (mock)
+  }
+  function runReceipts(){
+    const run = ++rcptRun;
+    const date = new Date().toLocaleDateString('en-ZA');
+    const base = String(Date.now()).slice(-6);
+    const groups = new Map();
+    BAG.forEach(b => { if (!groups.has(b.maker)) groups.set(b.maker, []); groups.get(b.maker).push(b); });
+    const slips = [];
+    if (RECEIPT_MODE !== 'manifest'){
+      [...groups].forEach(([h, items], i) => slips.push({ house: true, i,
+        html: rcptHouseSlip(h, items, `MF-${base}-${String.fromCharCode(65 + i)}`, date) }));
+    }
+    if (RECEIPT_MODE !== 'houses'){
+      slips.push({ house: false, html: rcptMainSlip(groups, `MF-${base}`, date, lastWallet) });
+    }
+    pileR.innerHTML = '';
+    const els = slips.map((sl, n) => {
+      const el = document.createElement('div');
+      el.className = 'rcpt-slip' + (sl.house ? '' : ' main');
+      el.style.zIndex = n + 1;
+      if (sl.house) el.style.transform = `translateX(${DXS[sl.i % DXS.length]}px) rotate(${ROTS[sl.i % ROTS.length]}deg)`;
+      el.innerHTML = sl.html;
+      pileR.appendChild(el);
+      return el;
+    });
+    stageR.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+    stageR.classList.add('open');
+    els.forEach((el, n) => {
+      rcptTimers.push(setTimeout(() => {
+        if (run !== rcptRun) return;
+        el.classList.add('printing');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 700 + n * 1900));
+    });
+  }
+  psConfirm.addEventListener('click', () => {
+    if (psConfirm.disabled) return;
+    psConfirm.disabled = true;
+    psMsg.textContent = 'Authorising…';
+    setTimeout(() => { psMsg.textContent = '✓ Done'; }, 800);
+    setTimeout(() => {
+      closeSheet();
+      closeRecord();
+      psConfirm.disabled = false;
+      runReceipts();
+    }, 1500);
+  });
+  document.getElementById('rcpt-done').addEventListener('click', closeReceipts);
   document.getElementById('ps-cancel').addEventListener('click', closeSheet);
   sheetBack.addEventListener('click', closeSheet);
   paintBag();
@@ -1397,7 +1553,8 @@ function formatRecognizedValue(usdPrice){
   document.getElementById('record-close').addEventListener('click', closeRecord);
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    if (sheet.classList.contains('open')) closeSheet(); else closeRecord();
+    if (stageR.classList.contains('open')) closeReceipts();
+    else if (sheet.classList.contains('open')) closeSheet(); else closeRecord();
   });
 
   document.getElementById('arrival-obj').addEventListener('click', () => openRecord(arrivalObjData));
