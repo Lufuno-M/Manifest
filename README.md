@@ -1,3 +1,4 @@
+[Uploading README.md…]()
 # Manifest
 
 *The archive of attention.*
@@ -34,7 +35,7 @@ A working checkout prototype with Apple Pay, Google Pay, and Samsung Pay payment
 
 ### The Wall
 
-An editorial space positioned beyond the catalog — references, images, influences, and traces of what made these objects matter. Separate from the catalog itself.
+A continuous book of evidence positioned beyond the catalog: scans, sightings, quotes, and traces of what made these objects matter. It lives inside the same scroll as the field, with no separate page. The room is always the blend of the images it sits between, so every plate belongs to the room. Some plates carry a story. The paper sound has its own switch, separate from the ambience.
 
 ### Atmosphere
 
