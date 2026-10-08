@@ -539,131 +539,77 @@
   .rcpt-slip.printing{ animation:none; }
 }
 
-/* ---- the wall ---- */
+/* ---- nav ---- */
 .nav-right{ display:flex; align-items:center; gap:18px; }
-.gate-veil{ position:fixed; inset:0; z-index:1; pointer-events:none; background:#0B0906; opacity:0; mix-blend-mode:multiply; }
-.wall-gate-wrap{ position:relative; z-index:2; display:flex; justify-content:center; padding:2vh 24px 16vh; }
-.gate-glow{
-  position:absolute; left:50%; top:50%; width:min(760px,150vw); height:min(760px,150vw);
-  transform:translate(-50%,-50%); pointer-events:none; border-radius:50%;
-  color:transparent; background:radial-gradient(circle, currentColor 0%, transparent 62%);
-  opacity:calc(0.12 + 0.55 * var(--gate-p, 0)); mix-blend-mode:multiply;
-  transition:color 2.4s ease;
-}
-.wall-gate{
-  position:relative; z-index:1; width:min(260px,72vw); aspect-ratio:3/4;
-  background:#0B0906; color:#EDEAF2;
-  display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:6px;
-  padding:0 16px 30px; text-align:center;
-  box-shadow:0 30px 60px rgba(9,8,12,0.35);
-  outline:1px solid rgba(255,255,255,0.08); outline-offset:-10px;
-  transition:transform 0.6s var(--ease), box-shadow 0.6s ease;
-}
-.wall-gate:hover, .wall-gate:focus-visible{ transform:translateY(-6px); box-shadow:0 40px 70px rgba(9,8,12,0.45); }
-.gate-eyebrow, .gate-sub{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:#9c98a8; }
-.gate-title{ font-family:'Fraunces',serif; font-weight:400; font-size:28px; letter-spacing:0.02em; margin:2px 0; }
-@media (prefers-reduced-motion: reduce){ .gate-glow, .wall-gate{ transition:none; } }
 .bag-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
-.wall{ position:fixed; inset:0; z-index:300; overflow-y:auto; background:rgba(9,8,12,.92);
-  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); color:#EDEAF2;
-  opacity:0; pointer-events:none; transition:opacity .6s var(--ease); }
-.wall.open{ opacity:1; pointer-events:auto; }
-.wall-glow{ position:fixed; inset:0; pointer-events:none; color:transparent; opacity:.3;
-  background:radial-gradient(circle at 50% 38%, currentColor 0%, transparent 62%); transition:color 1.8s ease; }
-.wall-close{ position:fixed; top:20px; right:clamp(20px,4vw,52px); z-index:2; font-family:'JetBrains Mono',monospace;
-  font-size:11px; letter-spacing:.1em; color:#EDEAF2; padding:6px 8px; }
-.wall-head{ position:relative; text-align:center; padding:16vh 24px 0; }
-.wall-head h2{ margin:0; font-family:'Fraunces',serif; font-weight:400; font-size:clamp(34px,6vw,64px); letter-spacing:.02em; }
-.wall-head p{ margin:12px 0 0; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#9c98a8; }
-.wall-hang{ position:relative; max-width:1400px; margin:0 auto; padding:12vh 5vw 10vh; display:flex; flex-wrap:wrap;
-  justify-content:center; align-items:flex-start; gap:10vh 6vw; }
-.piece{ width:min(var(--w),86vw); margin-top:var(--dy,0); cursor:zoom-in; }
-.piece img{ display:block; width:100%; height:auto; box-shadow:0 30px 60px rgba(0,0,0,.55); outline:1px solid rgba(255,255,255,.08);
-  transition:filter .5s ease, transform .5s var(--ease); }
-.piece:hover img, .piece:focus-visible img{ filter:brightness(1.1); transform:translateY(-3px); }
-.piece figcaption{ margin-top:14px; opacity:.6; transition:opacity .4s ease; }
-.piece:hover figcaption, .piece:focus-visible figcaption{ opacity:1; }
-.piece .t{ font-family:'Fraunces',serif; font-style:italic; font-size:14px; }
-.piece .n{ margin-top:3px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#9c98a8; line-height:1.5; }
-.wall-foot{ position:relative; text-align:center; padding:0 24px 12vh; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.08em; color:#7d7989; }
+.wordmark-nav, .nav-right, .bag-btn{ transition:color .5s ease; }
+body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ color:#EDEAF2; }
+
+/* ---- the wall: one continuous book, part of the same scroll ----
+   The room is never a fixed colour. It is always the blend of the images it sits between,
+   so a white-ground plate and a black-ground plate belong to the same room. */
+.wall{ --wall-bg:#d2d2d2; --wall-fg:#201C14; --wall-line:rgba(32,28,20,.18); position:relative; z-index:2; }
+.wall-fade-in{ height:40vh; }
+.wall-fade-out{ height:28vh; }
+.wall-body{ position:relative; background:var(--wall-bg); color:var(--wall-fg); font-family:'JetBrains Mono',monospace; }
+.wall-body::after{ content:""; position:absolute; inset:0; z-index:3; pointer-events:none; opacity:.4; mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.wall-lead{ position:relative; padding:12vh 24px 2vh; text-align:center; font:italic 400 15px/1.6 'Fraunces',serif; opacity:.8; }
+
+.plate{ position:relative; display:flex; align-items:center; justify-content:center; padding:11vh 6vw; }
+.plate.l{ justify-content:flex-start; padding-left:clamp(24px,13vw,220px); }
+.plate.r{ justify-content:flex-end; padding-right:clamp(24px,13vw,220px); }
+.pair{ display:flex; gap:clamp(16px,4vw,60px); align-items:flex-end; justify-content:center; }
+.pair figure:nth-child(2){ margin-bottom:6vh; }
+.plate figure{ margin:0; opacity:0; will-change:transform, opacity; }
+.plate figure img{
+  display:block; width:min(calc(var(--w) * 1px), 86vw, 560px, calc(68svh * var(--ar))); height:auto; aspect-ratio:var(--ar); cursor:zoom-in;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent), linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
+  -webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent), linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
+  mask-composite:intersect; }
+.pair figure img{ width:min(calc(var(--w) * 1px), 42vw, 430px, calc(62svh * var(--ar))); }
+.plate figcaption{ margin-top:14px; font-size:10px; letter-spacing:.06em; line-height:1.6; opacity:0; max-width:34ch; }
+.plate figcaption .n{ display:block; opacity:.5; letter-spacing:.14em; margin-bottom:2px; }
+.plate figcaption .s{ display:block; opacity:.55; }
+
+/* a plate with a story: the image and its text share one spread */
+.plate.story{ display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:6vw; align-items:center; max-width:1200px; margin:0 auto; padding:12vh 5vw; }
+.plate.story.flip figure{ order:2; }
+.plate.story figure img{ width:min(calc(var(--w) * 1px), 100%, calc(68svh * var(--ar))); }
+.plate .text{ opacity:0; will-change:transform, opacity; font-family:'Archivo',sans-serif; }
+.plate .text .kicker{ font:400 10px/1 'JetBrains Mono',monospace; letter-spacing:.2em; text-transform:uppercase; opacity:.55; }
+.plate .text h3{ margin:12px 0 0; font:400 clamp(28px,4vw,50px)/1.08 'Fraunces',serif; letter-spacing:.01em; }
+.plate .text .deck{ margin:14px 0 0; font:italic 400 clamp(16px,1.6vw,19px)/1.5 'Fraunces',serif; opacity:.8; }
+.plate .text .body{ margin-top:22px; padding-top:22px; border-top:1px solid var(--wall-line); }
+.plate .text .body p{ margin:0 0 14px; font-size:15px; line-height:1.75; opacity:.78; }
+.plate .text .body p:first-child::first-letter{ float:left; font-family:'Fraunces',serif; font-size:3.3em; line-height:.85; padding:6px 10px 0 0; }
+.plate .text .see{ margin-top:18px; display:flex; flex-wrap:wrap; gap:6px 16px; font:400 10px/1.4 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; }
+.plate .text .see span{ opacity:.5; }
+.plate .text .see a{ opacity:.75; border-bottom:1px solid var(--wall-line); cursor:pointer; }
+.plate .text .see a:hover, .plate .text .see a:focus-visible{ opacity:1; }
+.wall-foot{ position:relative; text-align:center; padding:4vh 24px 12vh; font-size:10px; letter-spacing:.08em; opacity:.5; }
+
+/* the paper sound has its own dot, next to the ambience dot, and only appears over the wall */
+#paper{ position:fixed; right:46px; bottom:24px; z-index:1000; width:8px; height:8px; padding:0; border:none; border-radius:50%;
+  background:currentColor; color:#7A7160; opacity:0; pointer-events:none; cursor:pointer; transition:opacity .8s ease, box-shadow .8s ease; }
+#paper::after{ content:""; position:absolute; inset:-14px; }
+#paper.show{ opacity:.3; pointer-events:auto; }
+#paper.show.on{ opacity:.85; box-shadow:0 0 6px currentColor; }
+
 .wall-zoom{ position:fixed; inset:0; z-index:310; display:none; align-items:center; justify-content:center; background:rgba(5,4,8,.94); cursor:zoom-out; padding:4vh 4vw; }
 .wall-zoom.open{ display:flex; }
 .wall-zoom img{ max-width:100%; max-height:100%; object-fit:contain; }
-@media (prefers-reduced-motion: reduce){ .wall, .wall-glow, .piece img, .piece figcaption{ transition:none; } }
-
-/* ---- the wall, as an issue ---- */
-.mag{ position:relative; }
-.mag-cover{ position:relative; min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:14vh 24px 10vh; }
-.mag-issue{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:#9c98a8; }
-.mag-title{ margin:22px 0 0; font-family:'Fraunces',serif; font-weight:300; text-transform:uppercase;
-  font-size:clamp(46px,13vw,168px); line-height:.95; letter-spacing:.06em; }
-.mag-dek{ margin:22px 0 0; font-family:'Fraunces',serif; font-style:italic; font-size:clamp(15px,2vw,19px); color:#cfcad9; }
-.mag-rule{ width:min(420px,70vw); height:1px; background:rgba(255,255,255,.16); margin:44px 0 26px; }
-.mag-toc{ list-style:none; margin:0; padding:0; display:grid; gap:8px; text-align:left; }
-.mag-toc button{ display:flex; gap:18px; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:11px;
-  letter-spacing:.1em; text-transform:uppercase; color:#9c98a8; padding:2px 0; transition:color .3s ease; }
-.mag-toc button:hover, .mag-toc button:focus-visible{ color:#EDEAF2; }
-.mag-toc .tn{ opacity:.55; min-width:2ch; }
-
-.spread{ position:relative; max-width:1200px; margin:0 auto; padding:14vh 5vw;
-  display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:6vw; align-items:center; }
-.spread.flip .frame{ order:2; }
-.spread .frame{ margin:0; cursor:zoom-in; }
-.spread .frame img{ display:block; width:100%; height:auto; box-shadow:0 30px 60px rgba(0,0,0,.55);
-  outline:1px solid rgba(255,255,255,.08); }
-.spread .text .no{ font-family:'Fraunces',serif; font-style:italic; font-size:clamp(48px,7vw,84px); line-height:1; color:rgba(237,234,242,.22); }
-.spread .kicker{ margin-top:14px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#9c98a8; }
-.spread h3{ margin:10px 0 0; font-family:'Fraunces',serif; font-weight:400; font-size:clamp(28px,4vw,50px); line-height:1.08; letter-spacing:.01em; }
-.spread .deck{ margin:14px 0 0; font-family:'Fraunces',serif; font-style:italic; font-size:clamp(16px,1.6vw,19px); line-height:1.5; color:#cfcad9; }
-.spread .body{ margin-top:22px; padding-top:22px; border-top:1px solid rgba(255,255,255,.12); }
-.spread .body p{ margin:0 0 14px; font-family:'Archivo',sans-serif; font-size:15px; line-height:1.75; color:#b9b5c4; }
-.spread .body p:first-child::first-letter{ float:left; font-family:'Fraunces',serif; font-size:3.3em; line-height:.85; padding:6px 10px 0 0; color:#EDEAF2; }
-.spread .credit{ margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#7d7989; line-height:1.6; }
-.spread .see{ margin-top:18px; display:flex; flex-wrap:wrap; gap:6px 16px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; }
-.spread .see span{ color:#7d7989; }
-.spread .see a{ color:#9c98a8; border-bottom:1px solid rgba(255,255,255,.14); transition:color .3s ease; cursor:pointer; }
-.spread .see a:hover, .spread .see a:focus-visible{ color:#EDEAF2; }
-.mag-run-head{ text-align:center; padding:10vh 24px 0; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#9c98a8; }
-.piece .pn{ font-family:'JetBrains Mono',monospace; font-style:normal; font-size:10px; letter-spacing:.1em; color:#7d7989; margin-right:10px; }
-.reveal{ opacity:0; transform:translateY(18px); transition:opacity .9s var(--ease), transform .9s var(--ease); }
-.reveal.in{ opacity:1; transform:none; }
 @media (max-width:820px){
-  .spread{ grid-template-columns:1fr; gap:34px; padding:10vh 6vw; }
-  .spread.flip .frame{ order:0; }
+  .plate.story{ grid-template-columns:1fr; gap:34px; padding:10vh 6vw; }
+  .plate.story.flip figure{ order:0; }
 }
-@media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
-
-/* ---- cover + inserts ---- */
-.mag-title{ font-size:clamp(40px,10vw,120px); margin-top:14px; }
-.cover-stage{ position:relative; display:block; width:min(80vw,440px); height:min(54vh,540px); margin-top:30px; cursor:pointer; }
-.cover-stage .ci{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 1.4s ease;
-  filter:drop-shadow(0 30px 40px rgba(0,0,0,.55)); }
-.cover-stage .ci.show{ opacity:1; }
-.cover-line{ margin-top:20px; min-height:14px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#9c98a8; transition:opacity .5s ease; }
-.mag .mag-dek{ margin-top:14px; }
-.mag-contents{ display:flex; flex-direction:column; align-items:center; gap:22px; padding:8vh 24px 4vh; }
-.insert-wrap{ display:flex; justify-content:center; padding:10vh 6vw; }
-.insert{ width:min(var(--w,320px),80vw); margin:0; cursor:zoom-in; transform:rotate(-1.2deg); }
-.insert:nth-of-type(even){ transform:rotate(1deg); }
-.insert .kicker{ margin-bottom:12px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#9c98a8; text-align:center; }
-.insert img{ display:block; width:100%; height:auto; padding:10px; background:#EDEAF2; box-shadow:0 30px 60px rgba(0,0,0,.55); }
-.insert figcaption{ margin-top:14px; text-align:center; }
-.insert .t{ font-family:'Fraunces',serif; font-style:italic; font-size:15px; }
-.insert .n{ margin-top:4px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#9c98a8; line-height:1.5; }
-@media (prefers-reduced-motion: reduce){ .cover-stage .ci{ transition:none; } }
-
-/* ---- the wall is now part of the scroll, not an overlay ---- */
-.wall{ position:relative; inset:auto; z-index:2; overflow:visible; background:none; -webkit-backdrop-filter:none; backdrop-filter:none;
-  opacity:1; pointer-events:auto; transition:none; color:#EDEAF2; }
-.wall-fade-in{ height:45vh; background:linear-gradient(180deg, rgba(9,8,12,0), #09080C); }
-.wall-fade-out{ height:32vh; background:linear-gradient(0deg, rgba(9,8,12,0), #09080C); }
-.wall-body{ position:relative; background:#09080C; }
-.wall-glow{ position:sticky; top:0; inset:auto; height:100vh; margin-bottom:-100vh; z-index:0; }
-.wall-body .mag, .wall-body .wall-foot{ position:relative; z-index:1; }
-.mag-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
-.wordmark-nav, .nav-right, .bag-btn, .mag-btn{ transition:color .5s ease; }
-body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body.on-dark .mag-btn{ color:#EDEAF2; }
+@media (max-width:640px){
+  .pair{ flex-direction:column; align-items:center; gap:28px; }
+  .pair figure:nth-child(2){ margin-bottom:0; }
+  .pair figure img{ width:min(calc(var(--w) * 1px), 78vw, calc(36svh * var(--ar))); }
+  .plate.l, .plate.r{ justify-content:center; padding-left:6vw; padding-right:6vw; }
+}
 </style>
 </head>
 <body>
@@ -720,7 +666,7 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
-  <div class="nav-right"><a class="mag-btn" id="mag-open" href="magazine.html" aria-label="Open the magazine">Magazine</a><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
+  <div class="nav-right"><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
 </nav>
 
 <section class="arrival" id="arrival">
@@ -753,26 +699,14 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body
 
 <div class="field-outro">that's the drop — for now</div>
 
-<section class="wall" id="wall" aria-label="The wall — Issue 01">
-  <div class="wall-fade-in" aria-hidden="true"></div>
-  <div class="wall-body">
-    <div class="wall-glow" id="wall-glow" aria-hidden="true"></div>
-    <div class="mag" id="wall-hang">
-    <header class="mag-cover" id="mag-cover">
-      <div class="mag-issue">Manifest · Issue 01</div>
-      <h2 class="mag-title">The Wall</h2>
-      <button class="cover-stage" id="cover-stage" type="button" aria-label="Go to the cover plate"><img class="ci" alt=""><img class="ci" alt=""></button>
-      <div class="cover-line" id="cover-line"></div>
-      <p class="mag-dek">what we're looking at · not in the catalog</p>
-    </header>
-    <section class="mag-contents">
-      <div class="mag-issue">Contents</div>
-      <ol class="mag-toc" id="mag-toc"></ol>
-    </section>
-  </div>
+<section class="wall" id="wall" aria-label="The wall">
+  <div class="wall-fade-in" id="wall-fade-in" aria-hidden="true"></div>
+  <div class="wall-body" id="wall-body">
+    <div class="wall-lead">Nothing here is explained. These are the traces.</div>
+    <div id="wall-book"></div>
     <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
   </div>
-  <div class="wall-fade-out" aria-hidden="true"></div>
+  <div class="wall-fade-out" id="wall-fade-out" aria-hidden="true"></div>
 </section>
 
 <div class="pending-toggle">
@@ -1790,185 +1724,140 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 
 <script>
 (function(){
-  // Each piece is a plate. Pieces with a `story` run as full spreads; the rest
-  // hang as plates. `see` links a plate to others by id.
-  // CONFIRM (Lufuno): every claim in the stories below is yours, not verified here.
-  // INSERTS: a tipped-in card between spreads. Add with insert:true, e.g.
-  //   { id:'tyler-supreme', insert:true, src:'assets/wall-tyler-supreme.jpg', t:'Title', n:'credit \u00b7 source', w:320, tint:'#8a8a94' }
-  // Optional: kicker:'Insert', cover:false (keeps it out of the cover rotation).
-  const PIECES = [
-    { id:'keef', src:'assets/wall-keef-box-logo.jpg', t:'Box Logo, Doubled', n:'Chief Keef in Supreme · photographer unattributed', w:400, dy:10, tint:'#d8384a',
-      kicker:'Lead story',
-      deck:'Chief Keef, twice over, in a box logo that never shipped.',
-      story:[
-        "As Manifest has it, this is an unreleased Supreme box logo, by Virgil \u2014 and the shoot around it wasn\u2019t a session so much as a project. Virgil is Virgil: the hand behind much of what hangs on this wall, rarely the one in front of it.",
-        "Pull the frame outward and it lands in Toronto \u2014 the 6, which is Drake\u2019s name for his city \u2014 and in the summer people still just call Summer Sixteen: the tour, the plane, the diss.",
-        "Around then Drake was also putting his weight behind 21 Savage, and the circle he built, October\u2019s Very Own, hasn\u2019t gone anywhere. It\u2019s still OVO now. Keep following the thread and it runs through the owls on this wall."
-      ],
-      see:['virgil','six','owl-camo'] },
-    { id:'virgil', src:'assets/wall-virgil-chillidays.jpg', t:'Cracked Glass', n:'Virgil Abloh \u00b7 \u201ccentered, hopeful & thankful AF\u201d \u00b7 receipts c/o @chilldays', w:340, dy:10, tint:'#8a93a0',
-      kicker:'Reference',
-      deck:'Virgil is Virgil.',
-      story:[
-        "The same name that stands behind the unreleased box logo in the lead story, shown the way it reached Manifest: cracked glass, and a caption \u2014 \u201ccentered, hopeful & thankful AF\u201d \u2014 via @chilldays."
-      ],
-      see:['keef'] },
-    { id:'six', src:'assets/wall-six.jpg', t:'6', n:'one glyph, no explanation \u00b7 source unattributed', w:300, dy:20, tint:'#9aa0a6',
-      kicker:'Glyph',
-      deck:'One glyph, no explanation.',
-      story:[
-        "In Toronto it doesn\u2019t need one. The 6 is Drake\u2019s shorthand for the city \u2014 the same 6 the Box Logo frame points toward."
-      ],
-      see:['keef'] },
-    { id:'owl-camo', src:'assets/wall-ovo-owl-camo.jpg', t:'OVO Owl \u2014 Camo', n:'gold, camo pav\u00e9, V-O eyes \u00b7 source unattributed', w:300, dy:60, tint:'#b8a24a',
-      kicker:'The owl',
-      deck:'A pendant worn like a membership.',
-      story:[
-        "The owl is OVO \u2014 October\u2019s Very Own, Drake\u2019s label and the circle that formed around it. This one is gold and camo pav\u00e9, V-O in the eyes.",
-        "Chains are where the owl travels now. When you see them on a neck today, Lil Yachty is part of the picture: he\u2019s easy inside that circle. The pieces that follow are the same bird in other stones."
-      ],
-      see:['keef'] },
-    { id:'owl-ice',  src:'assets/wall-ovo-owl-ice.jpg',   t:'OVO Owl \u2014 Ice',       n:'ice-blue pav\u00e9, engraved back \u00b7 source unattributed',     w:380, dy:80,  tint:'#6fd0d8' },
-    { id:'owl-pair', src:'assets/wall-ovo-owl-pair.jpg',  t:'OVO Owl \u2014 Pair',      n:'two owls, two chains \u00b7 source unattributed',             w:340, dy:120, tint:'#2a7f9c' },
-    { id:'owl-story',src:'assets/wall-ovo-owl-story.jpg', t:'OVO Owl \u2014 Story',     n:'seen via @jmanziel2 on Instagram',                       w:280, dy:70,  tint:'#aab4c0' },
-    { id:'owl-rose', src:'assets/wall-ovo-owl-rosegold.jpg', t:'OVO Owl \u2014 Rose Gold', n:'rose gold and white pav\u00e9, marquise perch \u00b7 watermark reads Iceman Nick', w:400, dy:40, tint:'#d9a074' },
-    { id:'owl-concrete', src:'assets/wall-ovo-owl-concrete.jpg', t:'OVO Owl \u2014 Concrete',  n:'baguette-set owl over two more pendants, held in hand \u00b7 source unattributed', w:300, dy:90, tint:'#aab4c0' },
-    { id:'owl-pink', src:'assets/wall-ovo-owl-pink.jpg',     t:'OVO Owl \u2014 Pink',      n:'pink pav\u00e9, white-stone eyes \u00b7 source unattributed',      w:300, dy:20, tint:'#d94fa8' },
-    { id:'owl-cuban',src:'assets/wall-ovo-owl-cuban.jpg',    t:'OVO Owl \u2014 Cuban',     n:'white pav\u00e9 on a pav\u00e9 Cuban link \u00b7 source unattributed',  w:380, dy:70, tint:'#c9ccd2' },
-    { id:'red',      src:'assets/wall-three-in-red.jpg',  t:'Three in Red',        n:'lip gloss, horns, one red field \u00b7 artist unattributed', w:520, dy:0,   tint:'#e0202c' },
-    { id:'skulls',   src:'assets/wall-skulls-tee.jpg',    t:'Skulls, Powder Bleach', n:'Number (N)ine tee \u00b7 source unattributed',              w:300, dy:30,  tint:'#8a8a94' }
-  ];
-  const wall = document.getElementById('wall'), hang = document.getElementById('wall-hang'),
-        glow = document.getElementById('wall-glow'), zoom = document.getElementById('wall-zoom'),
-        zimg = zoom.querySelector('img');
-  let built = false, wallInView = false;
-  const pad = i => String(i + 1).padStart(2, '0');
-  const showZoom = p => { zimg.src = p.src; zimg.alt = p.t; zoom.classList.add('open'); };
-  const jumpTo = id => { const el = document.getElementById('plate-' + id); if (el) el.scrollIntoView({ behavior:'smooth', block:'start' }); };
-  function build(){
-    if (built) return; built = true;
-    const toc = document.getElementById('mag-toc');
-    const byId = {};
-    let plateN = 0;
-    PIECES.forEach(p => { p.no = p.insert ? '+' : String(++plateN).padStart(2, '0'); byId[p.id] = p; });
+  /* THE WALL — one continuous book inside the page. Plates, in order. `bg` is each image's own edge colour;
+     the room becomes it as you arrive. A group with two ids is a diptych. A plate in STORY gets its text beside it.
+     To add a plate: drop the image in /assets, add a line to PLATES, put its id in BOOK where it belongs. */
+  const PLATES = [{"id": "ev01", "file": "assets/wall-ev-01.jpg", "cap": "Handwritten note, signed Virgil. ©2017.", "src": "Source unknown", "bg": [210, 210, 210], "w": 750, "h": 748}, {"id": "ev02", "file": "assets/wall-ev-02.jpg", "cap": "Quote attributed to Virgil Abloh, printed on tan fabric.", "src": "Source unknown", "bg": [148, 135, 112], "w": 736, "h": 981}, {"id": "ev03", "file": "assets/wall-ev-03.jpg", "cap": "Polaroid, “Cutting Room Floor.” Virgil ©2018.", "src": "Source unknown", "bg": [219, 215, 212], "w": 1024, "h": 780}, {"id": "ev04", "file": "assets/wall-ev-04.jpg", "cap": "Back print: “You actually fell in love with an image.”", "src": "Source unknown", "bg": [105, 105, 105], "w": 1179, "h": 2012}, {"id": "ev05", "file": "assets/wall-ev-05.jpg", "cap": "Portrait.", "src": "Source unknown", "bg": [179, 175, 172], "w": 620, "h": 775}, {"id": "ev06", "file": "assets/wall-ev-06.jpg", "cap": "Tee with Swoosh and “LOGO.”", "src": "Source unknown", "bg": [169, 163, 161], "w": 828, "h": 948}, {"id": "ev07", "file": "assets/wall-ev-07.jpg", "cap": "Tulle above, sneakers on the floor.", "src": "Source unknown", "bg": [124, 119, 116], "w": 988, "h": 1200}, {"id": "ev08", "file": "assets/wall-ev-08.jpg", "cap": "Monogram trunk panel.", "src": "Source unknown", "bg": [94, 78, 67], "w": 900, "h": 1600}, {"id": "ev09", "file": "assets/wall-ev-09.jpg", "cap": "Off-White™ print. Credited: Virgil Abloh, A$AP Rocky.", "src": "Source unknown", "bg": [237, 233, 229], "w": 1200, "h": 1461}, {"id": "ev10", "file": "assets/wall-ev-10.jpg", "cap": "October’s Very Own.", "src": "Source unknown", "bg": [5, 5, 5], "w": 736, "h": 1308}, {"id": "ev11", "file": "assets/wall-ev-11.jpg", "cap": "OVO crew. Black and white.", "src": "Source unknown", "bg": [80, 80, 80], "w": 841, "h": 1024}, {"id": "ev12", "file": "assets/wall-ev-12.jpg", "cap": "Owl hoodie. Black and white.", "src": "Source unknown", "bg": [105, 105, 105], "w": 736, "h": 920}, {"id": "ev13", "file": "assets/wall-ev-13.jpg", "cap": "Embroidered souvenir jacket.", "src": "Source unknown", "bg": [124, 123, 123], "w": 965, "h": 1200}, {"id": "ev14", "file": "assets/wall-ev-14.jpg", "cap": "Back of shirt reads “White Lives Matter.”", "src": "Source unknown", "bg": [107, 106, 102], "w": 828, "h": 1033}, {"id": "ev15", "file": "assets/wall-ev-15.jpg", "cap": "Disc artwork.", "src": "Source unknown", "bg": [231, 234, 234], "w": 700, "h": 700}, {"id": "ev16", "file": "assets/wall-ev-16.jpg", "cap": "Stage.", "src": "Source unknown", "bg": [156, 130, 111], "w": 736, "h": 981}, {"id": "ev17", "file": "assets/wall-ev-17.jpg", "cap": "Tee, back print.", "src": "Source unknown", "bg": [52, 103, 129], "w": 750, "h": 750}, {"id": "ev18", "file": "assets/wall-ev-18.jpg", "cap": "Hoodie, record-target print.", "src": "Source unknown", "bg": [123, 128, 120], "w": 828, "h": 1022}, {"id": "ev19", "file": "assets/wall-ev-19.jpg", "cap": "Sneaker wall.", "src": "Source unknown", "bg": [85, 82, 82], "w": 1200, "h": 1775}, {"id": "ev20", "file": "assets/wall-ev-20.jpg", "cap": "Illustration. Vetements cap.", "src": "Source unknown", "bg": [109, 105, 103], "w": 828, "h": 792}, {"id": "ev21", "file": "assets/wall-ev-21.jpg", "cap": "Flash photograph. Group.", "src": "Source unknown", "bg": [103, 107, 103], "w": 736, "h": 920}, {"id": "ev22", "file": "assets/wall-ev-22.jpg", "cap": "Flash photograph. Red graphic tee.", "src": "Source unknown", "bg": [164, 159, 157], "w": 1080, "h": 1350}, {"id": "ev23", "file": "assets/wall-ev-23.jpg", "cap": "Knit, mural behind.", "src": "Source unknown", "bg": [180, 146, 130], "w": 736, "h": 1181}, {"id": "ev24", "file": "assets/wall-ev-24.jpg", "cap": "Acne Studios.", "src": "Source unknown", "bg": [131, 131, 131], "w": 736, "h": 1041}, {"id": "ev25", "file": "assets/wall-ev-25.jpg", "cap": "Union Square, New York. 2014.", "src": "Source unknown", "bg": [141, 129, 110], "w": 1200, "h": 1600}, {"id": "ev26", "file": "assets/wall-ev-26.jpg", "cap": "Supreme. Repeated print.", "src": "Source unknown", "bg": [169, 146, 154], "w": 736, "h": 1336}, {"id": "ev27", "file": "assets/wall-ev-27.jpg", "cap": "Illustration. “$$$4u.”", "src": "Source unknown", "bg": [245, 237, 236], "w": 736, "h": 736}, {"id": "keef", "file": "assets/wall-keef-box-logo.jpg", "cap": "Chief Keef, twice, in a Supreme box logo.", "src": "Photographer unattributed", "bg": [204, 197, 203], "w": 547, "h": 365}, {"id": "virgil", "file": "assets/wall-virgil-chillidays.jpg", "cap": "Virgil Abloh. “centered, hopeful & thankful AF”", "src": "Receipts c/o @chilldays", "bg": [71, 78, 83], "w": 570, "h": 350}, {"id": "six", "file": "assets/wall-six.jpg", "cap": "One glyph, no explanation.", "src": "Source unknown", "bg": [255, 255, 255], "w": 1000, "h": 1000}, {"id": "owl-camo", "file": "assets/wall-ovo-owl-camo.jpg", "cap": "Gold, camo pavé, V-O in the eyes.", "src": "Source unknown", "bg": [246, 243, 250], "w": 399, "h": 501}, {"id": "owl-ice", "file": "assets/wall-ovo-owl-ice.jpg", "cap": "Ice-blue pavé, engraved back.", "src": "Source unknown", "bg": [59, 65, 60], "w": 447, "h": 447}, {"id": "owl-pair", "file": "assets/wall-ovo-owl-pair.jpg", "cap": "Two owls, two chains.", "src": "Source unknown", "bg": [10, 19, 28], "w": 399, "h": 501}, {"id": "owl-story", "file": "assets/wall-ovo-owl-story.jpg", "cap": "Owl pendant, seen in an Instagram story.", "src": "@jmanziel2 on Instagram", "bg": [48, 46, 42], "w": 640, "h": 1023}, {"id": "owl-rose", "file": "assets/wall-ovo-owl-rosegold.jpg", "cap": "Rose gold and white pavé, marquise perch.", "src": "Watermark reads Iceman Nick", "bg": [15, 15, 15], "w": 1080, "h": 1080}, {"id": "owl-concrete", "file": "assets/wall-ovo-owl-concrete.jpg", "cap": "Baguette-set owl over two more pendants, held in hand.", "src": "Source unknown", "bg": [97, 79, 67], "w": 604, "h": 971}, {"id": "owl-pink", "file": "assets/wall-ovo-owl-pink.jpg", "cap": "Pink pavé, white-stone eyes.", "src": "Source unknown", "bg": [54, 45, 46], "w": 736, "h": 915}, {"id": "owl-cuban", "file": "assets/wall-ovo-owl-cuban.jpg", "cap": "White pavé on a pavé Cuban link.", "src": "Source unknown", "bg": [71, 71, 69], "w": 1080, "h": 1080}, {"id": "red", "file": "assets/wall-three-in-red.jpg", "cap": "Lip gloss, horns, one red field.", "src": "Artist unattributed", "bg": [228, 166, 170], "w": 900, "h": 666}, {"id": "skulls", "file": "assets/wall-skulls-tee.jpg", "cap": "Skulls, powder bleach. Number (N)ine tee.", "src": "Source unknown", "bg": [49, 48, 50], "w": 500, "h": 600}];
+  const STORY = {"keef": {"title": "Box Logo, Doubled", "kicker": "Feature", "deck": "Chief Keef, twice over, in a box logo that never shipped.", "story": ["As Manifest has it, this is an unreleased Supreme box logo, by Virgil — and the shoot around it wasn’t a session so much as a project. Virgil is Virgil: the hand behind much of what hangs on this wall, rarely the one in front of it.", "Pull the frame outward and it lands in Toronto — the 6, Drake’s name for his city — and in Summer Sixteen, the tour.", "The circle around him, October’s Very Own, hasn’t gone anywhere. It’s still OVO now, and the thread runs through the owls on this wall."], "see": ["virgil", "six", "owl-camo"]}, "virgil": {"title": "Cracked Glass", "kicker": "Reference", "deck": "Virgil is Virgil.", "story": ["The same name that stands behind the unreleased box logo that follows, shown the way it reached Manifest: cracked glass, and a caption — “centered, hopeful & thankful AF” — via @chilldays."], "see": ["keef"]}, "six": {"title": "6", "kicker": "Glyph", "deck": "One glyph, no explanation.", "story": ["In Toronto it doesn’t need one. The 6 is Drake’s shorthand for the city — the same 6 the Box Logo frame points toward."], "see": ["keef"]}, "owl-camo": {"title": "OVO Owl — Camo", "kicker": "The owl", "deck": "A pendant worn like a membership.", "story": ["The owl is OVO — October’s Very Own, Drake’s label and the circle that formed around it. This one is gold and camo pavé, V-O in the eyes.", "Chains are where the owl travels now. When you see them on a neck today, Lil Yachty is part of the picture: he’s easy inside that circle. The pieces that follow are the same bird in other stones."], "see": ["keef"]}};
+  const BOOK = [["ev01"], ["ev02"], ["ev03"], ["ev04"], ["ev05"], ["ev06"], ["ev07"], ["ev08"], ["ev09"], ["virgil"], ["keef"], ["ev10"], ["ev11", "ev12"], ["six"], ["owl-camo"], ["owl-ice", "owl-pair"], ["owl-story"], ["owl-rose"], ["owl-concrete", "owl-pink"], ["owl-cuban"], ["ev13", "ev14"], ["skulls"], ["ev15"], ["ev16", "ev17"], ["ev18"], ["ev19"], ["ev20"], ["ev21", "ev22"], ["red"], ["ev23"], ["ev24", "ev25"], ["ev26"], ["ev27"]];
 
-    PIECES.forEach(p => {
-      const li = document.createElement('li');
-      li.innerHTML = '<button type="button"><span class="tn">' + p.no + '</span><span>' + p.t + '</span></button>';
-      li.firstChild.addEventListener('click', () => jumpTo(p.id));
-      toc.appendChild(li);
-    });
+  const wall = document.getElementById('wall'), body = document.getElementById('wall-body'), book = document.getElementById('wall-book');
+  const fadeIn = document.getElementById('wall-fade-in'), fadeOut = document.getElementById('wall-fade-out');
+  const zoom = document.getElementById('wall-zoom'), zimg = zoom.querySelector('img');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (x,a=0,b=1) => Math.min(b, Math.max(a,x));
+  const smooth = t => t*t*(3-2*t);
+  const mix = (a,b,t) => a.map((v,i) => v + (b[i]-v)*t);
+  const rgb = c => 'rgb(' + c.map(Math.round).join(',') + ')';
+  const rgba = (c,a) => 'rgba(' + c.map(Math.round).join(',') + ',' + a + ')';
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  const DARK = [32,28,20], LIGHT = [243,238,228];
 
-    // Cover: alternates through whatever is actually in the issue.
-    const covers = PIECES.filter(p => p.cover !== false);
-    const layers = Array.from(document.querySelectorAll('#cover-stage .ci'));
-    const line = document.getElementById('cover-line');
-    let ci = 0, front = 1;
-    function setCover(k){
-      const p = covers[k], im = new Image();
-      im.onload = () => {
-        const next = layers[1 - front];
-        next.src = p.src; next.alt = p.t;
-        next.classList.add('show'); layers[front].classList.remove('show');
-        front = 1 - front; ci = k;
-        line.textContent = (p.insert ? 'Insert' : 'Plate ' + p.no) + ' \u2014 ' + p.t;
-        if (document.getElementById('mag-cover').getBoundingClientRect().bottom > window.innerHeight * 0.4) glow.style.color = p.tint;
-      };
-      im.src = p.src;
-    }
-    document.getElementById('cover-stage').addEventListener('click', () => jumpTo(covers[ci].id));
-    setCover(0);
-    if (covers.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      setInterval(() => { if (wallInView) setCover((ci + 1) % covers.length); }, 6500);
-    }
+  const byId = {}; PLATES.forEach(p => byId[p.id] = p);
+  let n = 0; BOOK.forEach(g => g.forEach(id => byId[id].no = String(++n).padStart(2,'0')));
 
-    const watch = [];
-    let run = null, spreads = 0;
-    PIECES.forEach(p => {
-      if (p.insert){
-        run = null;
-        const w = document.createElement('div'); w.className = 'insert-wrap';
-        const f = document.createElement('figure'); f.className = 'insert reveal'; f.id = 'plate-' + p.id;
-        f.style.setProperty('--w', (p.w || 320) + 'px');
-        f.innerHTML = '<div class="kicker">' + (p.kicker || 'Insert') + '</div><img src="' + p.src + '" alt="' + p.t + '" loading="lazy"><figcaption><div class="t">' + p.t + '</div><div class="n">' + p.n + '</div></figcaption>';
-        f.addEventListener('click', () => showZoom(p));
-        w.appendChild(f); hang.appendChild(w); f.dataset.tint = p.tint; watch.push(f);
-        return;
-      }
-      if (p.story){
-        run = null;
-        const a = document.createElement('article');
-        a.className = 'spread reveal' + (spreads++ % 2 ? ' flip' : '');
-        a.id = 'plate-' + p.id;
-        const see = (p.see || []).map(id => '<a data-see="' + id + '">' + byId[id].no + ' \u00b7 ' + byId[id].t + '</a>').join('');
-        a.innerHTML =
-          '<figure class="frame"><img src="' + p.src + '" alt="' + p.t + '" loading="lazy"></figure>' +
-          '<div class="text">' +
-            '<div class="no">' + p.no + '</div>' +
-            '<div class="kicker">' + (p.kicker || '') + '</div>' +
-            '<h3>' + p.t + '</h3>' +
-            '<p class="deck">' + p.deck + '</p>' +
-            '<div class="body">' + p.story.map(s => '<p>' + s + '</p>').join('') + '</div>' +
-            '<div class="credit">' + p.n + '</div>' +
-            (see ? '<div class="see"><span>see also</span>' + see + '</div>' : '') +
-          '</div>';
-        a.querySelector('.frame').addEventListener('click', () => showZoom(p));
-        hang.appendChild(a); a.dataset.tint = p.tint; watch.push(a);
-      } else {
-        if (!run){
-          const h = document.createElement('div');
-          h.className = 'mag-run-head'; h.textContent = 'Further plates';
-          hang.appendChild(h);
-          run = document.createElement('div'); run.className = 'wall-hang';
-          hang.appendChild(run);
-        }
-        const f = document.createElement('figure');
-        f.className = 'piece reveal'; f.id = 'plate-' + p.id; f.tabIndex = 0;
-        f.style.setProperty('--w', p.w + 'px'); f.style.setProperty('--dy', p.dy + 'px');
-        f.innerHTML = '<img src="' + p.src + '" alt="' + p.t + '" loading="lazy"><figcaption><div class="t"><span class="pn">' + p.no + '</span>' + p.t + '</div><div class="n">' + p.n + '</div></figcaption>';
-        f.addEventListener('click', () => showZoom(p));
-        f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showZoom(p); } });
-        run.appendChild(f); f.dataset.tint = p.tint; watch.push(f);
-      }
-    });
+  const figure = m => '<figure><img src="' + m.file + '" alt="' + esc(m.cap) + '" width="' + m.w + '" height="' + m.h + '" style="--w:' + m.w + ';--ar:' + (m.w / m.h).toFixed(4) + '" loading="lazy">' +
+    '<figcaption><span class="n">' + m.no + '</span>' + esc(m.cap) + '<span class="s">' + esc(m.src) + '</span></figcaption></figure>';
 
-    hang.addEventListener('click', e => {
-      const a = e.target.closest('a[data-see]');
-      if (a){ e.preventDefault(); jumpTo(a.dataset.see); }
-    });
-
-    // As a spread enters the room it surfaces, and the room takes on its tint.
-    if ('IntersectionObserver' in window){
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(en => {
-          if (!en.isIntersecting) return;
-          en.target.classList.add('in');
-          glow.style.color = en.target.dataset.tint;
-        });
-      }, { root: null, threshold: 0.12 });
-      watch.forEach(el => io.observe(el));
+  let storyN = 0;
+  const plates = BOOK.map((ids, i) => {
+    const sec = document.createElement('section'), st = ids.length === 1 && STORY[ids[0]];
+    sec.id = 'plate-' + ids[0];
+    if (st){
+      sec.className = 'plate story' + (storyN++ % 2 ? ' flip' : '');
+      const see = (st.see || []).map(id => '<a data-see="' + id + '">' + byId[id].no + ' · ' + esc(STORY[id].title) + '</a>').join('');
+      sec.innerHTML = figure(byId[ids[0]]) +
+        '<div class="text"><div class="kicker">' + esc(st.kicker) + '</div><h3>' + esc(st.title) + '</h3>' +
+        '<p class="deck">' + esc(st.deck) + '</p><div class="body">' + st.story.map(s => '<p>' + esc(s) + '</p>').join('') + '</div>' +
+        (see ? '<div class="see"><span>see also</span>' + see + '</div>' : '') + '</div>';
     } else {
-      watch.forEach(el => el.classList.add('in'));
+      sec.className = 'plate ' + (ids.length > 1 ? 'c' : ['c','l','r'][i % 3]);
+      const figs = ids.map(id => figure(byId[id])).join('');
+      sec.innerHTML = ids.length > 1 ? '<div class="pair">' + figs + '</div>' : figs;
     }
-  }
-  // The wall is part of the same scroll. As it approaches, the page fades toward
-  // its palette; the nav turns light while it sits over the dark.
-  const wallBody = wall.querySelector('.wall-body');
-  function navTone(){
-    const r = wallBody.getBoundingClientRect();
-    document.body.classList.toggle('on-dark', r.top < 36 && r.bottom > 36);
-  }
-  window.addEventListener('scroll', navTone, { passive:true });
-  window.addEventListener('resize', navTone);
-  if ('IntersectionObserver' in window){
-    new IntersectionObserver(en => { wallInView = en[0].isIntersecting; }, { threshold: 0 }).observe(wall);
-  }
-  zoom.addEventListener('click', () => zoom.classList.remove('open'));
-  window.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && zoom.classList.contains('open')) zoom.classList.remove('open');
+    book.appendChild(sec);
+    const cols = ids.map(id => byId[id].bg);
+    return { el:sec, ids, bg:[0,1,2].map(c => cols.reduce((a,x) => a + x[c], 0) / cols.length),
+             figs:[...sec.querySelectorAll('figure')], caps:[...sec.querySelectorAll('figcaption')], text:sec.querySelector('.text') };
   });
-  build();
-  navTone();
+  const c0 = plates[0].bg, cN = plates[plates.length-1].bg;
+  wall.style.setProperty('--wall-bg', rgb(c0));
+  fadeIn.style.background  = 'linear-gradient(180deg,' + rgba(c0,0) + ',' + rgb(c0) + ')';
+  fadeOut.style.background = 'linear-gradient(0deg,' + rgba(cN,0) + ',' + rgb(cN) + ')';
+
+  /* paper sound — synthesised, off by default, its own switch */
+  const paper = document.createElement('button');
+  paper.id = 'paper'; paper.type = 'button'; paper.setAttribute('aria-label','Toggle paper sound'); paper.setAttribute('aria-pressed','false');
+  document.body.appendChild(paper);
+  let ctx = null, master = null, soundOn = false, lastFlip = 0;
+  function noiseBuf(sec){
+    const b = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate*sec)), ctx.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random()*2 - 1;
+    return b;
+  }
+  function burst(t, dur, f0, f1, peak, q=0.9, attack=0.03){
+    const src = ctx.createBufferSource(); src.buffer = noiseBuf(dur + 0.05);
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 450;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q;
+    bp.frequency.setValueAtTime(f0, t); bp.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(hp).connect(bp).connect(g).connect(master);
+    src.start(t); src.stop(t + dur + 0.05);
+  }
+  function rustle(){
+    if (!soundOn || !ctx) return;
+    const now = performance.now(); if (now - lastFlip < 380) return; lastFlip = now;
+    const t = ctx.currentTime + 0.01, v = 0.85 + Math.random()*0.3;
+    burst(t, 0.26*v, 1300, 4600, 0.55, 0.7, 0.07);
+    for (let i = 0; i < 4; i++) burst(t + 0.17 + i*0.045 + Math.random()*0.02, 0.014, 2600 + Math.random()*2400, 3000, 0.16, 1.4, 0.003);
+    burst(t + 0.08, 0.05, 220, 160, 0.10, 0.6, 0.01);
+  }
+  paper.addEventListener('click', () => {
+    if (!ctx){ ctx = new (window.AudioContext || window.webkitAudioContext)(); master = ctx.createGain(); master.gain.value = 0.32; master.connect(ctx.destination); }
+    if (ctx.state === 'suspended') ctx.resume();
+    soundOn = !soundOn; paper.classList.toggle('on', soundOn); paper.setAttribute('aria-pressed', soundOn);
+    if (soundOn) rustle();
+  });
+
+  /* colour + presence. Continuous: no snapping, no pages. Live rects, so lazy images can't throw it off. */
+  let active = -1, queued = false;
+  function frame(){
+    queued = false;
+    const wr = wall.getBoundingClientRect(), vh = innerHeight;
+    const inView = wr.top < vh && wr.bottom > 0;
+    paper.classList.toggle('show', inView);
+    if (!inView){ document.body.classList.remove('on-dark'); return; }
+
+    const vc = vh / 2, cs = plates.map(p => { const r = p.el.getBoundingClientRect(); return r.top + r.height/2; });
+    let bg;
+    if (vc <= cs[0]) bg = plates[0].bg;
+    else if (vc >= cs[cs.length-1]) bg = plates[plates.length-1].bg;
+    else { let i = 0; while (vc > cs[i+1]) i++; bg = mix(plates[i].bg, plates[i+1].bg, smooth((vc - cs[i]) / (cs[i+1] - cs[i]))); }
+    const lum = (0.2126*bg[0] + 0.7152*bg[1] + 0.0722*bg[2]) / 255;
+    const fg = mix(LIGHT, DARK, smooth(clamp((lum - 0.40) / 0.18)));
+    wall.style.setProperty('--wall-bg', rgb(bg));
+    wall.style.setProperty('--wall-fg', rgb(fg));
+    wall.style.setProperty('--wall-line', rgba(fg, 0.18));
+    paper.style.color = rgb(fg);
+    const br = body.getBoundingClientRect();
+    document.body.classList.toggle('on-dark', br.top < 36 && br.bottom > 36 && lum < 0.45);
+
+    let nearest = 0, nd = Infinity;
+    plates.forEach((p, i) => {
+      const off = vc - cs[i], d = Math.abs(off);
+      if (d < nd){ nd = d; nearest = i; }
+      const pres = smooth(clamp(1 - d / (vh * 0.85))), cap = smooth(clamp((pres - 0.45) / 0.4)), dy = reduce ? 0 : -off * 0.05;
+      p.figs.forEach((f, k) => { f.style.opacity = pres.toFixed(3); f.style.transform = 'translate3d(0,' + (dy * (k ? 1.25 : 1)).toFixed(1) + 'px,0)'; });
+      p.caps.forEach(c => c.style.opacity = cap.toFixed(3));
+      if (p.text){ p.text.style.opacity = cap.toFixed(3); p.text.style.transform = 'translate3d(0,' + dy.toFixed(1) + 'px,0)'; }
+    });
+    if (nearest !== active){ const first = active === -1; active = nearest; if (!first) rustle(); }
+  }
+  const request = () => { if (!queued){ queued = true; requestAnimationFrame(frame); } };
+  addEventListener('scroll', request, { passive:true });
+  addEventListener('resize', request);
+  addEventListener('load', request);
+
+  book.addEventListener('click', e => {
+    const a = e.target.closest('a[data-see]');
+    if (a){ const t = document.getElementById('plate-' + a.dataset.see); if (t) t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'center' }); return; }
+    const im = e.target.closest('figure img');
+    if (im){ zimg.src = im.currentSrc || im.src; zimg.alt = im.alt; zoom.classList.add('open'); }
+  });
+  zoom.addEventListener('click', () => zoom.classList.remove('open'));
+  addEventListener('keydown', e => { if (e.key === 'Escape') zoom.classList.remove('open'); });
+  request();
 })();
 </script>
 </body>
