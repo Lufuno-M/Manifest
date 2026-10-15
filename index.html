@@ -175,23 +175,6 @@
     font-size:15px; line-height:1.6; color:#3A382F; margin:0;
   }
 
-  .field-search{
-    position:relative; z-index:2;
-    max-width:340px; margin:0 auto 6vh; padding:0 24px;
-    text-align:center;
-  }
-  .field-search input{
-    width:100%;
-    font-family:'JetBrains Mono', monospace;
-    font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
-    color:var(--ink); background:transparent;
-    border:none; border-bottom:1px solid var(--hairline);
-    padding:8px 2px; text-align:center;
-    transition: border-color 0.4s ease;
-  }
-  .field-search input::placeholder{ color:var(--ink-soft); opacity:0.7; }
-  .field-search input:focus{ border-bottom-color:var(--ink-soft); }
-
   .field{ position:relative; z-index:2; }
 
   .field-obj{
@@ -541,9 +524,58 @@
 
 /* ---- nav ---- */
 .nav-right{ display:flex; align-items:center; gap:18px; }
-.bag-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
-.wordmark-nav, .nav-right, .bag-btn{ transition:color .5s ease; }
-body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ color:#EDEAF2; }
+.bag-btn, .nav-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
+.wordmark-nav, .nav-right, .bag-btn, .nav-btn{ transition:color .5s ease; }
+body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body.on-dark .nav-btn{ color:#EDEAF2; }
+
+/* permanent search, always in the nav. The field opens inline, left of the button. */
+.nav-search{ display:flex; align-items:center; gap:10px; }
+.nav-search input{
+  width:0; opacity:0; padding:4px 0; border:none; border-bottom:1px solid var(--hairline);
+  background:transparent; outline:none; border-radius:0;
+  font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink);
+  transition:width .4s var(--ease), opacity .3s ease, color .5s ease;
+}
+.nav-search input::placeholder{ color:var(--ink-soft); opacity:.7; }
+.nav-search.open input{ width:clamp(120px,22vw,220px); opacity:1; }
+body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,242,.3); }
+
+/* the index: the whole catalog as a list, grouped by house, A to Z */
+.burger{ display:inline-flex; flex-direction:column; gap:4px; width:16px; padding:4px 0; }
+.burger i{ display:block; height:1px; background:currentColor; }
+.index-backdrop{
+  position:fixed; inset:0; z-index:203; background:rgba(20,18,26,.45);
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  opacity:0; pointer-events:none; transition:opacity .35s var(--ease);
+}
+.index-backdrop.open{ opacity:1; pointer-events:auto; }
+.index{
+  position:fixed; top:0; left:0; bottom:0; z-index:204; width:min(440px,100vw);
+  background:#FCFBF8; box-shadow:20px 0 50px rgba(20,18,26,.2);
+  display:flex; flex-direction:column; padding:28px 28px 0;
+  transform:translateX(-100%); visibility:hidden;
+  transition:transform .4s var(--ease), visibility 0s .4s;
+}
+.index.open{ transform:none; visibility:visible; transition-delay:0s; }
+.index-head{ display:flex; justify-content:space-between; align-items:center; padding-bottom:16px; border-bottom:1px solid var(--hairline); }
+.index-list{ flex:1; overflow-y:auto; padding-bottom:40px; overscroll-behavior:contain; }
+.index-house{
+  margin:26px 0 6px; font:400 10px/1 'JetBrains Mono',monospace;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft);
+}
+.index-row{
+  display:flex; align-items:center; gap:14px; width:100%; padding:9px 0;
+  text-align:left; border-bottom:1px solid var(--hairline);
+}
+.index-row img{ width:40px; height:40px; object-fit:contain; flex:none; }
+.index-row .n{ flex:1; font-family:'Fraunces',serif; font-size:15px; color:var(--ink); }
+.index-row .c{ font:400 9px 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); }
+.index-row:hover .n{ text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--ink-soft); }
+
+@media (max-width:640px){
+  #field-count{ display:none; }
+  .nav-right{ gap:14px; }
+}
 
 /* ---- the wall: one continuous book, part of the same scroll ----
    The room is never a fixed colour. It is always the blend of the images it sits between,
@@ -557,8 +589,6 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ colo
 .wall-lead{ position:relative; padding:12vh 24px 2vh; text-align:center; font:italic 400 15px/1.6 'Fraunces',serif; opacity:.8; }
 
 .plate{ position:relative; display:flex; align-items:center; justify-content:center; padding:11vh 6vw; }
-.plate.l{ justify-content:flex-start; padding-left:clamp(24px,13vw,220px); }
-.plate.r{ justify-content:flex-end; padding-right:clamp(24px,13vw,220px); }
 .pair{ display:flex; gap:clamp(16px,4vw,60px); align-items:flex-end; justify-content:center; }
 .pair figure:nth-child(2){ margin-bottom:6vh; }
 .plate figure{ margin:0; opacity:0; will-change:transform, opacity; }
@@ -569,13 +599,16 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ colo
   mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent), linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
   mask-composite:intersect; }
 .pair figure img{ width:min(calc(var(--w) * 1px), 42vw, 430px, calc(62svh * var(--ar))); }
-.plate figcaption{ margin-top:14px; font-size:10px; letter-spacing:.06em; line-height:1.6; opacity:0; max-width:34ch; }
+.plate figcaption{ margin-top:14px; font-size:11px; letter-spacing:.06em; line-height:1.6; opacity:0; max-width:34ch; }
 .plate figcaption .n{ display:block; opacity:.5; letter-spacing:.14em; margin-bottom:2px; }
 .plate figcaption .s{ display:block; opacity:.55; }
 
-/* a plate with a story: the image and its text share one spread */
+/* every single plate is a spread: the image and its text share the page.
+   Plates with a written story use .story; the rest use .note, where the text column
+   carries the plate number, the caption set large, and the source. */
 .plate.story{ display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:6vw; align-items:center; max-width:1200px; margin:0 auto; padding:12vh 5vw; }
 .plate.story.flip figure{ order:2; }
+.plate.story figure{ justify-self:center; }
 .plate.story figure img{ width:min(calc(var(--w) * 1px), 100%, calc(68svh * var(--ar))); }
 .plate .text{ opacity:0; will-change:transform, opacity; font-family:'Archivo',sans-serif; }
 .plate .text .kicker{ font:400 10px/1 'JetBrains Mono',monospace; letter-spacing:.2em; text-transform:uppercase; opacity:.55; }
@@ -588,6 +621,12 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ colo
 .plate .text .see span{ opacity:.5; }
 .plate .text .see a{ opacity:.75; border-bottom:1px solid var(--wall-line); cursor:pointer; }
 .plate .text .see a:hover, .plate .text .see a:focus-visible{ opacity:1; }
+
+.plate.note .text .ghost{ font:300 clamp(96px,15vw,210px)/.8 'Fraunces',serif; letter-spacing:-.03em; opacity:.1; margin-left:-.04em; user-select:none; }
+.plate.note .text .kicker{ margin-top:22px; }
+.plate.note .text .note-cap{ margin:16px 0 0; font:italic 400 clamp(20px,2.3vw,30px)/1.3 'Fraunces',serif; opacity:.88; }
+.plate.note .text .note-src{ margin-top:22px; padding-top:18px; border-top:1px solid var(--wall-line); font:400 10px/1.6 'JetBrains Mono',monospace; letter-spacing:.14em; text-transform:uppercase; opacity:.55; }
+
 .wall-foot{ position:relative; text-align:center; padding:4vh 24px 12vh; font-size:10px; letter-spacing:.08em; opacity:.5; }
 
 /* the paper sound has its own dot, next to the ambience dot, and only appears over the wall */
@@ -608,7 +647,6 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ colo
   .pair{ flex-direction:column; align-items:center; gap:28px; }
   .pair figure:nth-child(2){ margin-bottom:0; }
   .pair figure img{ width:min(calc(var(--w) * 1px), 78vw, calc(36svh * var(--ar))); }
-  .plate.l, .plate.r{ justify-content:center; padding-left:6vw; padding-right:6vw; }
 }
 </style>
 </head>
@@ -666,7 +704,15 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ colo
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
-  <div class="nav-right"><button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button><span id="field-count">— objects</span></div>
+  <div class="nav-right">
+    <div class="nav-search" id="nav-search">
+      <input type="text" id="field-search-input" placeholder="name, house, category" autocomplete="off" aria-label="Search the archive by name, house, or category">
+      <button class="nav-btn" id="search-toggle" type="button" aria-expanded="false">Search</button>
+    </div>
+    <button class="nav-btn" id="index-open" type="button" aria-label="Open index"><span class="burger"><i></i><i></i><i></i></span></button>
+    <button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button>
+    <span id="field-count">— objects</span>
+  </div>
 </nav>
 
 <section class="arrival" id="arrival">
@@ -686,11 +732,7 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ colo
 </section>
 
 <section class="field-note">
-  <p>nothing's sorted. stay a minute — the room clocks where you've been.</p>
-</section>
-
-<section class="field-search">
-  <input type="text" id="field-search-input" placeholder="search the archive" autocomplete="off" aria-label="Search the catalog by name, maker, or category">
+  <p>shuffled fresh every visit. hold still near an object and the room answers in color.</p>
 </section>
 
 <section class="field" id="field">
@@ -768,6 +810,15 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn{ colo
     </div>
     <div class="bag-msg" id="bag-msg"></div>
   </div>
+</aside>
+
+<div class="index-backdrop" id="index-backdrop"></div>
+<aside class="index" id="index" aria-label="Index">
+  <div class="index-head">
+    <span class="eyebrow">Index · <span id="index-count"></span></span>
+    <button class="eyebrow" id="index-close" type="button">Close ✕</button>
+  </div>
+  <div class="index-list" id="index-list"></div>
 </aside>
 
 <div class="pay-sheet-backdrop" id="pay-backdrop"></div>
@@ -1135,20 +1186,78 @@ wells.forEach((w, i) => {
   w.neighbor = best;
 });
 
-document.getElementById('field-search-input').addEventListener('input', function(){
-  const q = this.value.trim().toLowerCase();
-  let visibleCount = 0;
+/* ---- search + index ----
+   One filter drives both the floating field and the index list. */
+const matches = (o, q) => !q
+  || o.name.toLowerCase().includes(q)
+  || o.maker.toLowerCase().includes(q)
+  || o.category.toLowerCase().includes(q);
+
+// Index: grouped by house, alphabetical by house, then by name.
+// Collabs ("Nike × Supreme") sit under their full credit line.
+const indexListEl = document.getElementById('index-list');
+const indexSorted = [...OBJECTS].sort((a, b) =>
+  a.maker.localeCompare(b.maker) || a.name.localeCompare(b.name));
+function paintIndex(q){
+  const list = q ? indexSorted.filter(o => matches(o, q)) : indexSorted;
+  let html = '', last = null;
+  list.forEach(o => {
+    if (o.maker !== last){ html += `<div class="index-house">${o.maker}</div>`; last = o.maker; }
+    html += `<button type="button" class="index-row" data-id="${o.id}"><img src="${o.asset}" alt="" loading="lazy"><span class="n">${o.name}</span><span class="c">${o.category}</span></button>`;
+  });
+  indexListEl.innerHTML = html || '<div class="bag-empty">Nothing matches.</div>';
+  document.getElementById('index-count').textContent = String(list.length).padStart(2, '0');
+}
+
+function applyFilter(q){
+  let visible = 0;
   wells.forEach(w => {
-    const match = !q
-      || w.obj.name.toLowerCase().includes(q)
-      || w.obj.maker.toLowerCase().includes(q)
-      || w.obj.category.toLowerCase().includes(q);
-    w.el.style.display = match ? '' : 'none';
-    if (match) visibleCount++;
+    const m = matches(w.obj, q);
+    w.el.style.display = m ? '' : 'none';
+    if (m) visible++;
   });
   document.getElementById('field-count').textContent =
-    q ? (String(visibleCount).padStart(2,'0') + ' matching')
-      : (String(OBJECTS.length).padStart(2,'0') + ' objects');
+    q ? String(visible).padStart(2, '0') + ' matching'
+      : String(OBJECTS.length).padStart(2, '0') + ' objects';
+  paintIndex(q);
+}
+paintIndex('');
+
+const navSearch = document.getElementById('nav-search');
+const searchToggle = document.getElementById('search-toggle');
+const searchInput = document.getElementById('field-search-input');
+searchInput.addEventListener('input', () => applyFilter(searchInput.value.trim().toLowerCase()));
+searchToggle.addEventListener('click', () => {
+  const open = navSearch.classList.toggle('open');
+  searchToggle.setAttribute('aria-expanded', open);
+  if (open){ searchInput.focus(); }
+  else { searchInput.value = ''; applyFilter(''); }
+});
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && navSearch.classList.contains('open')) searchToggle.click();
+});
+
+const indexEl = document.getElementById('index');
+const indexBack = document.getElementById('index-backdrop');
+function openIndex(){
+  indexEl.classList.add('open'); indexBack.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeIndex(){
+  indexEl.classList.remove('open'); indexBack.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('index-open').addEventListener('click', openIndex);
+document.getElementById('index-close').addEventListener('click', closeIndex);
+indexBack.addEventListener('click', closeIndex);
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && indexEl.classList.contains('open')) closeIndex();
+});
+indexListEl.addEventListener('click', e => {
+  const row = e.target.closest('.index-row');
+  if (!row) return;
+  closeIndex();
+  window.openRecordById(row.dataset.id);
 });
 
 // Reference prices in OBJECTS stay USD. Display-only conversion below.
@@ -1498,6 +1607,12 @@ function formatRecognizedValue(usdPrice){
     const o = OBJECTS.find(x => x.id === el.dataset.id);
     if (o) openRecord(o);
   });
+
+  // Lets the index (and anything else outside this scope) open a record by id.
+  window.openRecordById = (id) => {
+    const o = OBJECTS.find(x => x.id === id);
+    if (o) openRecord(o);
+  };
 })();
 
 document.getElementById('pending-btn').addEventListener('click', function(){
@@ -1725,7 +1840,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 <script>
 (function(){
   /* THE WALL — one continuous book inside the page. Plates, in order. `bg` is each image's own edge colour;
-     the room becomes it as you arrive. A group with two ids is a diptych. A plate in STORY gets its text beside it.
+     the room becomes it as you arrive. A group with two ids is a diptych. A plate in STORY gets its written text beside it;
+     every other single plate gets a spread too (plate number, caption set large, source), so no plate sits alone.
      To add a plate: drop the image in /assets, add a line to PLATES, put its id in BOOK where it belongs. */
   const PLATES = [{"id": "ev01", "file": "assets/wall-ev-01.jpg", "cap": "Handwritten note, signed Virgil. ©2017.", "src": "Source unknown", "bg": [210, 210, 210], "w": 750, "h": 748}, {"id": "ev02", "file": "assets/wall-ev-02.jpg", "cap": "Quote attributed to Virgil Abloh, printed on tan fabric.", "src": "Source unknown", "bg": [148, 135, 112], "w": 736, "h": 981}, {"id": "ev03", "file": "assets/wall-ev-03.jpg", "cap": "Polaroid, “Cutting Room Floor.” Virgil ©2018.", "src": "Source unknown", "bg": [219, 215, 212], "w": 1024, "h": 780}, {"id": "ev04", "file": "assets/wall-ev-04.jpg", "cap": "Back print: “You actually fell in love with an image.”", "src": "Source unknown", "bg": [105, 105, 105], "w": 1179, "h": 2012}, {"id": "ev05", "file": "assets/wall-ev-05.jpg", "cap": "Portrait.", "src": "Source unknown", "bg": [179, 175, 172], "w": 620, "h": 775}, {"id": "ev06", "file": "assets/wall-ev-06.jpg", "cap": "Tee with Swoosh and “LOGO.”", "src": "Source unknown", "bg": [169, 163, 161], "w": 828, "h": 948}, {"id": "ev07", "file": "assets/wall-ev-07.jpg", "cap": "Tulle above, sneakers on the floor.", "src": "Source unknown", "bg": [124, 119, 116], "w": 988, "h": 1200}, {"id": "ev08", "file": "assets/wall-ev-08.jpg", "cap": "Monogram trunk panel.", "src": "Source unknown", "bg": [94, 78, 67], "w": 900, "h": 1600}, {"id": "ev09", "file": "assets/wall-ev-09.jpg", "cap": "Off-White™ print. Credited: Virgil Abloh, A$AP Rocky.", "src": "Source unknown", "bg": [237, 233, 229], "w": 1200, "h": 1461}, {"id": "ev10", "file": "assets/wall-ev-10.jpg", "cap": "October’s Very Own.", "src": "Source unknown", "bg": [5, 5, 5], "w": 736, "h": 1308}, {"id": "ev11", "file": "assets/wall-ev-11.jpg", "cap": "OVO crew. Black and white.", "src": "Source unknown", "bg": [80, 80, 80], "w": 841, "h": 1024}, {"id": "ev12", "file": "assets/wall-ev-12.jpg", "cap": "Owl hoodie. Black and white.", "src": "Source unknown", "bg": [105, 105, 105], "w": 736, "h": 920}, {"id": "ev13", "file": "assets/wall-ev-13.jpg", "cap": "Embroidered souvenir jacket.", "src": "Source unknown", "bg": [124, 123, 123], "w": 965, "h": 1200}, {"id": "ev14", "file": "assets/wall-ev-14.jpg", "cap": "Back of shirt reads “White Lives Matter.”", "src": "Source unknown", "bg": [107, 106, 102], "w": 828, "h": 1033}, {"id": "ev15", "file": "assets/wall-ev-15.jpg", "cap": "Disc artwork.", "src": "Source unknown", "bg": [231, 234, 234], "w": 700, "h": 700}, {"id": "ev16", "file": "assets/wall-ev-16.jpg", "cap": "Stage.", "src": "Source unknown", "bg": [156, 130, 111], "w": 736, "h": 981}, {"id": "ev17", "file": "assets/wall-ev-17.jpg", "cap": "Tee, back print.", "src": "Source unknown", "bg": [52, 103, 129], "w": 750, "h": 750}, {"id": "ev18", "file": "assets/wall-ev-18.jpg", "cap": "Hoodie, record-target print.", "src": "Source unknown", "bg": [123, 128, 120], "w": 828, "h": 1022}, {"id": "ev19", "file": "assets/wall-ev-19.jpg", "cap": "Sneaker wall.", "src": "Source unknown", "bg": [85, 82, 82], "w": 1200, "h": 1775}, {"id": "ev20", "file": "assets/wall-ev-20.jpg", "cap": "Illustration. Vetements cap.", "src": "Source unknown", "bg": [109, 105, 103], "w": 828, "h": 792}, {"id": "ev21", "file": "assets/wall-ev-21.jpg", "cap": "Flash photograph. Group.", "src": "Source unknown", "bg": [103, 107, 103], "w": 736, "h": 920}, {"id": "ev22", "file": "assets/wall-ev-22.jpg", "cap": "Flash photograph. Red graphic tee.", "src": "Source unknown", "bg": [164, 159, 157], "w": 1080, "h": 1350}, {"id": "ev23", "file": "assets/wall-ev-23.jpg", "cap": "Knit, mural behind.", "src": "Source unknown", "bg": [180, 146, 130], "w": 736, "h": 1181}, {"id": "ev24", "file": "assets/wall-ev-24.jpg", "cap": "Acne Studios.", "src": "Source unknown", "bg": [131, 131, 131], "w": 736, "h": 1041}, {"id": "ev25", "file": "assets/wall-ev-25.jpg", "cap": "Union Square, New York. 2014.", "src": "Source unknown", "bg": [141, 129, 110], "w": 1200, "h": 1600}, {"id": "ev26", "file": "assets/wall-ev-26.jpg", "cap": "Supreme. Repeated print.", "src": "Source unknown", "bg": [169, 146, 154], "w": 736, "h": 1336}, {"id": "ev27", "file": "assets/wall-ev-27.jpg", "cap": "Illustration. “$$$4u.”", "src": "Source unknown", "bg": [245, 237, 236], "w": 736, "h": 736}, {"id": "keef", "file": "assets/wall-keef-box-logo.jpg", "cap": "Chief Keef, twice, in a Supreme box logo.", "src": "Photographer unattributed", "bg": [204, 197, 203], "w": 547, "h": 365}, {"id": "virgil", "file": "assets/wall-virgil-chillidays.jpg", "cap": "Virgil Abloh. “centered, hopeful & thankful AF”", "src": "Receipts c/o @chilldays", "bg": [71, 78, 83], "w": 570, "h": 350}, {"id": "six", "file": "assets/wall-six.jpg", "cap": "One glyph, no explanation.", "src": "Source unknown", "bg": [255, 255, 255], "w": 1000, "h": 1000}, {"id": "owl-camo", "file": "assets/wall-ovo-owl-camo.jpg", "cap": "Gold, camo pavé, V-O in the eyes.", "src": "Source unknown", "bg": [246, 243, 250], "w": 399, "h": 501}, {"id": "owl-ice", "file": "assets/wall-ovo-owl-ice.jpg", "cap": "Ice-blue pavé, engraved back.", "src": "Source unknown", "bg": [59, 65, 60], "w": 447, "h": 447}, {"id": "owl-pair", "file": "assets/wall-ovo-owl-pair.jpg", "cap": "Two owls, two chains.", "src": "Source unknown", "bg": [10, 19, 28], "w": 399, "h": 501}, {"id": "owl-story", "file": "assets/wall-ovo-owl-story.jpg", "cap": "Owl pendant, seen in an Instagram story.", "src": "@jmanziel2 on Instagram", "bg": [48, 46, 42], "w": 640, "h": 1023}, {"id": "owl-rose", "file": "assets/wall-ovo-owl-rosegold.jpg", "cap": "Rose gold and white pavé, marquise perch.", "src": "Watermark reads Iceman Nick", "bg": [15, 15, 15], "w": 1080, "h": 1080}, {"id": "owl-concrete", "file": "assets/wall-ovo-owl-concrete.jpg", "cap": "Baguette-set owl over two more pendants, held in hand.", "src": "Source unknown", "bg": [97, 79, 67], "w": 604, "h": 971}, {"id": "owl-pink", "file": "assets/wall-ovo-owl-pink.jpg", "cap": "Pink pavé, white-stone eyes.", "src": "Source unknown", "bg": [54, 45, 46], "w": 736, "h": 915}, {"id": "owl-cuban", "file": "assets/wall-ovo-owl-cuban.jpg", "cap": "White pavé on a pavé Cuban link.", "src": "Source unknown", "bg": [71, 71, 69], "w": 1080, "h": 1080}, {"id": "red", "file": "assets/wall-three-in-red.jpg", "cap": "Lip gloss, horns, one red field.", "src": "Artist unattributed", "bg": [228, 166, 170], "w": 900, "h": 666}, {"id": "skulls", "file": "assets/wall-skulls-tee.jpg", "cap": "Skulls, powder bleach. Number (N)ine tee.", "src": "Source unknown", "bg": [49, 48, 50], "w": 500, "h": 600}];
   const STORY = {"keef": {"title": "Box Logo, Doubled", "kicker": "Feature", "deck": "Chief Keef, twice over, in a box logo that never shipped.", "story": ["As Manifest has it, this is an unreleased Supreme box logo, by Virgil — and the shoot around it wasn’t a session so much as a project. Virgil is Virgil: the hand behind much of what hangs on this wall, rarely the one in front of it.", "Pull the frame outward and it lands in Toronto — the 6, Drake’s name for his city — and in Summer Sixteen, the tour.", "The circle around him, October’s Very Own, hasn’t gone anywhere. It’s still OVO now, and the thread runs through the owls on this wall."], "see": ["virgil", "six", "owl-camo"]}, "virgil": {"title": "Cracked Glass", "kicker": "Reference", "deck": "Virgil is Virgil.", "story": ["The same name that stands behind the unreleased box logo that follows, shown the way it reached Manifest: cracked glass, and a caption — “centered, hopeful & thankful AF” — via @chilldays."], "see": ["keef"]}, "six": {"title": "6", "kicker": "Glyph", "deck": "One glyph, no explanation.", "story": ["In Toronto it doesn’t need one. The 6 is Drake’s shorthand for the city — the same 6 the Box Logo frame points toward."], "see": ["keef"]}, "owl-camo": {"title": "OVO Owl — Camo", "kicker": "The owl", "deck": "A pendant worn like a membership.", "story": ["The owl is OVO — October’s Very Own, Drake’s label and the circle that formed around it. This one is gold and camo pavé, V-O in the eyes.", "Chains are where the owl travels now. When you see them on a neck today, Lil Yachty is part of the picture: he’s easy inside that circle. The pieces that follow are the same bird in other stones."], "see": ["keef"]}};
@@ -1745,25 +1861,36 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 
   const byId = {}; PLATES.forEach(p => byId[p.id] = p);
   let n = 0; BOOK.forEach(g => g.forEach(id => byId[id].no = String(++n).padStart(2,'0')));
+  const TOTAL = String(n).padStart(2,'0');
 
-  const figure = m => '<figure><img src="' + m.file + '" alt="' + esc(m.cap) + '" width="' + m.w + '" height="' + m.h + '" style="--w:' + m.w + ';--ar:' + (m.w / m.h).toFixed(4) + '" loading="lazy">' +
-    '<figcaption><span class="n">' + m.no + '</span>' + esc(m.cap) + '<span class="s">' + esc(m.src) + '</span></figcaption></figure>';
+  // cap=false: the caption lives in the text column instead of under the image
+  const figure = (m, cap = true) => '<figure><img src="' + m.file + '" alt="' + esc(m.cap) + '" width="' + m.w + '" height="' + m.h + '" style="--w:' + m.w + ';--ar:' + (m.w / m.h).toFixed(4) + '" loading="lazy">' +
+    (cap ? '<figcaption><span class="n">' + m.no + '</span>' + esc(m.cap) + '<span class="s">' + esc(m.src) + '</span></figcaption>' : '') + '</figure>';
 
-  let storyN = 0;
+  let spreadN = 0; // alternates which side the image sits on, across stories and notes alike
   const plates = BOOK.map((ids, i) => {
     const sec = document.createElement('section'), st = ids.length === 1 && STORY[ids[0]];
     sec.id = 'plate-' + ids[0];
     if (st){
-      sec.className = 'plate story' + (storyN++ % 2 ? ' flip' : '');
+      sec.className = 'plate story' + (spreadN++ % 2 ? ' flip' : '');
       const see = (st.see || []).map(id => '<a data-see="' + id + '">' + byId[id].no + ' · ' + esc(STORY[id].title) + '</a>').join('');
       sec.innerHTML = figure(byId[ids[0]]) +
         '<div class="text"><div class="kicker">' + esc(st.kicker) + '</div><h3>' + esc(st.title) + '</h3>' +
         '<p class="deck">' + esc(st.deck) + '</p><div class="body">' + st.story.map(s => '<p>' + esc(s) + '</p>').join('') + '</div>' +
         (see ? '<div class="see"><span>see also</span>' + see + '</div>' : '') + '</div>';
+    } else if (ids.length === 1){
+      // No written story yet: still a full spread. Nothing is invented — the column carries
+      // only what the record already holds: plate number, caption, source.
+      const m = byId[ids[0]];
+      sec.className = 'plate story note' + (spreadN++ % 2 ? ' flip' : '');
+      sec.innerHTML = figure(m, false) +
+        '<div class="text"><div class="ghost" aria-hidden="true">' + m.no + '</div>' +
+        '<div class="kicker">Plate ' + m.no + ' / ' + TOTAL + '</div>' +
+        '<p class="note-cap">' + esc(m.cap) + '</p>' +
+        '<div class="note-src">' + esc(m.src) + '</div></div>';
     } else {
-      sec.className = 'plate ' + (ids.length > 1 ? 'c' : ['c','l','r'][i % 3]);
-      const figs = ids.map(id => figure(byId[id])).join('');
-      sec.innerHTML = ids.length > 1 ? '<div class="pair">' + figs + '</div>' : figs;
+      sec.className = 'plate c';
+      sec.innerHTML = '<div class="pair">' + ids.map(id => figure(byId[id])).join('') + '</div>';
     }
     book.appendChild(sec);
     const cols = ids.map(id => byId[id].bg);
