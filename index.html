@@ -6,7 +6,7 @@
 <title>MANIFEST</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 
   :root{
@@ -306,6 +306,7 @@
     letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
     padding:6px 8px;
   }
+  .record-prov{ text-align:center; margin-bottom:18px; opacity:.7; }
   .record-stage{ width:100%; max-width:260px; margin:0 auto; }
   .record-stage img{ width:100%; height:auto; object-fit:contain; }
   .record-dots{
@@ -331,6 +332,11 @@
     font-family:'Fraunces', serif; font-style:italic;
     font-size:14px; line-height:1.6; color:#3A382F;
   }
+  .record-mine{
+    margin-top:16px; padding-top:16px; border-top:1px solid var(--hairline);
+    text-align:center; font-family:'Fraunces',serif; font-size:15px; line-height:1.6; color:var(--ink);
+  }
+  .record-mine::before{ content:"— "; color:var(--ink-soft); }
   .record-scarcity{
     margin-top:14px; text-align:center;
     font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft);
@@ -648,6 +654,49 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   .pair figure:nth-child(2){ margin-bottom:0; }
   .pair figure img{ width:min(calc(var(--w) * 1px), 78vw, calc(36svh * var(--ar))); }
 }
+
+/* ---- house-branded slips: each house prints on its own paper ---- */
+.rcpt-paper .brand-logo{ display:block; height:44px; margin:0 auto 8px; object-fit:contain; }
+.rcpt-paper .brand-word{ text-align:center; }
+.rcpt-paper .brand-sub{ text-align:center; font-size:8.5px; letter-spacing:1.4px; text-transform:uppercase; color:#777; margin:4px 0 14px; }
+.rcpt-paper .bc{ height:34px; margin-top:14px; background:repeating-linear-gradient(90deg,#161616 0 2px,transparent 2px 4px,#161616 4px 5px,transparent 5px 8px,#161616 8px 11px,transparent 11px 12px); }
+.rcpt-paper .band{ margin:-22px -20px 16px; }
+
+/* BAPE: camo band, heavy sans wordmark */
+.b-bape .band{ height:20px; background:
+  radial-gradient(circle at 20% 40%,#2f4a2b 0 7px,transparent 8px),
+  radial-gradient(circle at 62% 70%,#1d2f1b 0 6px,transparent 7px),
+  radial-gradient(circle at 88% 30%,#5d7234 0 7px,transparent 8px), #7f9150; background-size:52px 20px; }
+.b-bape .brand-word{ font-family:'Archivo',sans-serif; font-weight:800; font-size:19px; letter-spacing:2px; }
+
+/* Louis Vuitton: warm paper, spaced serif */
+.b-lv{ background:#f6efe1; }
+.b-lv .band{ height:14px; background:repeating-linear-gradient(90deg,#8a6a3a 0 1px,transparent 1px 9px); opacity:.55; }
+.b-lv .brand-word{ font-family:'Fraunces',serif; font-weight:400; font-size:19px; letter-spacing:6px; }
+
+/* Supreme: red box */
+.b-supreme .band{ display:none; }
+.b-supreme .brand-word{ background:#da1f26; color:#fff; font-family:'Archivo',sans-serif; font-weight:800; font-style:italic; font-size:24px; letter-spacing:-.5px; padding:6px 0; margin:0 auto 6px; width:70%; }
+
+/* Off-White: hazard stripe, quote marks */
+.b-ow .band{ height:12px; background:repeating-linear-gradient(135deg,#161616 0 8px,#fbfbf8 8px 16px); }
+.b-ow .brand-word{ font-family:'Archivo',sans-serif; font-weight:600; font-size:17px; letter-spacing:3px; }
+.b-ow .rcpt-label::before,.b-ow .rcpt-label::after{ content:'"'; }
+
+/* Chrome Hearts: black paper, silver type */
+.b-ch{ background:#0e0e0e; color:#c9c9c9; }
+.b-ch .rcpt-row span,.b-ch .rcpt-label,.b-ch .brand-sub{ color:#8a8a8a; }
+.b-ch .rcpt-rule{ border-top-color:#444; }
+.b-ch .rcpt-total{ border-top-color:#c9c9c9; } .b-ch .rcpt-total span{ color:#c9c9c9; }
+.b-ch .rcpt-note{ color:#a8a8a8; }
+.b-ch .bc{ background:repeating-linear-gradient(90deg,#c9c9c9 0 2px,transparent 2px 4px,#c9c9c9 4px 5px,transparent 5px 8px); }
+.b-ch .band{ height:6px; background:#c9c9c9; }
+.b-ch .brand-word{ font-family:'Fraunces',serif; font-size:19px; letter-spacing:5px; }
+
+/* Goyard: chevron band */
+.b-goyard{ background:#f4ecda; }
+.b-goyard .band{ height:16px; background:repeating-linear-gradient(135deg,#1f3a2e 0 4px,#c8a35a 4px 8px,#f4ecda 8px 12px); }
+.b-goyard .brand-word{ font-family:'Fraunces',serif; font-size:19px; letter-spacing:7px; }
 </style>
 </head>
 <body>
@@ -717,7 +766,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 
 <section class="arrival" id="arrival">
   <div class="wordmark display">Manifest</div>
-  <div class="thesis">the archive of attention</div>
+  <div class="thesis">from the collection of Lufuno</div>
   <div class="arrival-obj-wrap" id="arrival-obj">
     <div class="halo" id="arrival-halo"></div>
     <div class="stage" id="arrival-stage"></div>
@@ -732,7 +781,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 </section>
 
 <section class="field-note">
-  <p>shuffled fresh every visit. hold still near an object and the room answers in color.</p>
+  <p>every object here is mine. hold still near one and the room answers in color.</p>
 </section>
 
 <section class="field" id="field">
@@ -764,11 +813,13 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 <div class="record-backdrop" id="record-backdrop"></div>
 <div class="record" id="record" role="dialog" aria-modal="true" aria-labelledby="record-name">
   <button class="record-close" id="record-close" aria-label="Close">Close ✕</button>
+  <div class="record-prov eyebrow">from my collection</div>
   <div class="record-stage" id="record-stage"></div>
   <div class="record-dots" id="record-dots" style="display:none;"></div>
   <div class="record-maker eyebrow" id="record-maker"></div>
   <div class="record-name" id="record-name"></div>
   <div class="record-blurb" id="record-blurb"></div>
+  <div class="record-mine" id="record-mine" style="display:none;"></div>
   <div class="record-scarcity" id="record-scarcity" style="display:none;"></div>
   <div class="record-sizes" id="record-sizes" style="display:none;">
     <div class="eyebrow label">Sizes</div>
@@ -836,7 +887,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   <div class="rcpt-pile" id="rcpt-pile"></div>
 </div>
 
-<footer>MANIFEST — the archive of attention</footer>
+<footer>MANIFEST — from the collection of Lufuno</footer>
 
 <div class="wall-zoom" id="wall-zoom"><img alt=""></div>
 
@@ -901,6 +952,10 @@ const AMBIENCE = (() => {
 </script>
 
 <script>
+/* Optional per-object fields:
+     mine:'...'      your own first-person line (where you got it, why you kept it). Shown in the record only if set.
+     scarcity:'...'  release context.
+     out:['S','XL']  sizes unavailable. */
 const OBJECTS = [
   { id:'lv-city-of-stars', name:'City of Stars', maker:'Louis Vuitton', category:'Fragrance', price:310, sizes:null,
     blurb:'Naming still unresolved against "City of Nights" — the object stands, the title is pending.', asset:'assets/lv-city-of-stars.png' },
@@ -1331,6 +1386,10 @@ function formatRecognizedValue(usdPrice){
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
+    // Your own first-person line. Only appears if you've written one for this object.
+    const mineEl = document.getElementById('record-mine');
+    mineEl.textContent = o.mine || '';
+    mineEl.style.display = o.mine ? '' : 'none';
     const scarcityEl = document.getElementById('record-scarcity');
     scarcityEl.textContent = o.scarcity || '';
     scarcityEl.style.display = o.scarcity ? '' : 'none';
@@ -1492,9 +1551,9 @@ function formatRecognizedValue(usdPrice){
     });
   });
   // ---- Receipts (mock): after payment, slips print out of a slot. ----
-  // RECEIPT_MODE: 'both'     = one Manifest slip per house, then the Manifest receipt
-  //               'houses'   = only the per-house slips (see the mess)
-  //               'manifest' = only the single Manifest receipt (the end goal)
+  // RECEIPT_MODE: 'both'     = one slip per house (in that house's own look), then the Manifest receipt
+  //               'houses'   = only the per-house slips
+  //               'manifest' = only the single Manifest receipt
   const RECEIPT_MODE = 'both';
   const stageR = document.getElementById('rcpt-stage');
   const pileR = document.getElementById('rcpt-pile');
@@ -1502,20 +1561,41 @@ function formatRecognizedValue(usdPrice){
   const DXS = [-24, 20, -12, 28, -28, 10];
   let rcptRun = 0, rcptTimers = [];
 
+  // House looks. First match wins, so a collab prints on the house listed first
+  // ("Nike × Supreme" -> Supreme, "BAPE × Comme des Garçons" -> BAPE).
+  // Logo images are optional: drop a file at the path and it prints above the wordmark;
+  // if the file is missing the image removes itself and the wordmark stands alone.
+  // Houses with no entry here print on the plain Manifest-style slip.
+  const BRANDS = [
+    { key:'bape',    match:/bathing ape|bape/i, word:'A BATHING APE®', sub:'BAPE® store copy',      logo:'assets/receipt-logos/bape.png',          foot:'Thank you' },
+    { key:'lv',      match:/louis vuitton/i,    word:'LOUIS VUITTON',  sub:'Maison fondée en 1854', logo:'assets/receipt-logos/lv.png',            foot:'Merci' },
+    { key:'supreme', match:/supreme/i,          word:'Supreme',        sub:'',                      logo:'assets/receipt-logos/supreme.png',       foot:'Thank you' },
+    { key:'ow',      match:/off-white/i,        word:'OFF-WHITE™',     sub:'c/o Virgil Abloh™',     logo:'assets/receipt-logos/off-white.png',     foot:'"Thank you"' },
+    { key:'ch',      match:/chrome hearts/i,    word:'CHROME HEARTS',  sub:'',                      logo:'assets/receipt-logos/chrome-hearts.png', foot:'Thank you' },
+    { key:'goyard',  match:/goyard/i,           word:'GOYARD',         sub:'Paris',                 logo:'assets/receipt-logos/goyard.png',        foot:'Merci' }
+  ];
+  const brandOf = (house) => BRANDS.find(b => b.match.test(house));
+
   function rcptHouseSlip(house, items, no, date){
     const sub = zarFormat(items.reduce((t, b) => t + zarNumber(b.label), 0));
-    return `<div class="rcpt-paper">
-      <div class="rcpt-word">MANIFEST</div><div class="rcpt-tag">a record of recognized objects</div>
+    const br = brandOf(house) || { key:'plain', word:house.toUpperCase(), sub:'', logo:'', foot:'Thank you' };
+    const lines = items.map(b =>
+      `<div class="rcpt-item">${b.name}</div>
+       <div class="rcpt-row"><span>${b.size ? 'Size ' + b.size + ' · ' : ''}Qty 1</span><b>${b.label}</b></div>`).join('');
+    return `<div class="rcpt-paper b-${br.key}">
+      <div class="band"></div>
+      ${br.logo ? `<img class="brand-logo" src="${br.logo}" alt="" onerror="this.remove()">` : ''}
+      <div class="brand-word">${br.word}</div>
+      <div class="brand-sub">${br.sub || '&nbsp;'}</div>
       <div class="rcpt-row"><span>Slip No.</span><b>${no}</b></div>
       <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
       <div class="rcpt-rule"></div>
-      <div class="rcpt-label">House</div><div class="rcpt-house">${house}</div>
-      <div class="rcpt-rule"></div>
-      ${items.map(b => `<div class="rcpt-item">${b.name}</div><div class="rcpt-row"><span>${b.size ? 'Size ' + b.size : '&nbsp;'}</span><b>${b.label}</b></div>`).join('')}
+      ${lines}
       <div class="rcpt-rule"></div>
       <div class="rcpt-row rcpt-total"><span>Subtotal</span><b>${sub}</b></div>
-      <div class="rcpt-note">Packed with the rest of your order.</div>
-      <div class="rcpt-foot">Issued by Manifest</div></div>`;
+      <div class="bc"></div>
+      <div class="rcpt-note">${br.foot}</div>
+      <div class="rcpt-foot">From the collection of Lufuno</div></div>`;
   }
   function rcptMainSlip(groups, no, date, wallet){
     const total = zarFormat([...groups.values()].flat().reduce((t, b) => t + zarNumber(b.label), 0));
@@ -1531,7 +1611,7 @@ function formatRecognizedValue(usdPrice){
       <div class="rcpt-rule"></div>
       <div class="rcpt-row rcpt-total"><span>Total</span><b>${total}</b></div>
       <div class="rcpt-note">It has been recognized, and it is yours to keep.</div>
-      <div class="rcpt-foot">Issued by Manifest</div></div>`;
+      <div class="rcpt-foot">From the collection of Lufuno</div></div>`;
   }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
