@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MANIFEST</title>
+<title>MANIFEST — Streetwear</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -697,6 +697,57 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 .b-goyard{ background:#f4ecda; }
 .b-goyard .band{ height:16px; background:repeating-linear-gradient(135deg,#1f3a2e 0 4px,#c8a35a 4px 8px,#f4ecda 8px 12px); }
 .b-goyard .brand-word{ font-family:'Fraunces',serif; font-size:19px; letter-spacing:7px; }
+
+  /* Store-facing refinements */
+  .pending-toggle{ display:none !important; }
+  body.searching .wall, body.searching .field-outro,
+  body.searching .field-note, body.searching .pending-toggle{ display:none !important; }
+  body.searching #field{ min-height:0 !important; }
+  #field-objects.searching{
+    display:grid !important; position:relative !important; height:auto !important;
+    grid-template-columns:repeat(auto-fill,minmax(min(190px,42vw),1fr));
+    align-items:start; gap:clamp(24px,4vw,48px) clamp(14px,2.5vw,30px);
+    padding:clamp(110px,15vh,150px) clamp(20px,4vw,52px) 12vh;
+  }
+  #field-objects.searching .field-obj{
+    position:relative !important; inset:auto !important; top:auto !important; left:auto !important;
+    width:100% !important; height:auto !important; min-width:0;
+    animation:none !important; transform:none !important;
+  }
+  #field-objects.searching .field-obj .stage{
+    width:100%; height:auto; aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  }
+  #field-objects.searching .field-obj .stage img{ width:100%; height:100%; object-fit:contain; }
+  #field-objects.searching .field-obj .halo{ display:none; }
+  #field-objects.searching .field-obj .cap{
+    opacity:1 !important; transform:none !important; position:static; margin-top:12px;
+  }
+  #search-empty{
+    grid-column:1 / -1; display:none; text-align:center; padding:18vh 24px;
+    color:var(--ink-soft); font:italic 400 16px 'Fraunces',serif;
+  }
+  .snd{
+    position:fixed !important; right:20px !important; bottom:20px !important; z-index:1000;
+    display:flex !important; align-items:center; justify-content:center; gap:9px;
+    width:auto !important; min-width:112px; height:46px !important; padding:0 16px !important;
+    border:1px solid rgba(32,28,20,.22) !important; border-radius:24px !important;
+    background:rgba(252,251,248,.94) !important; color:var(--ink) !important; opacity:1 !important;
+    box-shadow:0 6px 22px rgba(20,18,26,.15) !important;
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    font:500 10px 'JetBrains Mono',monospace; letter-spacing:.12em; text-transform:uppercase;
+    transition:background .25s,color .25s,border-color .25s;
+  }
+  .snd:hover{ border-color:var(--ink-soft) !important; }
+  .snd.on{ background:var(--ink) !important; color:#FCFBF8 !important; border-color:var(--ink) !important; }
+  .snd svg{ width:18px; height:18px; flex:none; }
+  .snd .w1,.snd .w2{ opacity:0; transition:opacity .2s; }
+  .snd.on .w1,.snd.on .w2{ opacity:1; }
+  #paper{ right:148px !important; bottom:39px !important; }
+  @media(max-width:640px){
+    #field-objects.searching{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .snd{ right:14px !important; bottom:14px !important; }
+    #paper{ right:140px !important; bottom:32px !important; }
+  }
 </style>
 </head>
 <body>
@@ -766,7 +817,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 
 <section class="arrival" id="arrival">
   <div class="wordmark display">Manifest</div>
-  <div class="thesis">from the collection of Lufuno</div>
+  <div class="thesis">A curated streetwear store</div>
   <div class="arrival-obj-wrap" id="arrival-obj">
     <div class="halo" id="arrival-halo"></div>
     <div class="stage" id="arrival-stage"></div>
@@ -781,21 +832,21 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 </section>
 
 <section class="field-note">
-  <p>every object here is mine. hold still near one and the room answers in color.</p>
+  <p>Streetwear, footwear and objects selected for their design, history and place in culture.</p>
 </section>
 
 <section class="field" id="field">
   <div id="field-objects" style="position:relative;"></div>
 </section>
 
-<div class="field-outro">that's the drop — for now</div>
+<div class="field-outro">End of the current selection</div>
 
 <section class="wall" id="wall" aria-label="The wall">
   <div class="wall-fade-in" id="wall-fade-in" aria-hidden="true"></div>
   <div class="wall-body" id="wall-body">
-    <div class="wall-lead">Nothing here is explained. These are the traces.</div>
+    <div class="wall-lead">References, images and ideas from the culture around the pieces.</div>
     <div id="wall-book"></div>
-    <div class="wall-foot">everything here belongs to its makers. shown for reference, credited where known.</div>
+    <div class="wall-foot">Images and marks remain the property of their respective owners. Presented for reference.</div>
   </div>
   <div class="wall-fade-out" id="wall-fade-out" aria-hidden="true"></div>
 </section>
@@ -887,16 +938,17 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   <div class="rcpt-pile" id="rcpt-pile"></div>
 </div>
 
-<footer>MANIFEST — from the collection of Lufuno</footer>
+<footer>MANIFEST — STREETWEAR STORE</footer>
 
 <div class="wall-zoom" id="wall-zoom"><img alt=""></div>
 
 <audio id="ambient" src="assets/manifest-ambient.mp3" loop preload="metadata" style="display:none"></audio>
-<button id="ambience-toggle" aria-label="sound" onclick="AMBIENCE.toggle()"
-  style="position:fixed; bottom:24px; right:24px; width:8px; height:8px;
-  border-radius:50%; background:var(--champagne-gold, #d4af37);
-  border:none; opacity:0.3; transition:opacity 0.8s ease, box-shadow 0.8s ease;
-  cursor:pointer; z-index:1000; padding:0;">
+<button id="ambience-toggle" class="snd" type="button" aria-label="Toggle ambient sound" aria-pressed="false" onclick="AMBIENCE.toggle()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 9v6h4l5 4V5L8 9H4z"/>
+    <path class="w1" d="M16.5 8.5a5 5 0 0 1 0 7"/>
+    <path class="w2" d="M19 6a8.5 8.5 0 0 1 0 12"/>
+  </svg><span class="snd-l">Sound off</span>
 </button>
 
 <script>
@@ -932,12 +984,14 @@ const AMBIENCE = (() => {
     if (!playing){
       el.play();
       fade(0.35);
-      dot.style.opacity = '0.85';
-      dot.style.boxShadow = '0 0 6px var(--champagne-gold, #d4af37)';
+      dot.classList.add('on');
+      dot.setAttribute('aria-pressed', 'true');
+      dot.querySelector('.snd-l').textContent = 'Sound on';
     } else {
       fade(0, 1.5);
-      dot.style.opacity = '0.3';
-      dot.style.boxShadow = 'none';
+      dot.classList.remove('on');
+      dot.setAttribute('aria-pressed', 'false');
+      dot.querySelector('.snd-l').textContent = 'Sound off';
       setTimeout(() => { if (!playing) el.pause(); }, 1600);
     }
     playing = !playing;
@@ -962,9 +1016,9 @@ const OBJECTS = [
   { id:'lv-murakami-charm', name:'Monogram Charm', maker:'Louis Vuitton × Takashi Murakami', category:'Jewelry', price:850, sizes:null,
     blurb:'The collaboration reduced to a single wearable fragment.', asset:'assets/lv-murakami-charm.png' },
   { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
-    blurb:'Evaluated and admitted on its own terms, separate from the grey release.', asset:'assets/murakami-cushion-pink.png' },
+    blurb:'A pink graphic cushion, distinct from the grey version.', asset:'assets/murakami-cushion-pink.png' },
   { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
-    blurb:'Same silhouette as the pink, its own admission decision.', asset:'assets/murakami-cushion-grey.png' },
+    blurb:'The same graphic cushion in grey, with a quieter finish.', asset:'assets/murakami-cushion-grey.png' },
   { id:'youngboy-tee', name:'Graphic Tee', maker:'YoungBoy Never Broke Again', category:'Apparel', price:75, sizes:['XS','S','M','L','XL'],
     blurb:'Recoded through fan and resale culture rather than runway.', asset:'assets/youngboy-tee.png' },
   { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
@@ -976,7 +1030,7 @@ const OBJECTS = [
   { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same debate, same platforms, its own manifestation.', asset:'assets/storm-blue.png' },
   { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
-    blurb:'Third colorway, admitted individually per the standing one-at-a-time process.', asset:'assets/storm-black.png' },
+    blurb:'A black colorway of the Storm design, with its own distinct finish.', asset:'assets/storm-black.png' },
   { id:'lv-imagination', name:'Imagination', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:310, sizes:null,
     blurb:'A house best known for luggage, bottling a scent instead. Proof the canon isn\'t only bags and sneakers.', asset:'assets/lv-imagination.png' },
   { id:'lv-limmensite', name:'L\'Immensité', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:320, sizes:null,
@@ -1007,13 +1061,13 @@ const OBJECTS = [
   { id:'lv-lv-charm', name:'"LV" Monogram Charm', maker:'Louis Vuitton', category:'Jewelry', price:400, sizes:null,
     blurb:'Two letters, cast small enough to hang off a bag or a keyring — the house’s shortest possible signature.', asset:'assets/lv-lv-charm.png' },
   { id:'palm-angels-track-pants', name:'Track Pants', maker:'Palm Angels', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
-    blurb:'First Palm Angels admission — the side-stripe track silhouette that put the house on every off-duty rack.', asset:'assets/palm-angels-track-pants.png' },
+    blurb:'The side-stripe track silhouette that made Palm Angels a fixture of off-duty style.', asset:'assets/palm-angels-track-pants.png' },
   { id:'vetements-hoodie-black', name:'Hoodie — Black', maker:'Vetements', category:'Apparel', price:600, sizes:['XS','S','M','L','XL'],
     blurb:'Oversized, unadorned, deliberately anti-branding — the house\'s founding gesture stripped to its basic form.', asset:'assets/vetements-hoodie-black.png' },
   { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
     blurb:'Butterfly-sleeve track top, the house\'s signature silhouette in its loudest register.', asset:'assets/needles-track-jacket-purple.png' },
   { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
-    blurb:'Same butterfly cut, cooler colorway — admitted separately per the one-colorway-one-object rule.', asset:'assets/needles-track-jacket-blue.png' },
+    blurb:'The same butterfly cut in a cooler blue-and-white combination.', asset:'assets/needles-track-jacket-blue.png' },
   { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
     blurb:'The house\'s mascot rendered underfoot, in the camo that started it all.', asset:'assets/bape-ape-head-rug-camo.png' },
   { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
@@ -1021,33 +1075,33 @@ const OBJECTS = [
   { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
     blurb:'The smallest possible object still carrying full house recognition.', asset:'assets/bape-lighter-wordmark.png' },
   { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
-    blurb:'Same form, the ape-head line art instead of the wordmark — a second, distinct admission.', asset:'assets/bape-lighter-camo-graphic.png' },
+    blurb:'The same compact lighter, finished with the ape-head graphic instead of the wordmark.', asset:'assets/bape-lighter-camo-graphic.png' },
   { id:'supreme-crewneck-blue', name:'Box Logo Crewneck — Blue', maker:'Supreme', category:'Apparel', price:200, sizes:['XS','S','M','L','XL'],
-    blurb:'The plainest possible carrier for the most recognized logo in the archive.', asset:'assets/supreme-crewneck-blue.png' },
+    blurb:'A clean blue crewneck carrying Supreme’s unmistakable Box Logo.', asset:'assets/supreme-crewneck-blue.png' },
   { id:'nike-cpfm-vapormax-2019', name:'Vapormax 2019', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:1100, sizes:['7','8','9','10','11','12','13'],
     blurb:'CPFM\'s tubing and hardware grafted onto the Vapormax sole — collaboration as visible surgery, not a colorway.', asset:'assets/nike-cpfm-vapormax-2019.png' },
   { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
-    blurb:'First Adidas admission — the Human Race line in the colorway most tied to the collaboration\'s identity.', asset:'assets/adidas-nmd-human-race-green.png' },
+    blurb:'The Human Race line in the green colorway most closely tied to the collaboration.', asset:'assets/adidas-nmd-human-race-green.png' },
   { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same line, the text-forward colorway that turned the shoe into a slogan.', asset:'assets/adidas-nmd-human-race-blue.png' },
   { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
-    blurb:'Second colorway of the wall clock already in the archive, admitted on its own per house policy.', asset:'assets/bape-clock-blue.png' },
+    blurb:'The ape-head wall clock in blue, with the same bold profile in a different color.', asset:'assets/bape-clock-blue.png' },
   { id:'ambush-lighter-keychain', name:'Lighter Keychain', maker:'Ambush', category:'Accessory', price:180, sizes:null,
-    blurb:'First Ambush admission — hardware-forward, the house\'s jewelry logic applied to something disposable.', asset:'assets/ambush-lighter-keychain.png' },
+    blurb:'Ambush brings its hardware-led approach to a lighter designed to travel on a keychain.', asset:'assets/ambush-lighter-keychain.png' },
   { id:'balenciaga-keychain', name:'Keychain', maker:'Balenciaga', category:'Accessory', price:290, sizes:null,
-    blurb:'First Balenciaga admission, entering through an accessory rather than a headline piece.', asset:'assets/balenciaga-keychain.png' },
+    blurb:'A compact Balenciaga accessory, finished with the house’s understated branding.', asset:'assets/balenciaga-keychain.png' },
   { id:'revenge-storm-velcro', name:'Storm Velcro Patch', maker:'Revenge', category:'Accessory', price:90, sizes:null,
-    blurb:'The removable panel from the Storm collaboration, admitted as its own small object.', asset:'assets/revenge-storm-velcro.png' },
+    blurb:'The removable panel from the Storm collaboration, made to customise the shoe.', asset:'assets/revenge-storm-velcro.png' },
   { id:'bape-ashtray', name:'Ape Head Ashtray', maker:'A Bathing Ape', category:'Object', price:150, sizes:null,
     blurb:'Ceramic instead of textile — the house mascot moved onto a smoking accessory, still legible at a glance.', asset:'assets/bape-ashtray.png' },
   { id:'palace-cherub-hoodie-brown', name:'Tri-Ferg Cherub Hoodie', maker:'Palace', category:'Apparel', price:260, sizes:['XS','S','M','L','XL'],
-    blurb:'First Palace admission — the tri-ferg run through Renaissance cherub imagery, skate lineage colliding with a baroque reference.', asset:'assets/palace-cherub-hoodie-brown.png' },
+    blurb:'Palace’s tri-ferg logo meets Renaissance cherub imagery in a graphic hoodie.', asset:'assets/palace-cherub-hoodie-brown.png' },
   { id:'palace-wordmark-hoodie-grey', name:'Wordmark Hoodie — Grey', maker:'Palace', category:'Apparel', price:220, sizes:['XS','S','M','L','XL'],
-    blurb:'Second Palace admission, plainer register — the tri-ferg kept to the back, the wordmark doing the work up front.', asset:'assets/palace-wordmark-hoodie-grey.png' },
+    blurb:'A cleaner Palace hoodie, with the tri-ferg on the back and the wordmark across the front.', asset:'assets/palace-wordmark-hoodie-grey.png' },
   { id:'vivet-half-zip-sweater', name:'Beginner Half-Zip Sweater', maker:'VIVET', category:'Apparel', price:180, sizes:['XS','S','M','L','XL'],
-    blurb:'First VIVET admission — distressing built into the knit rather than added after, wear read as a manufacturing decision.', asset:'assets/vivet-half-zip-sweater.png' },
+    blurb:'VIVET builds the distressed finish into the knit itself.', asset:'assets/vivet-half-zip-sweater.png' },
   { id:'sicko-trail-runner-blue', name:'Trail Runner — Blue', maker:'Sicko', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
-    blurb:'First Sicko admission — technical trail construction pulled onto a lifestyle register, the house mark standing in for a swoosh.', asset:'assets/sicko-trail-runner-blue.png' },
+    blurb:'A technical trail-runner silhouette with Sicko branding.', asset:'assets/sicko-trail-runner-blue.png' },
   { id:'sicko-ee-shorts-green', name:'Plaid Shorts — Green', maker:'Sicko × Eric Emanuel', category:'Apparel', price:170, sizes:['XS','S','M','L','XL'],
     blurb:'Two houses that don\'t usually share a hangtag — EE\'s plaid mesh carrying a second mark instead of standing alone.', asset:'assets/sicko-ee-shorts-green.png' },
 
@@ -1094,7 +1148,7 @@ const OBJECTS = [
   { id:'sicko-luke-wav', name:'"Born Unwanted" Hoodie', maker:'Sicko', category:'Apparel', price:280, sizes:['S','M','L','XL'],
     blurb:'Pale yellow, an upside-down line, a sun with a sleeping face — Ian Connor\'s house running the same instinct Revenge trades in, on a hood instead of a boot.', asset:'assets/sicko-luke-wav.png' },
   { id:'sicko-2', name:'"SICK!!" Hoodie', maker:'Sicko', category:'Apparel', price:260, sizes:['S','M','L','XL'],
-    blurb:'Natural fleece, a running figure dragged through the wordmark — a second Sicko admission, same house as the Storm boot already in the Bloodline.', asset:'assets/sicko-2.png' },
+    blurb:'Natural fleece and a running figure layered across the Sicko wordmark.', asset:'assets/sicko-2.png' },
   {"id": "skull-wappen-rib-zip", "name": "Skull Wappen Zip Bomber", "maker": "Number (N)ine", "category": "Apparel", "price": 520, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "twin skulls, zero explanation. the graphic does the talking.", "asset": "assets/skull-wappen-rib-zip.png"},
   {"id": "sicko-bfp-red-hoodie", "name": "Born From Pain Hoodie — Red", "maker": "Sicko", "category": "Apparel", "price": 260, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "red on red on red. the slogan is the whole flex.", "asset": "assets/sicko-bfp-red-hoodie.png"},
   {"id": "sicko-ee-plaid-runner-red", "name": "Plaid Trail Runner — Black/Red", "maker": "Sicko × Eric Emanuel", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "trail sole, tartan upper. built for mud, worn for the timeline.", "asset": "assets/sicko-ee-plaid-runner-red.png"},
@@ -1129,7 +1183,7 @@ const OBJECTS = [
   {"id": "palm-angels-track-pants-red", "name": "Track Pants — Red", "maker": "Palm Angels", "category": "Apparel", "price": 400, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "red, white stripes. the loud one.", "asset": "assets/palm-angels-track-pants-red.png"},
   {"id": "sicko-bfp-black-hoodie", "name": "Born From Pain Hoodie — Black", "maker": "Sicko", "category": "Apparel", "price": 260, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "chrome wordmark on black. same slogan, colder.", "asset": "assets/sicko-bfp-black-hoodie.png"},
   {"id": "sicko-trail-runner-yellow", "name": "Trail Runner — Black/Yellow", "maker": "Sicko", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "caution-tape yellow, clear strap, ready for anything.", "asset": "assets/sicko-trail-runner-yellow.png"},
-  {"id": "supreme-gems-tee-black", "name": "Gems Tee — Black", "maker": "Supreme", "category": "Apparel", "price": 130, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "the script logo drawn in rhinestone dust.", "asset": "assets/supreme-gems-tee-black.png"},
+  {"id": "supreme-gems-tee-black", "name": "Gems Tee — Black", "maker": "Supreme", "category": "Apparel", "price": 130, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "The script logo picked out in rhinestones.", "asset": "assets/supreme-gems-tee-black.png"},
   {"id": "supreme-nike-corduroy-jacket-black", "name": "Corduroy Hooded Jacket — Black", "maker": "Nike × Supreme", "category": "Apparel", "price": 420, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "cord texture, arc logo across the back. clean front, poster back.", "asset": "assets/supreme-nike-corduroy-jacket-black.png", "assets": ["assets/supreme-nike-corduroy-jacket-black.png", "assets/supreme-nike-corduroy-jacket-black-angle-2.png"]},
   {"id": "supreme-tyler-tee-white", "name": "Tyler Tee — White", "maker": "Supreme", "category": "Apparel", "price": 150, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "portrait print on a plain white blank. the collab as a photograph.", "asset": "assets/supreme-tyler-tee-white.png"},
 ];
@@ -1138,9 +1192,9 @@ const PENDING = [];
 function renderPendingMark(){
   return `<div class="pending-mark"><span class="pending-label">pending<br>imagery</span></div>`;
 }
-function renderStage(o){
+function renderStage(o, eager = false){
   return o.asset
-    ? `<img src="${o.asset}" alt="${o.name}" loading="lazy">`
+    ? `<img src="${o.asset}" alt="${o.name}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`
     : renderPendingMark();
 }
 
@@ -1154,7 +1208,7 @@ arrivalStageEl.style.transition = 'opacity 50ms linear';
 
 let arrivalObjData = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
 function paintArrival(){
-  arrivalStageEl.innerHTML = renderStage(arrivalObjData);
+  arrivalStageEl.innerHTML = renderStage(arrivalObjData, true);
   arrivalMakerEl.textContent = arrivalObjData.maker;
   arrivalNameEl.textContent = arrivalObjData.name;
 }
@@ -1266,13 +1320,39 @@ function paintIndex(q){
 
 function applyFilter(q){
   let visible = 0;
+  const searching = Boolean(q);
+  const wasSearching = document.body.classList.contains('searching');
+  document.body.classList.toggle('searching', searching);
+  fieldObjectsEl.classList.toggle('searching', searching);
+
   wells.forEach(w => {
     const m = matches(w.obj, q);
     w.el.style.display = m ? '' : 'none';
     if (m) visible++;
   });
+
+  let empty = document.getElementById('search-empty');
+  if (!empty){
+    empty = document.createElement('div');
+    empty.id = 'search-empty';
+    empty.textContent = 'No pieces match that search.';
+    fieldObjectsEl.appendChild(empty);
+  }
+  empty.style.display = searching && visible === 0 ? 'block' : 'none';
+
+  if (searching){
+    fieldObjectsEl.style.height = 'auto';
+    document.getElementById('field').style.minHeight = '0';
+    if (!wasSearching) requestAnimationFrame(() =>
+      document.getElementById('field').scrollIntoView({behavior:'smooth', block:'start'})
+    );
+  } else {
+    fieldObjectsEl.style.height = (cursorTop + 14) + 'vh';
+    document.getElementById('field').style.minHeight = (cursorTop + 20) + 'vh';
+  }
+
   document.getElementById('field-count').textContent =
-    q ? String(visible).padStart(2, '0') + ' matching'
+    searching ? String(visible).padStart(2, '0') + ' matching'
       : String(OBJECTS.length).padStart(2, '0') + ' objects';
   paintIndex(q);
 }
@@ -1316,14 +1396,14 @@ indexListEl.addEventListener('click', e => {
 });
 
 // Reference prices in OBJECTS stay USD. Display-only conversion below.
-// Recognized value shown is 60% of the reference price, as one figure —
+// Store price is calculated from the reference price, as one figure —
 // no range, no visible tie back to the reference, so it reads as the
 // object's value rather than a markdown off something higher.
 const USD_TO_ZAR = 17;
-function formatRecognizedValue(usdPrice){
-  const recognizedUSD = usdPrice * 0.6;
+function formatStorePrice(usdPrice){
+  const storeUSD = usdPrice * 0.6;
   const round = (n) => Math.round(n / 10) * 10; // clean denomination
-  return 'R' + round(recognizedUSD * USD_TO_ZAR).toLocaleString('en-ZA');
+  return 'R' + round(storeUSD * USD_TO_ZAR).toLocaleString('en-ZA');
 }
 
 (function(){
@@ -1393,7 +1473,7 @@ function formatRecognizedValue(usdPrice){
     const scarcityEl = document.getElementById('record-scarcity');
     scarcityEl.textContent = o.scarcity || '';
     scarcityEl.style.display = o.scarcity ? '' : 'none';
-    priceEl.textContent = formatRecognizedValue(o.price);
+    priceEl.textContent = formatStorePrice(o.price);
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
       // Optional per-object `out:['S','XL']` marks sizes we don't have right now.
@@ -1424,7 +1504,7 @@ function formatRecognizedValue(usdPrice){
     closeSheet();
   }
 
-  // Bag uses the same formatRecognizedValue as the record, so the figure
+  // Bag uses the same formatStorePrice as the record, so the figure
   // in the bag always matches what was on the record. Totals add up those
   // displayed figures (digits only), so no second price formula exists.
   const zarNumber = (label) => parseInt(label.replace(/\D/g, ''), 10) || 0;
@@ -1445,7 +1525,7 @@ function formatRecognizedValue(usdPrice){
     }
     BAG.push({
       name: current.name, maker: current.maker, asset: current.asset,
-      label: formatRecognizedValue(current.price), size: chosenSize()
+      label: formatStorePrice(current.price), size: chosenSize()
     });
     paintBag();
     return true;
@@ -1567,7 +1647,7 @@ function formatRecognizedValue(usdPrice){
   // if the file is missing the image removes itself and the wordmark stands alone.
   // Houses with no entry here print on the plain Manifest-style slip.
   const BRANDS = [
-    { key:'bape',    match:/bathing ape|bape/i, word:'A BATHING APE®', sub:'BAPE® store copy',      logo:'assets/receipt-logos/bape.png',          foot:'Thank you' },
+    { key:'bape',    match:/bathing ape|bape/i, word:'A BATHING APE®', sub:'A BATHING APE®',      logo:'assets/receipt-logos/bape.png',          foot:'Thank you' },
     { key:'lv',      match:/louis vuitton/i,    word:'LOUIS VUITTON',  sub:'Maison fondée en 1854', logo:'assets/receipt-logos/lv.png',            foot:'Merci' },
     { key:'supreme', match:/supreme/i,          word:'Supreme',        sub:'',                      logo:'assets/receipt-logos/supreme.png',       foot:'Thank you' },
     { key:'ow',      match:/off-white/i,        word:'OFF-WHITE™',     sub:'c/o Virgil Abloh™',     logo:'assets/receipt-logos/off-white.png',     foot:'"Thank you"' },
@@ -1595,12 +1675,12 @@ function formatRecognizedValue(usdPrice){
       <div class="rcpt-row rcpt-total"><span>Subtotal</span><b>${sub}</b></div>
       <div class="bc"></div>
       <div class="rcpt-note">${br.foot}</div>
-      <div class="rcpt-foot">From the collection of Lufuno</div></div>`;
+      <div class="rcpt-foot">MANIFEST STORE</div></div>`;
   }
   function rcptMainSlip(groups, no, date, wallet){
     const total = zarFormat([...groups.values()].flat().reduce((t, b) => t + zarNumber(b.label), 0));
     return `<div class="rcpt-paper">
-      <div class="rcpt-word">MANIFEST</div><div class="rcpt-tag">a record of recognized objects</div>
+      <div class="rcpt-word">MANIFEST</div><div class="rcpt-tag">STORE RECEIPT</div>
       <div class="rcpt-row"><span>Receipt No.</span><b>${no}</b></div>
       <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
       <div class="rcpt-row"><span>Paid with</span><b>${wallet}</b></div>
@@ -1610,8 +1690,8 @@ function formatRecognizedValue(usdPrice){
       ).join('')}
       <div class="rcpt-rule"></div>
       <div class="rcpt-row rcpt-total"><span>Total</span><b>${total}</b></div>
-      <div class="rcpt-note">It has been recognized, and it is yours to keep.</div>
-      <div class="rcpt-foot">From the collection of Lufuno</div></div>`;
+      <div class="rcpt-note">Thank you. Your order has been recorded.</div>
+      <div class="rcpt-foot">MANIFEST STORE</div></div>`;
   }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
@@ -1843,6 +1923,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     lastFrame = now;
 
     const elapsed = (now - t0) / 1000;
+    const hueTick = now - (window._manifestHueTick || 0) > 1500;
+    if (hueTick) window._manifestHueTick = now;
 
     updateDusk(elapsed);
 
@@ -1859,8 +1941,10 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       const s = baseScale + bass * 0.025;
       p.el.style.transform = `translate(${x.toFixed(2)}vmax, ${y.toFixed(2)}vmax) scale(${s.toFixed(3)})`;
       p.el.style.opacity = (p.baseOpacity * (1 - bass * 0.06)).toFixed(3);
-      const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
-      p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
+      if (hueTick){
+        const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
+        p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
+      }
     });
 
     motionEnergy *= 0.93;
@@ -1879,6 +1963,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     applyWell(arrivalWell, arrivalWell.dwell / MAX, 0.5, true, arrivalVisible ? 1 : 0);
 
     wells.forEach(w => {
+      if (w.el.style.display === 'none') return;
       const r = w.el.getBoundingClientRect();
       const onscreen = r.bottom > -300 && r.top < window.innerHeight + 300;
       if (!onscreen){
