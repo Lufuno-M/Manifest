@@ -748,6 +748,31 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
     .snd{ right:14px !important; bottom:14px !important; }
     #paper{ right:140px !important; bottom:32px !important; }
   }
+
+/* Manifest acquisition transparency */
+.acquisition{padding:clamp(48px,8vw,112px) clamp(20px,6vw,88px);background:#f4f2ed;color:#171714}
+.acq-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:38px}
+.acq-kicker,.acq-meta{font:10px/1.4 monospace;letter-spacing:.12em;text-transform:uppercase;color:#77756e}
+.acq-title{font:clamp(34px,6vw,76px)/.98 Georgia,serif;letter-spacing:-.045em;max-width:720px;margin:14px 0}
+.acq-intro{font:14px/1.65 sans-serif;color:#66635d;max-width:480px}
+.acq-list{border-top:1px solid #d4d0c7}
+.acq-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;padding:21px 0;border-bottom:1px solid #d4d0c7;align-items:center}
+.acq-name{font:clamp(18px,2.4vw,26px)/1.15 Georgia,serif}
+.acq-detail{font:12px/1.5 sans-serif;color:#77756e;margin-top:7px;max-width:560px}
+.acq-status{font:10px/1 monospace;letter-spacing:.09em;text-transform:uppercase;border:1px solid #c8c3b8;border-radius:30px;padding:9px 12px;white-space:nowrap;color:#4e4b44}
+.acq-status[data-state="verifying"]{background:#e9e5da}
+.acq-status[data-state="planned"]{background:transparent}
+.acq-status[data-state="available"]{background:#e1e9df;border-color:#b8c7b4}
+.acq-foot{font:11px/1.6 sans-serif;color:#77756e;margin-top:18px;max-width:680px}
+.acq-lower{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px);margin-top:64px;padding-top:28px;border-top:1px solid #d4d0c7}
+.acq-lower h3{font:clamp(23px,3vw,36px)/1.1 Georgia,serif;font-weight:400;margin:10px 0}
+.acq-lower p{font:13px/1.65 sans-serif;color:#6d6a63;max-width:480px}
+.acq-note{font:11px/1.5 monospace;color:#77756e;margin-top:16px}
+#bag-applepay{font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.bag .wallet-alt,.record .wallet-alt,.record .btn-pay,.pay-sheet-backdrop,.pay-sheet,.rcpt-stage{display:none!important}
+.bag .bag-foot:after{content:"A request is not an order. Availability, final shipping and payment are confirmed separately.";display:block;font:10px/1.55 sans-serif;color:#8a877f;margin-top:12px}
+@media(max-width:640px){.acq-head{display:block}.acq-item{gap:12px}.acq-status{font-size:9px;padding:8px}.acq-lower{grid-template-columns:1fr;gap:28px}}
+
 </style>
 </head>
 <body>
@@ -861,6 +886,30 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   </div>
 </div>
 
+
+<section class="acquisition" id="acquisition" aria-labelledby="acq-title">
+  <div class="acq-head">
+    <div>
+      <div class="acq-kicker">Manifest / acquisition register</div>
+      <h2 class="acq-title" id="acq-title">A collection in motion.</h2>
+      <p class="acq-intro">A visible record of what is being considered, checked and sourced. We would rather show what is not ready than imply that it is available.</p>
+    </div>
+    <div class="acq-meta">First acquisition round<br>South Africa</div>
+  </div>
+  <div class="acq-list" aria-label="Sourcing status">
+    <article class="acq-item"><div><div class="acq-name">Murakami flower cushion</div><div class="acq-detail">One considered. Packed dimensions and volumetric weight still need confirmation.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
+    <article class="acq-item"><div><div class="acq-name">BAPE wall clock</div><div class="acq-detail">One considered. Exact listing, battery requirements and protective packaging need checking.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
+    <article class="acq-item"><div><div class="acq-name">BAPE ashtray</div><div class="acq-detail">One considered. Material, dimensions and packaging are not yet confirmed.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
+    <article class="acq-item"><div><div class="acq-name">Supreme skateboard deck</div><div class="acq-detail">One planned for a later round. Oversized freight quotation required before proceeding.</div></div><span class="acq-status" data-state="planned">Planned</span></article>
+    <article class="acq-item"><div><div class="acq-name">LV fragrance bottles</div><div class="acq-detail">Separate purchase. Authentic supply and a permitted shipping route must be established first.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
+  </div>
+  <p class="acq-foot">These are sourcing intentions, not confirmed stock or offers for sale. Status changes only when the underlying information has been checked. No supplier, price, authenticity claim or delivery date is implied here.</p>
+  <div class="acq-lower">
+    <div><div class="acq-kicker">01 / Discovery</div><h3>Taste before transaction.</h3><p>Manifest's selection should remain worth visiting before a customer is ready to buy. New references and emerging objects can be introduced as editorial discoveries, separate from confirmed inventory.</p><div class="acq-note">EDITORIAL SELECTION · HUMAN REVIEW</div></div>
+    <div><div class="acq-kicker">02 / The record</div><h3>Nothing moves by implication.</h3><p>Verifying means information is being checked. Planned means it has not entered sourcing. Available should mean the owner has confirmed stock and the current price. Acquired and delivered describe completed steps, not marketing language.</p><div class="acq-note">PUBLIC STATUS · OWNER CONTROLLED</div></div>
+  </div>
+</section>
+
 <div class="record-backdrop" id="record-backdrop"></div>
 <div class="record" id="record" role="dialog" aria-modal="true" aria-labelledby="record-name">
   <button class="record-close" id="record-close" aria-label="Close">Close ✕</button>
@@ -938,7 +987,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   <div class="rcpt-pile" id="rcpt-pile"></div>
 </div>
 
-<footer>MANIFEST — STREETWEAR STORE</footer>
+<footer>MANIFEST — A CURATED COLLECTION</footer>
 
 <div class="wall-zoom" id="wall-zoom"><img alt=""></div>
 
@@ -1438,7 +1487,7 @@ function formatStorePrice(usdPrice){
     'Samsung Pay': '<span class="wm wm-samsung">SAMSUNG<span class="wm-pay">Pay</span></span>'
   };
   payBtn.innerHTML = APPLE;
-  bagPay.innerHTML = APPLE;
+  bagPay.textContent = 'Copy order request';
 
   let recordAssets = [];
   let recordIndex = 0;
@@ -1609,7 +1658,33 @@ function formatStorePrice(usdPrice){
     openSheet(name);
   }
   payBtn.addEventListener('click', () => startPay('Apple Pay', true));
-  bagPay.addEventListener('click', () => startPay('Apple Pay', false));
+  bagPay.addEventListener('click', async () => {
+    if (!BAG.length) return;
+    const request = [
+      'MANIFEST — ACQUISITION REQUEST',
+      '',
+      ...BAG.map((b, i) => (i + 1) + '. ' + b.name + (b.size ? ' / ' + b.size : '') + ' — displayed price ' + b.label),
+      '',
+      'Displayed subtotal: ' + document.getElementById('bag-total').textContent,
+      '',
+      'Please confirm current availability, final shipping, duties (if applicable), delivery estimate and payment instructions.',
+      'This is an enquiry only. No order has been placed and no payment has been taken.'
+    ].join('\n');
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(request);
+      } else {
+        const field = document.createElement('textarea');
+        field.value = request; field.style.position = 'fixed'; field.style.opacity = '0';
+        document.body.appendChild(field); field.select();
+        const copied = document.execCommand('copy'); field.remove();
+        if (!copied) throw new Error('Copy unavailable');
+      }
+      bagMsg.textContent = 'Request copied. Send it through Manifest’s official contact channel. This has not placed an order or taken payment.';
+    } catch (error) {
+      bagMsg.textContent = 'Copy was unavailable. Please note the items and contact Manifest directly. No order or payment has been created.';
+    }
+  });
   // Blue wallet: shows both names until one is chosen, then wears that
   // wallet's mark (in both the record and the bag) and stays switchable.
   const walletEls = Array.from(document.querySelectorAll('.wallet-alt'));
