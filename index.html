@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MANIFEST — Streetwear</title>
+<title>MANIFEST</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 
   :root{
@@ -175,25 +175,71 @@
     font-size:15px; line-height:1.6; color:#3A382F; margin:0;
   }
 
-  .field{ position:relative; z-index:2; }
+  .field-search{
+    position:relative; z-index:2;
+    max-width:340px; margin:0 auto 3vh; padding:0 24px;
+    text-align:center;
+    scroll-margin-top:70px;
+  }
+  .field-search input{
+    width:100%;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--ink); background:transparent;
+    border:none; border-bottom:1px solid var(--hairline);
+    padding:8px 2px; text-align:center;
+    transition: border-color 0.4s ease;
+  }
+  .field-search input::placeholder{ color:var(--ink-soft); opacity:0.7; }
+  .field-search input:focus{ border-bottom-color:var(--ink-soft); }
 
+  /* Category chips — quiet, mono, same voice as the search line */
+  .field-filters{
+    position:relative; z-index:2;
+    max-width:560px; margin:0 auto 6vh; padding:0 24px;
+    display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px;
+    scroll-margin-top:70px;
+  }
+  .field-filters button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--ink-soft);
+    padding:6px 2px;
+    border-bottom:1px solid transparent;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .field-filters button:hover{ color:var(--ink); }
+  .field-filters button.active{ color:var(--ink); border-bottom-color:var(--ink); }
+
+  /* The field — a single column that flows. Objects keep a scattered
+     horizontal position, but spacing is constant so nothing can stack. */
+  .field{
+    position:relative; z-index:2;
+    max-width:980px; margin:0 auto;
+    padding:0 clamp(16px,4vw,40px) 8vh;
+  }
+  #field-objects{
+    --w: clamp(128px, 36vw, 176px);          /* one base size, responsive */
+    display:flex; flex-direction:column;
+    gap: clamp(56px, 11vh, 110px);           /* constant breathing room */
+  }
   .field-obj{
-    position:absolute;
-    z-index:2;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+    --iw: calc(var(--w) * var(--s, 1));      /* ±6% variation only */
+    position:relative; z-index:2;
+    width:var(--iw);
+    margin-left: calc((100% - var(--iw)) * var(--x, 0.5)); /* never leaves the screen */
+    display:flex; flex-direction:column; align-items:center;
     animation: drift-obj 15s ease-in-out infinite;
     cursor:pointer;
   }
   .field-obj .stage{
-    width:100%; height:100%;
+    width:100%; aspect-ratio:1 / 1;
     filter: drop-shadow(0 12px 16px rgba(32,28,20,0.08));
   }
   .field-obj img{ width:100%; height:100%; object-fit:contain; }
   .field-obj .cap{
-    margin-top:12px;
-    text-align:center;
+    width:max(100%, 140px);                  /* long names wrap instead of spilling */
+    margin-top:12px; text-align:center;
     opacity: var(--cap-opacity, 0);
     transform: translateY(4px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
@@ -205,13 +251,29 @@
   }
   .field-obj .cap .name{
     font-family:'Fraunces', serif; font-size:14px; margin-top:2px; color:var(--ink);
-    white-space:nowrap;
+    line-height:1.3;
   }
   @keyframes drift-obj{
     0%{ transform: translate(0,0) rotate(var(--jitter-r, 0deg)); }
     50%{ transform: translate(5px,-12px) rotate(calc(var(--jitter-r, 0deg) + 0.7deg)); }
     100%{ transform: translate(0,0) rotate(var(--jitter-r, 0deg)); }
   }
+
+  .field-empty{
+    position:relative; z-index:2;
+    max-width:420px; margin:0 auto; padding:6vh 24px 14vh;
+    text-align:center; display:none;
+  }
+  .field-empty p{
+    font-family:'Fraunces', serif; font-style:italic;
+    font-size:15px; line-height:1.6; color:#3A382F; margin:0 0 14px;
+  }
+  .field-empty button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--ink-soft); border-bottom:1px solid var(--hairline); padding:4px 2px;
+  }
+  .field-empty button:hover{ color:var(--ink); }
 
   .pending-mark{
     width:100%; height:100%;
@@ -299,14 +361,13 @@
     opacity:0; pointer-events:none;
     transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
   }
-  .record.open{ opacity:1; transform:translate(-50%,-50%); pointer-events:auto; }
+  .record-backdrop.open + .record, .record.open{ opacity:1; transform:translate(-50%,-50%); pointer-events:auto; }
   .record-close{
     position:absolute; top:18px; right:20px;
     font-family:'JetBrains Mono', monospace; font-size:11px;
     letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
     padding:6px 8px;
   }
-  .record-prov{ text-align:center; margin-bottom:18px; opacity:.7; }
   .record-stage{ width:100%; max-width:260px; margin:0 auto; }
   .record-stage img{ width:100%; height:auto; object-fit:contain; }
   .record-dots{
@@ -332,15 +393,6 @@
     font-family:'Fraunces', serif; font-style:italic;
     font-size:14px; line-height:1.6; color:#3A382F;
   }
-  .record-mine{
-    margin-top:16px; padding-top:16px; border-top:1px solid var(--hairline);
-    text-align:center; font-family:'Fraunces',serif; font-size:15px; line-height:1.6; color:var(--ink);
-  }
-  .record-mine::before{ content:"— "; color:var(--ink-soft); }
-  .record-scarcity{
-    margin-top:14px; text-align:center;
-    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft);
-  }
   .record-sizes{
     margin-top:26px; text-align:center;
   }
@@ -357,8 +409,6 @@
     transition: border-color 0.25s ease, color 0.25s ease;
   }
   .record-size-row button:hover{ border-color:var(--ink-soft); }
-  .record-size-row button.out{ opacity:0.35; text-decoration:line-through; cursor:default; }
-  .record-size-row button.out:hover{ border-color:var(--hairline); }
   .record-size-row button.chosen{ border-color:var(--ink); color:var(--ink); font-weight:600; }
   .record-price{
     margin-top:26px; text-align:center;
@@ -367,412 +417,11 @@
   .record-price .amount{
     font-family:'Fraunces', serif; font-size:20px; color:var(--ink);
   }
-
-  /* ---- bag + wallet buttons ---- */
-  .record-actions{ margin-top:20px; }
-  .action-row{ display:flex; gap:10px; }
-  .btn-black{
-    display:flex; align-items:center; justify-content:center; gap:6px;
-    height:48px; width:100%;
-    background:#000; color:#fff; border-radius:6px;
-    font-family:'Archivo', sans-serif; font-size:15px; font-weight:500;
-    transition: opacity 0.25s ease;
+  .record-price .label{ margin-top:4px; }
+  .record-note{
+    margin-top:16px; text-align:center; font-size:10px;
+    color:var(--ink-soft); opacity:0.7; line-height:1.5;
   }
-  .btn-black:hover{ opacity:0.85; }
-  .btn-black:disabled{ opacity:0.3; cursor:default; }
-  .action-row .btn-black:first-child{ flex:1; }
-  .action-row .btn-pay{ flex:0 0 38%; }
-  .applepay-mark{
-    display:inline-flex; align-items:center; gap:3px;
-    font-family:'Archivo', sans-serif; font-size:20px; font-weight:600; letter-spacing:-0.01em;
-  }
-  .applepay-mark svg{ width:16px; height:19px; fill:#fff; margin-top:-2px; }
-  .gpay-note, .gpay-link{
-    margin-top:10px; text-align:center;
-    font-family:'JetBrains Mono', monospace; font-size:10px;
-    letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
-  }
-  .gpay-link{ width:100%; padding:6px; }
-
-  .bag{
-    position:fixed; top:0; right:0; bottom:0; z-index:202;
-    width:min(400px, 100vw);
-    background:#FCFBF8;
-    box-shadow:-20px 0 50px rgba(20,18,26,0.2);
-    display:flex; flex-direction:column;
-    padding:28px 28px 24px;
-    transform:translateX(100%);
-    transition: transform 0.4s var(--ease);
-  }
-  .bag.open{ transform:none; }
-  .bag-head{ display:flex; justify-content:space-between; align-items:center; }
-  .bag-items{ flex:1; overflow-y:auto; margin-top:24px; }
-  .bag-empty{
-    margin-top:40px; text-align:center;
-    font-family:'Fraunces', serif; font-style:italic; color:var(--ink-soft);
-  }
-  .bag-row{
-    display:flex; gap:14px; align-items:center;
-    padding:14px 0; border-bottom:1px solid var(--hairline);
-  }
-  .bag-row img{ width:64px; height:64px; object-fit:contain; }
-  .bag-row .info{ flex:1; }
-  .bag-row .n{ font-family:'Fraunces', serif; font-size:15px; }
-  .bag-row .s{
-    font-family:'JetBrains Mono', monospace; font-size:10px;
-    letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); margin-top:3px;
-  }
-  .bag-row .rm{ font-size:11px; color:var(--ink-soft); padding:6px; }
-  .bag-foot{ padding-top:18px; }
-  .bag-total{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px; }
-  .bag-total .amount{ font-family:'Fraunces', serif; font-size:20px; }
-  .bag-msg{
-    margin-top:10px; min-height:14px; text-align:center;
-    font-size:10px; color:var(--ink-soft);
-  }
-
-/* ---- blue wallet (Google Pay / Samsung Pay) + pay sheet ---- */
-.btn-blue{
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  height:44px; width:100%;
-  background:#1a73e8; color:#fff; border-radius:6px;
-  font-family:'Archivo', sans-serif; font-size:14px; font-weight:500;
-  transition: opacity 0.25s ease;
-}
-.btn-blue:hover{ opacity:0.9; }
-.btn-blue:disabled{ opacity:0.3; cursor:default; }
-.btn-blue .chev{ font-size:11px; transition: transform 0.25s var(--ease); }
-.wallet-alt{ margin-top:10px; }
-.wallet-alt.open .btn-blue .chev{ transform:rotate(180deg); }
-.wallet-menu{ display:none; margin-top:6px; border:1px solid rgba(26,115,232,0.35); border-radius:6px; overflow:hidden; }
-.wallet-alt.open .wallet-menu{ display:grid; }
-.wallet-menu button{ display:flex; align-items:center; padding:13px 14px; text-align:left; font-family:'Archivo', sans-serif; font-size:14px; color:#1a4fa0; }
-.wm{ display:inline-flex; align-items:center; gap:6px; font-family:'Archivo', sans-serif; font-weight:500; letter-spacing:0.01em; line-height:1; }
-.wm svg{ width:16px; height:16px; fill:currentColor; }
-.wm-pay{ font-size:15px; font-weight:500; }
-.wm-samsung{ font-weight:700; font-size:12px; letter-spacing:0.16em; gap:0; }
-.wm-samsung .wm-pay{ letter-spacing:0.01em; margin-left:6px; }
-.btn-blue .wl{ font-size:14px; }
-.wallet-menu button + button{ border-top:1px solid rgba(26,115,232,0.2); }
-.wallet-menu button:hover{ background:rgba(26,115,232,0.08); }
-
-.pay-sheet-backdrop{
-  position:fixed; inset:0; z-index:400; background:rgba(20,18,26,0.45);
-  opacity:0; pointer-events:none; transition: opacity 0.3s var(--ease);
-}
-.pay-sheet-backdrop.open{ opacity:1; pointer-events:auto; }
-.pay-sheet{
-  position:fixed; z-index:401; left:50%; bottom:0; width:min(420px, 100vw);
-  background:#F5F5F7; color:#111; border-radius:14px 14px 0 0;
-  padding:20px 22px 26px;
-  transform:translate(-50%, 100%); transition: transform 0.4s var(--ease);
-}
-.pay-sheet.open{ transform:translate(-50%, 0); }
-.ps-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-family:'Archivo', sans-serif; font-weight:600; font-size:17px; }
-.ps-head .applepay-mark{ color:#000; }
-.ps-head .applepay-mark svg{ fill:#000; }
-.ps-head button{ font-size:14px; color:#1a73e8; font-weight:400; }
-.ps-row{ display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.08); font-size:14px; }
-.ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
-.ps-msg{ margin-top:10px; min-height:14px; text-align:center; font-size:11px; color:#6b6b73; }
-
-/* ---- receipts: printed after payment (mock) ---- */
-.rcpt-stage{
-  position:fixed; inset:0; z-index:500; overflow-y:auto; overflow-x:hidden;
-  background:rgba(11,9,6,0.975); opacity:0; pointer-events:none;
-  transition:opacity .45s var(--ease);
-}
-.rcpt-stage.open{ opacity:1; pointer-events:auto; }
-.rcpt-slot{
-  position:sticky; top:0; z-index:5; width:min(330px,88vw); height:12px; margin:0 auto;
-  background:linear-gradient(#000,#17130d); border-radius:0 0 8px 8px;
-  box-shadow:0 6px 18px rgba(0,0,0,.6);
-}
-.rcpt-pile{ display:flex; flex-direction:column; align-items:center; padding:0 0 18vh; }
-.rcpt-slip{
-  position:relative; width:min(290px,80vw); margin-top:-40px;
-  filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));
-  clip-path:inset(0 0 100% 0);
-}
-.rcpt-slip:first-child{ margin-top:6px; }
-.rcpt-slip.main{ width:min(320px,86vw); margin-top:-22px; }
-.rcpt-slip.printing{ animation:rcptPrint 1.7s steps(30,end) forwards; }
-@keyframes rcptPrint{ from{ clip-path:inset(0 0 100% 0); } to{ clip-path:inset(-20px -20px -20px -20px); } }
-.rcpt-paper{
-  background:#fbfbf8; color:#161616; padding:22px 20px 36px;
-  font-family:'JetBrains Mono',monospace; font-size:11px; line-height:17px;
-  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 7px) no-repeat,radial-gradient(circle at 5px 7px,transparent 4px,#000 4.5px) bottom/10px 7px repeat-x;
-          mask:linear-gradient(#000 0 0) top/100% calc(100% - 7px) no-repeat,radial-gradient(circle at 5px 7px,transparent 4px,#000 4.5px) bottom/10px 7px repeat-x;
-}
-.rcpt-word{ text-align:center; font-family:'Archivo',sans-serif; font-weight:800; font-size:25px; letter-spacing:5px; }
-.rcpt-tag{ text-align:center; font-size:8.5px; letter-spacing:1.4px; text-transform:uppercase; color:#777; margin:4px 0 14px; }
-.rcpt-row{ display:flex; justify-content:space-between; gap:12px; }
-.rcpt-row span{ color:#555; }
-.rcpt-row b{ font-weight:400; text-align:right; }
-.rcpt-rule{ border-top:1px dashed #999; margin:11px 0; }
-.rcpt-label{ color:#555; }
-.rcpt-house{ font-weight:700; font-size:13px; }
-.rcpt-item{ font-weight:700; margin-top:6px; }
-.rcpt-group{ margin-top:9px; font-size:9px; letter-spacing:1.4px; text-transform:uppercase; color:#777; }
-.rcpt-total{ font-weight:700; font-size:13px; border-top:1px solid #161616; padding-top:6px; margin-top:6px; }
-.rcpt-total span{ color:#161616; }
-.rcpt-note{ margin-top:12px; text-align:center; font-size:10px; line-height:15px; color:#444; }
-.rcpt-foot{ margin-top:12px; text-align:center; font-size:8.5px; letter-spacing:2px; text-transform:uppercase; color:#888; }
-.rcpt-done{
-  position:fixed; top:14px; right:16px; z-index:6; color:#EDEAF2; font-family:'JetBrains Mono',monospace;
-  font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:8px 10px; opacity:.7;
-}
-.rcpt-done:hover{ opacity:1; }
-@media (prefers-reduced-motion: reduce){
-  .rcpt-slip{ clip-path:none; }
-  .rcpt-slip.printing{ animation:none; }
-}
-
-/* ---- nav ---- */
-.nav-right{ display:flex; align-items:center; gap:18px; }
-.bag-btn, .nav-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
-.wordmark-nav, .nav-right, .bag-btn, .nav-btn{ transition:color .5s ease; }
-body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body.on-dark .nav-btn{ color:#EDEAF2; }
-
-/* permanent search, always in the nav. The field opens inline, left of the button. */
-.nav-search{ display:flex; align-items:center; gap:10px; }
-.nav-search input{
-  width:0; opacity:0; padding:4px 0; border:none; border-bottom:1px solid var(--hairline);
-  background:transparent; outline:none; border-radius:0;
-  font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink);
-  transition:width .4s var(--ease), opacity .3s ease, color .5s ease;
-}
-.nav-search input::placeholder{ color:var(--ink-soft); opacity:.7; }
-.nav-search.open input{ width:clamp(120px,22vw,220px); opacity:1; }
-body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,242,.3); }
-
-/* the index: the whole catalog as a list, grouped by house, A to Z */
-.burger{ display:inline-flex; flex-direction:column; gap:4px; width:16px; padding:4px 0; }
-.burger i{ display:block; height:1px; background:currentColor; }
-.index-backdrop{
-  position:fixed; inset:0; z-index:203; background:rgba(20,18,26,.45);
-  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
-  opacity:0; pointer-events:none; transition:opacity .35s var(--ease);
-}
-.index-backdrop.open{ opacity:1; pointer-events:auto; }
-.index{
-  position:fixed; top:0; left:0; bottom:0; z-index:204; width:min(440px,100vw);
-  background:#FCFBF8; box-shadow:20px 0 50px rgba(20,18,26,.2);
-  display:flex; flex-direction:column; padding:28px 28px 0;
-  transform:translateX(-100%); visibility:hidden;
-  transition:transform .4s var(--ease), visibility 0s .4s;
-}
-.index.open{ transform:none; visibility:visible; transition-delay:0s; }
-.index-head{ display:flex; justify-content:space-between; align-items:center; padding-bottom:16px; border-bottom:1px solid var(--hairline); }
-.index-list{ flex:1; overflow-y:auto; padding-bottom:40px; overscroll-behavior:contain; }
-.index-house{
-  margin:26px 0 6px; font:400 10px/1 'JetBrains Mono',monospace;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft);
-}
-.index-row{
-  display:flex; align-items:center; gap:14px; width:100%; padding:9px 0;
-  text-align:left; border-bottom:1px solid var(--hairline);
-}
-.index-row img{ width:40px; height:40px; object-fit:contain; flex:none; }
-.index-row .n{ flex:1; font-family:'Fraunces',serif; font-size:15px; color:var(--ink); }
-.index-row .c{ font:400 9px 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); }
-.index-row:hover .n{ text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--ink-soft); }
-
-@media (max-width:640px){
-  #field-count{ display:none; }
-  .nav-right{ gap:14px; }
-}
-
-/* ---- the wall: one continuous book, part of the same scroll ----
-   The room is never a fixed colour. It is always the blend of the images it sits between,
-   so a white-ground plate and a black-ground plate belong to the same room. */
-.wall{ --wall-bg:#d2d2d2; --wall-fg:#201C14; --wall-line:rgba(32,28,20,.18); position:relative; z-index:2; }
-.wall-fade-in{ height:40vh; }
-.wall-fade-out{ height:28vh; }
-.wall-body{ position:relative; background:var(--wall-bg); color:var(--wall-fg); font-family:'JetBrains Mono',monospace; }
-.wall-body::after{ content:""; position:absolute; inset:0; z-index:3; pointer-events:none; opacity:.4; mix-blend-mode:soft-light;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
-.wall-lead{ position:relative; padding:12vh 24px 2vh; text-align:center; font:italic 400 15px/1.6 'Fraunces',serif; opacity:.8; }
-
-.plate{ position:relative; display:flex; align-items:center; justify-content:center; padding:11vh 6vw; }
-.pair{ display:flex; gap:clamp(16px,4vw,60px); align-items:flex-end; justify-content:center; }
-.pair figure:nth-child(2){ margin-bottom:6vh; }
-.plate figure{ margin:0; opacity:0; will-change:transform, opacity; }
-.plate figure img{
-  display:block; width:min(calc(var(--w) * 1px), 86vw, 560px, calc(68svh * var(--ar))); height:auto; aspect-ratio:var(--ar); cursor:zoom-in;
-  -webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent), linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
-  -webkit-mask-composite:source-in;
-  mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent), linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);
-  mask-composite:intersect; }
-.pair figure img{ width:min(calc(var(--w) * 1px), 42vw, 430px, calc(62svh * var(--ar))); }
-.plate figcaption{ margin-top:14px; font-size:11px; letter-spacing:.06em; line-height:1.6; opacity:0; max-width:34ch; }
-.plate figcaption .n{ display:block; opacity:.5; letter-spacing:.14em; margin-bottom:2px; }
-.plate figcaption .s{ display:block; opacity:.55; }
-
-/* every single plate is a spread: the image and its text share the page.
-   Plates with a written story use .story; the rest use .note, where the text column
-   carries the plate number, the caption set large, and the source. */
-.plate.story{ display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:6vw; align-items:center; max-width:1200px; margin:0 auto; padding:12vh 5vw; }
-.plate.story.flip figure{ order:2; }
-.plate.story figure{ justify-self:center; }
-.plate.story figure img{ width:min(calc(var(--w) * 1px), 100%, calc(68svh * var(--ar))); }
-.plate .text{ opacity:0; will-change:transform, opacity; font-family:'Archivo',sans-serif; }
-.plate .text .kicker{ font:400 10px/1 'JetBrains Mono',monospace; letter-spacing:.2em; text-transform:uppercase; opacity:.55; }
-.plate .text h3{ margin:12px 0 0; font:400 clamp(28px,4vw,50px)/1.08 'Fraunces',serif; letter-spacing:.01em; }
-.plate .text .deck{ margin:14px 0 0; font:italic 400 clamp(16px,1.6vw,19px)/1.5 'Fraunces',serif; opacity:.8; }
-.plate .text .body{ margin-top:22px; padding-top:22px; border-top:1px solid var(--wall-line); }
-.plate .text .body p{ margin:0 0 14px; font-size:15px; line-height:1.75; opacity:.78; }
-.plate .text .body p:first-child::first-letter{ float:left; font-family:'Fraunces',serif; font-size:3.3em; line-height:.85; padding:6px 10px 0 0; }
-.plate .text .see{ margin-top:18px; display:flex; flex-wrap:wrap; gap:6px 16px; font:400 10px/1.4 'JetBrains Mono',monospace; letter-spacing:.1em; text-transform:uppercase; }
-.plate .text .see span{ opacity:.5; }
-.plate .text .see a{ opacity:.75; border-bottom:1px solid var(--wall-line); cursor:pointer; }
-.plate .text .see a:hover, .plate .text .see a:focus-visible{ opacity:1; }
-
-.plate.note .text .ghost{ font:300 clamp(96px,15vw,210px)/.8 'Fraunces',serif; letter-spacing:-.03em; opacity:.1; margin-left:-.04em; user-select:none; }
-.plate.note .text .kicker{ margin-top:22px; }
-.plate.note .text .note-cap{ margin:16px 0 0; font:italic 400 clamp(20px,2.3vw,30px)/1.3 'Fraunces',serif; opacity:.88; }
-.plate.note .text .note-src{ margin-top:22px; padding-top:18px; border-top:1px solid var(--wall-line); font:400 10px/1.6 'JetBrains Mono',monospace; letter-spacing:.14em; text-transform:uppercase; opacity:.55; }
-
-.wall-foot{ position:relative; text-align:center; padding:4vh 24px 12vh; font-size:10px; letter-spacing:.08em; opacity:.5; }
-
-/* the paper sound has its own dot, next to the ambience dot, and only appears over the wall */
-#paper{ position:fixed; right:46px; bottom:24px; z-index:1000; width:8px; height:8px; padding:0; border:none; border-radius:50%;
-  background:currentColor; color:#7A7160; opacity:0; pointer-events:none; cursor:pointer; transition:opacity .8s ease, box-shadow .8s ease; }
-#paper::after{ content:""; position:absolute; inset:-14px; }
-#paper.show{ opacity:.3; pointer-events:auto; }
-#paper.show.on{ opacity:.85; box-shadow:0 0 6px currentColor; }
-
-.wall-zoom{ position:fixed; inset:0; z-index:310; display:none; align-items:center; justify-content:center; background:rgba(5,4,8,.94); cursor:zoom-out; padding:4vh 4vw; }
-.wall-zoom.open{ display:flex; }
-.wall-zoom img{ max-width:100%; max-height:100%; object-fit:contain; }
-@media (max-width:820px){
-  .plate.story{ grid-template-columns:1fr; gap:34px; padding:10vh 6vw; }
-  .plate.story.flip figure{ order:0; }
-}
-@media (max-width:640px){
-  .pair{ flex-direction:column; align-items:center; gap:28px; }
-  .pair figure:nth-child(2){ margin-bottom:0; }
-  .pair figure img{ width:min(calc(var(--w) * 1px), 78vw, calc(36svh * var(--ar))); }
-}
-
-/* ---- house-branded slips: each house prints on its own paper ---- */
-.rcpt-paper .brand-logo{ display:block; height:44px; margin:0 auto 8px; object-fit:contain; }
-.rcpt-paper .brand-word{ text-align:center; }
-.rcpt-paper .brand-sub{ text-align:center; font-size:8.5px; letter-spacing:1.4px; text-transform:uppercase; color:#777; margin:4px 0 14px; }
-.rcpt-paper .bc{ height:34px; margin-top:14px; background:repeating-linear-gradient(90deg,#161616 0 2px,transparent 2px 4px,#161616 4px 5px,transparent 5px 8px,#161616 8px 11px,transparent 11px 12px); }
-.rcpt-paper .band{ margin:-22px -20px 16px; }
-
-/* BAPE: camo band, heavy sans wordmark */
-.b-bape .band{ height:20px; background:
-  radial-gradient(circle at 20% 40%,#2f4a2b 0 7px,transparent 8px),
-  radial-gradient(circle at 62% 70%,#1d2f1b 0 6px,transparent 7px),
-  radial-gradient(circle at 88% 30%,#5d7234 0 7px,transparent 8px), #7f9150; background-size:52px 20px; }
-.b-bape .brand-word{ font-family:'Archivo',sans-serif; font-weight:800; font-size:19px; letter-spacing:2px; }
-
-/* Louis Vuitton: warm paper, spaced serif */
-.b-lv{ background:#f6efe1; }
-.b-lv .band{ height:14px; background:repeating-linear-gradient(90deg,#8a6a3a 0 1px,transparent 1px 9px); opacity:.55; }
-.b-lv .brand-word{ font-family:'Fraunces',serif; font-weight:400; font-size:19px; letter-spacing:6px; }
-
-/* Supreme: red box */
-.b-supreme .band{ display:none; }
-.b-supreme .brand-word{ background:#da1f26; color:#fff; font-family:'Archivo',sans-serif; font-weight:800; font-style:italic; font-size:24px; letter-spacing:-.5px; padding:6px 0; margin:0 auto 6px; width:70%; }
-
-/* Off-White: hazard stripe, quote marks */
-.b-ow .band{ height:12px; background:repeating-linear-gradient(135deg,#161616 0 8px,#fbfbf8 8px 16px); }
-.b-ow .brand-word{ font-family:'Archivo',sans-serif; font-weight:600; font-size:17px; letter-spacing:3px; }
-.b-ow .rcpt-label::before,.b-ow .rcpt-label::after{ content:'"'; }
-
-/* Chrome Hearts: black paper, silver type */
-.b-ch{ background:#0e0e0e; color:#c9c9c9; }
-.b-ch .rcpt-row span,.b-ch .rcpt-label,.b-ch .brand-sub{ color:#8a8a8a; }
-.b-ch .rcpt-rule{ border-top-color:#444; }
-.b-ch .rcpt-total{ border-top-color:#c9c9c9; } .b-ch .rcpt-total span{ color:#c9c9c9; }
-.b-ch .rcpt-note{ color:#a8a8a8; }
-.b-ch .bc{ background:repeating-linear-gradient(90deg,#c9c9c9 0 2px,transparent 2px 4px,#c9c9c9 4px 5px,transparent 5px 8px); }
-.b-ch .band{ height:6px; background:#c9c9c9; }
-.b-ch .brand-word{ font-family:'Fraunces',serif; font-size:19px; letter-spacing:5px; }
-
-/* Goyard: chevron band */
-.b-goyard{ background:#f4ecda; }
-.b-goyard .band{ height:16px; background:repeating-linear-gradient(135deg,#1f3a2e 0 4px,#c8a35a 4px 8px,#f4ecda 8px 12px); }
-.b-goyard .brand-word{ font-family:'Fraunces',serif; font-size:19px; letter-spacing:7px; }
-
-  /* Store-facing refinements */
-  .pending-toggle{ display:none !important; }
-  body.searching .wall, body.searching .field-outro,
-  body.searching .field-note, body.searching .pending-toggle{ display:none !important; }
-  body.searching #field{ min-height:0 !important; }
-  #field-objects.searching{
-    display:grid !important; position:relative !important; height:auto !important;
-    grid-template-columns:repeat(auto-fill,minmax(min(190px,42vw),1fr));
-    align-items:start; gap:clamp(24px,4vw,48px) clamp(14px,2.5vw,30px);
-    padding:clamp(110px,15vh,150px) clamp(20px,4vw,52px) 12vh;
-  }
-  #field-objects.searching .field-obj{
-    position:relative !important; inset:auto !important; top:auto !important; left:auto !important;
-    width:100% !important; height:auto !important; min-width:0;
-    animation:none !important; transform:none !important;
-  }
-  #field-objects.searching .field-obj .stage{
-    width:100%; height:auto; aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-  }
-  #field-objects.searching .field-obj .stage img{ width:100%; height:100%; object-fit:contain; }
-  #field-objects.searching .field-obj .halo{ display:none; }
-  #field-objects.searching .field-obj .cap{
-    opacity:1 !important; transform:none !important; position:static; margin-top:12px;
-  }
-  #search-empty{
-    grid-column:1 / -1; display:none; text-align:center; padding:18vh 24px;
-    color:var(--ink-soft); font:italic 400 16px 'Fraunces',serif;
-  }
-  .snd{
-    position:fixed !important; right:20px !important; bottom:20px !important; z-index:1000;
-    display:flex !important; align-items:center; justify-content:center; gap:9px;
-    width:auto !important; min-width:112px; height:46px !important; padding:0 16px !important;
-    border:1px solid rgba(32,28,20,.22) !important; border-radius:24px !important;
-    background:rgba(252,251,248,.94) !important; color:var(--ink) !important; opacity:1 !important;
-    box-shadow:0 6px 22px rgba(20,18,26,.15) !important;
-    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-    font:500 10px 'JetBrains Mono',monospace; letter-spacing:.12em; text-transform:uppercase;
-    transition:background .25s,color .25s,border-color .25s;
-  }
-  .snd:hover{ border-color:var(--ink-soft) !important; }
-  .snd.on{ background:var(--ink) !important; color:#FCFBF8 !important; border-color:var(--ink) !important; }
-  .snd svg{ width:18px; height:18px; flex:none; }
-  .snd .w1,.snd .w2{ opacity:0; transition:opacity .2s; }
-  .snd.on .w1,.snd.on .w2{ opacity:1; }
-  #paper{ right:148px !important; bottom:39px !important; }
-  @media(max-width:640px){
-    #field-objects.searching{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .snd{ right:14px !important; bottom:14px !important; }
-    #paper{ right:140px !important; bottom:32px !important; }
-  }
-
-/* Manifest acquisition transparency */
-.acquisition{padding:clamp(48px,8vw,112px) clamp(20px,6vw,88px);background:#f4f2ed;color:#171714}
-.acq-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:38px}
-.acq-kicker,.acq-meta{font:10px/1.4 monospace;letter-spacing:.12em;text-transform:uppercase;color:#77756e}
-.acq-title{font:clamp(34px,6vw,76px)/.98 Georgia,serif;letter-spacing:-.045em;max-width:720px;margin:14px 0}
-.acq-intro{font:14px/1.65 sans-serif;color:#66635d;max-width:480px}
-.acq-list{border-top:1px solid #d4d0c7}
-.acq-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;padding:21px 0;border-bottom:1px solid #d4d0c7;align-items:center}
-.acq-name{font:clamp(18px,2.4vw,26px)/1.15 Georgia,serif}
-.acq-detail{font:12px/1.5 sans-serif;color:#77756e;margin-top:7px;max-width:560px}
-.acq-status{font:10px/1 monospace;letter-spacing:.09em;text-transform:uppercase;border:1px solid #c8c3b8;border-radius:30px;padding:9px 12px;white-space:nowrap;color:#4e4b44}
-.acq-status[data-state="verifying"]{background:#e9e5da}
-.acq-status[data-state="planned"]{background:transparent}
-.acq-status[data-state="available"]{background:#e1e9df;border-color:#b8c7b4}
-.acq-foot{font:11px/1.6 sans-serif;color:#77756e;margin-top:18px;max-width:680px}
-.acq-lower{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px);margin-top:64px;padding-top:28px;border-top:1px solid #d4d0c7}
-.acq-lower h3{font:clamp(23px,3vw,36px)/1.1 Georgia,serif;font-weight:400;margin:10px 0}
-.acq-lower p{font:13px/1.65 sans-serif;color:#6d6a63;max-width:480px}
-.acq-note{font:11px/1.5 monospace;color:#77756e;margin-top:16px}
-#bag-applepay{font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-.bag .wallet-alt,.record .wallet-alt,.record .btn-pay,.pay-sheet-backdrop,.pay-sheet,.rcpt-stage{display:none!important}
-.bag .bag-foot:after{content:"A request is not an order. Availability, final shipping and payment are confirmed separately.";display:block;font:10px/1.55 sans-serif;color:#8a877f;margin-top:12px}
-@media(max-width:640px){.acq-head{display:block}.acq-item{gap:12px}.acq-status{font-size:9px;padding:8px}.acq-lower{grid-template-columns:1fr;gap:28px}}
-
 </style>
 </head>
 <body>
@@ -829,20 +478,12 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 
 <nav>
   <div class="wordmark-nav">MANIFEST</div>
-  <div class="nav-right">
-    <div class="nav-search" id="nav-search">
-      <input type="text" id="field-search-input" placeholder="name, house, category" autocomplete="off" aria-label="Search the archive by name, house, or category">
-      <button class="nav-btn" id="search-toggle" type="button" aria-expanded="false">Search</button>
-    </div>
-    <button class="nav-btn" id="index-open" type="button" aria-label="Open index"><span class="burger"><i></i><i></i><i></i></span></button>
-    <button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button>
-    <span id="field-count">— objects</span>
-  </div>
+  <div class="nav-right"><span id="field-count">— objects</span></div>
 </nav>
 
 <section class="arrival" id="arrival">
   <div class="wordmark display">Manifest</div>
-  <div class="thesis">A curated streetwear store</div>
+  <div class="thesis">An archive of attention</div>
   <div class="arrival-obj-wrap" id="arrival-obj">
     <div class="halo" id="arrival-halo"></div>
     <div class="stage" id="arrival-stage"></div>
@@ -857,24 +498,25 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 </section>
 
 <section class="field-note">
-  <p>Streetwear, footwear and objects selected for their design, history and place in culture.</p>
+  <p>Nothing here is sorted. Stay a while — the room remembers where you've been.</p>
 </section>
+
+<section class="field-search" id="field-search">
+  <input type="text" id="field-search-input" placeholder="Find by name or maker" autocomplete="off" aria-label="Search the catalog by name, maker, or category">
+</section>
+
+<nav class="field-filters" id="field-filters" aria-label="Filter by category"></nav>
 
 <section class="field" id="field">
-  <div id="field-objects" style="position:relative;"></div>
+  <div id="field-objects"></div>
 </section>
 
-<div class="field-outro">End of the current selection</div>
+<div class="field-empty" id="field-empty">
+  <p>Nothing in the record answers to that — yet.</p>
+  <button type="button" id="field-empty-reset">Return to the full field</button>
+</div>
 
-<section class="wall" id="wall" aria-label="The wall">
-  <div class="wall-fade-in" id="wall-fade-in" aria-hidden="true"></div>
-  <div class="wall-body" id="wall-body">
-    <div class="wall-lead">References, images and ideas from the culture around the pieces.</div>
-    <div id="wall-book"></div>
-    <div class="wall-foot">Images and marks remain the property of their respective owners. Presented for reference.</div>
-  </div>
-  <div class="wall-fade-out" id="wall-fade-out" aria-hidden="true"></div>
-</section>
+<div class="field-outro">End of record — for now</div>
 
 <div class="pending-toggle">
   <button id="pending-btn" aria-expanded="false">
@@ -886,118 +528,33 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   </div>
 </div>
 
-
-<section class="acquisition" id="acquisition" aria-labelledby="acq-title">
-  <div class="acq-head">
-    <div>
-      <div class="acq-kicker">Manifest / acquisition register</div>
-      <h2 class="acq-title" id="acq-title">A collection in motion.</h2>
-      <p class="acq-intro">A visible record of what is being considered, checked and sourced. We would rather show what is not ready than imply that it is available.</p>
-    </div>
-    <div class="acq-meta">First acquisition round<br>South Africa</div>
-  </div>
-  <div class="acq-list" aria-label="Sourcing status">
-    <article class="acq-item"><div><div class="acq-name">Murakami flower cushion</div><div class="acq-detail">One considered. Packed dimensions and volumetric weight still need confirmation.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
-    <article class="acq-item"><div><div class="acq-name">BAPE wall clock</div><div class="acq-detail">One considered. Exact listing, battery requirements and protective packaging need checking.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
-    <article class="acq-item"><div><div class="acq-name">BAPE ashtray</div><div class="acq-detail">One considered. Material, dimensions and packaging are not yet confirmed.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
-    <article class="acq-item"><div><div class="acq-name">Supreme skateboard deck</div><div class="acq-detail">One planned for a later round. Oversized freight quotation required before proceeding.</div></div><span class="acq-status" data-state="planned">Planned</span></article>
-    <article class="acq-item"><div><div class="acq-name">LV fragrance bottles</div><div class="acq-detail">Separate purchase. Authentic supply and a permitted shipping route must be established first.</div></div><span class="acq-status" data-state="verifying">Verifying</span></article>
-  </div>
-  <p class="acq-foot">These are sourcing intentions, not confirmed stock or offers for sale. Status changes only when the underlying information has been checked. No supplier, price, authenticity claim or delivery date is implied here.</p>
-  <div class="acq-lower">
-    <div><div class="acq-kicker">01 / Discovery</div><h3>Taste before transaction.</h3><p>Manifest's selection should remain worth visiting before a customer is ready to buy. New references and emerging objects can be introduced as editorial discoveries, separate from confirmed inventory.</p><div class="acq-note">EDITORIAL SELECTION · HUMAN REVIEW</div></div>
-    <div><div class="acq-kicker">02 / The record</div><h3>Nothing moves by implication.</h3><p>Verifying means information is being checked. Planned means it has not entered sourcing. Available should mean the owner has confirmed stock and the current price. Acquired and delivered describe completed steps, not marketing language.</p><div class="acq-note">PUBLIC STATUS · OWNER CONTROLLED</div></div>
-  </div>
-</section>
-
 <div class="record-backdrop" id="record-backdrop"></div>
 <div class="record" id="record" role="dialog" aria-modal="true" aria-labelledby="record-name">
   <button class="record-close" id="record-close" aria-label="Close">Close ✕</button>
-  <div class="record-prov eyebrow">from my collection</div>
   <div class="record-stage" id="record-stage"></div>
   <div class="record-dots" id="record-dots" style="display:none;"></div>
   <div class="record-maker eyebrow" id="record-maker"></div>
   <div class="record-name" id="record-name"></div>
   <div class="record-blurb" id="record-blurb"></div>
-  <div class="record-mine" id="record-mine" style="display:none;"></div>
-  <div class="record-scarcity" id="record-scarcity" style="display:none;"></div>
   <div class="record-sizes" id="record-sizes" style="display:none;">
-    <div class="eyebrow label">Sizes</div>
+    <div class="eyebrow label">Size</div>
     <div class="record-size-row" id="record-size-row"></div>
   </div>
   <div class="record-price">
     <div class="amount" id="record-price-amount"></div>
+    <div class="eyebrow label">Recognized value</div>
   </div>
-  <div class="record-actions">
-    <div class="action-row">
-      <button class="btn-black" id="record-add">Add to Bag</button>
-      <button class="btn-black btn-pay" id="record-applepay" aria-label="Buy with Apple Pay"></button>
-    </div>
-    <div class="wallet-alt">
-      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false"><span class="wl">Google Pay · Samsung Pay</span> <span class="chev">▾</span></button>
-      <div class="wallet-menu" role="menu">
-        <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
-        <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
-      </div>
-    </div>
-  </div>
+  <div class="record-note">Reference figure, drawn from current market comparables — not a listing.</div>
 </div>
 
-<aside class="bag" id="bag" aria-label="Bag">
-  <div class="bag-head">
-    <span class="eyebrow">Bag</span>
-    <button class="eyebrow" id="bag-close">Close ✕</button>
-  </div>
-  <div class="bag-items" id="bag-items"></div>
-  <div class="bag-foot">
-    <div class="bag-total"><span class="eyebrow">Total</span><span class="amount" id="bag-total"></span></div>
-    <button class="btn-black" id="bag-applepay" aria-label="Pay with Apple Pay"></button>
-    <div class="wallet-alt">
-      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false"><span class="wl">Google Pay · Samsung Pay</span> <span class="chev">▾</span></button>
-      <div class="wallet-menu" role="menu">
-        <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
-        <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
-      </div>
-    </div>
-    <div class="bag-msg" id="bag-msg"></div>
-  </div>
-</aside>
-
-<div class="index-backdrop" id="index-backdrop"></div>
-<aside class="index" id="index" aria-label="Index">
-  <div class="index-head">
-    <span class="eyebrow">Index · <span id="index-count"></span></span>
-    <button class="eyebrow" id="index-close" type="button">Close ✕</button>
-  </div>
-  <div class="index-list" id="index-list"></div>
-</aside>
-
-<div class="pay-sheet-backdrop" id="pay-backdrop"></div>
-<div class="pay-sheet" id="pay-sheet" role="dialog" aria-modal="true" aria-label="Payment">
-  <div class="ps-head"><span id="ps-wallet"></span><button type="button" id="ps-cancel">Cancel</button></div>
-  <div id="ps-rows"></div>
-  <div class="ps-total"><span>Total</span><span id="ps-total"></span></div>
-  <button class="btn-black" id="ps-confirm"></button>
-  <div class="ps-msg" id="ps-msg"></div>
-</div>
-
-<div class="rcpt-stage" id="rcpt-stage" role="dialog" aria-modal="true" aria-label="Receipts">
-  <div class="rcpt-slot"></div>
-  <button type="button" class="rcpt-done" id="rcpt-done">Done ✕</button>
-  <div class="rcpt-pile" id="rcpt-pile"></div>
-</div>
-
-<footer>MANIFEST — A CURATED COLLECTION</footer>
-
-<div class="wall-zoom" id="wall-zoom"><img alt=""></div>
+<footer>MANIFEST — objects, not products · attention is the product</footer>
 
 <audio id="ambient" src="assets/manifest-ambient.mp3" loop preload="metadata" style="display:none"></audio>
-<button id="ambience-toggle" class="snd" type="button" aria-label="Toggle ambient sound" aria-pressed="false" onclick="AMBIENCE.toggle()">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M4 9v6h4l5 4V5L8 9H4z"/>
-    <path class="w1" d="M16.5 8.5a5 5 0 0 1 0 7"/>
-    <path class="w2" d="M19 6a8.5 8.5 0 0 1 0 12"/>
-  </svg><span class="snd-l">Sound off</span>
+<button id="ambience-toggle" aria-label="sound" onclick="AMBIENCE.toggle()"
+  style="position:fixed; bottom:24px; right:24px; width:8px; height:8px;
+  border-radius:50%; background:var(--champagne-gold, #d4af37);
+  border:none; opacity:0.3; transition:opacity 0.8s ease, box-shadow 0.8s ease;
+  cursor:pointer; z-index:1000; padding:0;">
 </button>
 
 <script>
@@ -1033,14 +590,12 @@ const AMBIENCE = (() => {
     if (!playing){
       el.play();
       fade(0.35);
-      dot.classList.add('on');
-      dot.setAttribute('aria-pressed', 'true');
-      dot.querySelector('.snd-l').textContent = 'Sound on';
+      dot.style.opacity = '0.85';
+      dot.style.boxShadow = '0 0 6px var(--champagne-gold, #d4af37)';
     } else {
       fade(0, 1.5);
-      dot.classList.remove('on');
-      dot.setAttribute('aria-pressed', 'false');
-      dot.querySelector('.snd-l').textContent = 'Sound off';
+      dot.style.opacity = '0.3';
+      dot.style.boxShadow = 'none';
       setTimeout(() => { if (!playing) el.pause(); }, 1600);
     }
     playing = !playing;
@@ -1055,19 +610,15 @@ const AMBIENCE = (() => {
 </script>
 
 <script>
-/* Optional per-object fields:
-     mine:'...'      your own first-person line (where you got it, why you kept it). Shown in the record only if set.
-     scarcity:'...'  release context.
-     out:['S','XL']  sizes unavailable. */
 const OBJECTS = [
   { id:'lv-city-of-stars', name:'City of Stars', maker:'Louis Vuitton', category:'Fragrance', price:310, sizes:null,
     blurb:'Naming still unresolved against "City of Nights" — the object stands, the title is pending.', asset:'assets/lv-city-of-stars.png' },
   { id:'lv-murakami-charm', name:'Monogram Charm', maker:'Louis Vuitton × Takashi Murakami', category:'Jewelry', price:850, sizes:null,
     blurb:'The collaboration reduced to a single wearable fragment.', asset:'assets/lv-murakami-charm.png' },
   { id:'murakami-cushion-pink', name:'Flower Cushion — Pink', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
-    blurb:'A pink graphic cushion, distinct from the grey version.', asset:'assets/murakami-cushion-pink.png' },
+    blurb:'Evaluated and admitted on its own terms, separate from the grey release.', asset:'assets/murakami-cushion-pink.png' },
   { id:'murakami-cushion-grey', name:'Flower Cushion — Grey', maker:'Takashi Murakami', category:'Object', price:450, sizes:null,
-    blurb:'The same graphic cushion in grey, with a quieter finish.', asset:'assets/murakami-cushion-grey.png' },
+    blurb:'Same silhouette as the pink, its own admission decision.', asset:'assets/murakami-cushion-grey.png' },
   { id:'youngboy-tee', name:'Graphic Tee', maker:'YoungBoy Never Broke Again', category:'Apparel', price:75, sizes:['XS','S','M','L','XL'],
     blurb:'Recoded through fan and resale culture rather than runway.', asset:'assets/youngboy-tee.png' },
   { id:'bape-clock', name:'Ape Head Wall Clock', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
@@ -1079,7 +630,7 @@ const OBJECTS = [
   { id:'storm-blue', name:'Storm — Blue', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same debate, same platforms, its own manifestation.', asset:'assets/storm-blue.png' },
   { id:'storm-black', name:'Storm — Black', maker:'Revenge', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
-    blurb:'A black colorway of the Storm design, with its own distinct finish.', asset:'assets/storm-black.png' },
+    blurb:'Third colorway, admitted individually per the standing one-at-a-time process.', asset:'assets/storm-black.png' },
   { id:'lv-imagination', name:'Imagination', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:310, sizes:null,
     blurb:'A house best known for luggage, bottling a scent instead. Proof the canon isn\'t only bags and sneakers.', asset:'assets/lv-imagination.png' },
   { id:'lv-limmensite', name:'L\'Immensité', maker:'Louis Vuitton Fragrance', category:'Fragrance', price:320, sizes:null,
@@ -1110,13 +661,13 @@ const OBJECTS = [
   { id:'lv-lv-charm', name:'"LV" Monogram Charm', maker:'Louis Vuitton', category:'Jewelry', price:400, sizes:null,
     blurb:'Two letters, cast small enough to hang off a bag or a keyring — the house’s shortest possible signature.', asset:'assets/lv-lv-charm.png' },
   { id:'palm-angels-track-pants', name:'Track Pants', maker:'Palm Angels', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
-    blurb:'The side-stripe track silhouette that made Palm Angels a fixture of off-duty style.', asset:'assets/palm-angels-track-pants.png' },
+    blurb:'First Palm Angels admission — the side-stripe track silhouette that put the house on every off-duty rack.', asset:'assets/palm-angels-track-pants.png' },
   { id:'vetements-hoodie-black', name:'Hoodie — Black', maker:'Vetements', category:'Apparel', price:600, sizes:['XS','S','M','L','XL'],
     blurb:'Oversized, unadorned, deliberately anti-branding — the house\'s founding gesture stripped to its basic form.', asset:'assets/vetements-hoodie-black.png' },
   { id:'needles-track-jacket-purple', name:'Track Jacket — Purple', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
     blurb:'Butterfly-sleeve track top, the house\'s signature silhouette in its loudest register.', asset:'assets/needles-track-jacket-purple.png' },
   { id:'needles-track-jacket-blue', name:'Track Jacket — Blue/White', maker:'Needles', category:'Apparel', price:400, sizes:['XS','S','M','L','XL'],
-    blurb:'The same butterfly cut in a cooler blue-and-white combination.', asset:'assets/needles-track-jacket-blue.png' },
+    blurb:'Same butterfly cut, cooler colorway — admitted separately per the one-colorway-one-object rule.', asset:'assets/needles-track-jacket-blue.png' },
   { id:'bape-ape-head-rug-camo', name:'Ape Head Rug — Camo', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
     blurb:'The house\'s mascot rendered underfoot, in the camo that started it all.', asset:'assets/bape-ape-head-rug-camo.png' },
   { id:'bape-ape-head-rug-pink', name:'Ape Head Rug — Pink', maker:'A Bathing Ape', category:'Object', price:260, sizes:null,
@@ -1124,33 +675,33 @@ const OBJECTS = [
   { id:'bape-lighter-wordmark', name:'Ape Head Lighter — Wordmark', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
     blurb:'The smallest possible object still carrying full house recognition.', asset:'assets/bape-lighter-wordmark.png' },
   { id:'bape-lighter-camo-graphic', name:'Ape Head Lighter — Camo Graphic', maker:'A Bathing Ape', category:'Object', price:75, sizes:null,
-    blurb:'The same compact lighter, finished with the ape-head graphic instead of the wordmark.', asset:'assets/bape-lighter-camo-graphic.png' },
+    blurb:'Same form, the ape-head line art instead of the wordmark — a second, distinct admission.', asset:'assets/bape-lighter-camo-graphic.png' },
   { id:'supreme-crewneck-blue', name:'Box Logo Crewneck — Blue', maker:'Supreme', category:'Apparel', price:200, sizes:['XS','S','M','L','XL'],
-    blurb:'A clean blue crewneck carrying Supreme’s unmistakable Box Logo.', asset:'assets/supreme-crewneck-blue.png' },
+    blurb:'The plainest possible carrier for the most recognized logo in the archive.', asset:'assets/supreme-crewneck-blue.png' },
   { id:'nike-cpfm-vapormax-2019', name:'Vapormax 2019', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:1100, sizes:['7','8','9','10','11','12','13'],
     blurb:'CPFM\'s tubing and hardware grafted onto the Vapormax sole — collaboration as visible surgery, not a colorway.', asset:'assets/nike-cpfm-vapormax-2019.png' },
   { id:'adidas-nmd-human-race-green', name:'Human Race NMD — Green', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
-    blurb:'The Human Race line in the green colorway most closely tied to the collaboration.', asset:'assets/adidas-nmd-human-race-green.png' },
+    blurb:'First Adidas admission — the Human Race line in the colorway most tied to the collaboration\'s identity.', asset:'assets/adidas-nmd-human-race-green.png' },
   { id:'adidas-nmd-human-race-blue', name:'Human Race NMD — Blue ‘Human Being’', maker:'Adidas × Pharrell Williams', category:'Footwear', price:450, sizes:['7','8','9','10','11','12','13'],
     blurb:'Same line, the text-forward colorway that turned the shoe into a slogan.', asset:'assets/adidas-nmd-human-race-blue.png' },
   { id:'bape-clock-blue', name:'Ape Head Wall Clock — Blue', maker:'A Bathing Ape', category:'Object', price:180, sizes:null,
-    blurb:'The ape-head wall clock in blue, with the same bold profile in a different color.', asset:'assets/bape-clock-blue.png' },
+    blurb:'Second colorway of the wall clock already in the archive, admitted on its own per house policy.', asset:'assets/bape-clock-blue.png' },
   { id:'ambush-lighter-keychain', name:'Lighter Keychain', maker:'Ambush', category:'Accessory', price:180, sizes:null,
-    blurb:'Ambush brings its hardware-led approach to a lighter designed to travel on a keychain.', asset:'assets/ambush-lighter-keychain.png' },
+    blurb:'First Ambush admission — hardware-forward, the house\'s jewelry logic applied to something disposable.', asset:'assets/ambush-lighter-keychain.png' },
   { id:'balenciaga-keychain', name:'Keychain', maker:'Balenciaga', category:'Accessory', price:290, sizes:null,
-    blurb:'A compact Balenciaga accessory, finished with the house’s understated branding.', asset:'assets/balenciaga-keychain.png' },
+    blurb:'First Balenciaga admission, entering through an accessory rather than a headline piece.', asset:'assets/balenciaga-keychain.png' },
   { id:'revenge-storm-velcro', name:'Storm Velcro Patch', maker:'Revenge', category:'Accessory', price:90, sizes:null,
-    blurb:'The removable panel from the Storm collaboration, made to customise the shoe.', asset:'assets/revenge-storm-velcro.png' },
+    blurb:'The removable panel from the Storm collaboration, admitted as its own small object.', asset:'assets/revenge-storm-velcro.png' },
   { id:'bape-ashtray', name:'Ape Head Ashtray', maker:'A Bathing Ape', category:'Object', price:150, sizes:null,
     blurb:'Ceramic instead of textile — the house mascot moved onto a smoking accessory, still legible at a glance.', asset:'assets/bape-ashtray.png' },
   { id:'palace-cherub-hoodie-brown', name:'Tri-Ferg Cherub Hoodie', maker:'Palace', category:'Apparel', price:260, sizes:['XS','S','M','L','XL'],
-    blurb:'Palace’s tri-ferg logo meets Renaissance cherub imagery in a graphic hoodie.', asset:'assets/palace-cherub-hoodie-brown.png' },
+    blurb:'First Palace admission — the tri-ferg run through Renaissance cherub imagery, skate lineage colliding with a baroque reference.', asset:'assets/palace-cherub-hoodie-brown.png' },
   { id:'palace-wordmark-hoodie-grey', name:'Wordmark Hoodie — Grey', maker:'Palace', category:'Apparel', price:220, sizes:['XS','S','M','L','XL'],
-    blurb:'A cleaner Palace hoodie, with the tri-ferg on the back and the wordmark across the front.', asset:'assets/palace-wordmark-hoodie-grey.png' },
+    blurb:'Second Palace admission, plainer register — the tri-ferg kept to the back, the wordmark doing the work up front.', asset:'assets/palace-wordmark-hoodie-grey.png' },
   { id:'vivet-half-zip-sweater', name:'Beginner Half-Zip Sweater', maker:'VIVET', category:'Apparel', price:180, sizes:['XS','S','M','L','XL'],
-    blurb:'VIVET builds the distressed finish into the knit itself.', asset:'assets/vivet-half-zip-sweater.png' },
+    blurb:'First VIVET admission — distressing built into the knit rather than added after, wear read as a manufacturing decision.', asset:'assets/vivet-half-zip-sweater.png' },
   { id:'sicko-trail-runner-blue', name:'Trail Runner — Blue', maker:'Sicko', category:'Footwear', price:220, sizes:['7','8','9','10','11','12','13'],
-    blurb:'A technical trail-runner silhouette with Sicko branding.', asset:'assets/sicko-trail-runner-blue.png' },
+    blurb:'First Sicko admission — technical trail construction pulled onto a lifestyle register, the house mark standing in for a swoosh.', asset:'assets/sicko-trail-runner-blue.png' },
   { id:'sicko-ee-shorts-green', name:'Plaid Shorts — Green', maker:'Sicko × Eric Emanuel', category:'Apparel', price:170, sizes:['XS','S','M','L','XL'],
     blurb:'Two houses that don\'t usually share a hangtag — EE\'s plaid mesh carrying a second mark instead of standing alone.', asset:'assets/sicko-ee-shorts-green.png' },
 
@@ -1162,8 +713,7 @@ const OBJECTS = [
   { id:'beats-pill-red', name:'Pill', maker:'Beats by Dre', category:'Object', price:180, sizes:null,
     blurb:'Red, capsule-shaped, unmistakable from across a room — the shape became the signal before the sound did.', asset:'assets/beats-pill-red.png' },
   { id:'nike-vlone-af1', name:'Air Force 1 Low × VLONE', maker:'Nike × VLONE', category:'Footwear', price:950, sizes:['7','8','9','10','11','12','13'],
-    blurb:'Black leather, orange Swoosh, "Friends Alone" stitched into the panel — a friendship turned into a colorway.', asset:'assets/nike-vlone-af1.png',
-    scarcity:'hyper-limited at ComplexCon 2016, then a Harlem-only release in 2017' },
+    blurb:'Black leather, orange Swoosh, "Friends Alone" stitched into the panel — a friendship turned into a colorway.', asset:'assets/nike-vlone-af1.png' },
   { id:'supreme-white-af1', name:'Air Force 1 Low × Supreme', maker:'Nike × Supreme', category:'Footwear', price:400, sizes:['7','8','9','10','11','12','13'],
     blurb:'White leather, a heart stitched in red at the tongue — the most restrained thing Supreme ever put its name on.', asset:'assets/supreme-white-af1.png' },
   { id:'white-cpfm-nike-af1', name:'Air Force 1 Low × CPFM', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:340, sizes:['7','8','9','10','11','12','13'],
@@ -1197,60 +747,16 @@ const OBJECTS = [
   { id:'sicko-luke-wav', name:'"Born Unwanted" Hoodie', maker:'Sicko', category:'Apparel', price:280, sizes:['S','M','L','XL'],
     blurb:'Pale yellow, an upside-down line, a sun with a sleeping face — Ian Connor\'s house running the same instinct Revenge trades in, on a hood instead of a boot.', asset:'assets/sicko-luke-wav.png' },
   { id:'sicko-2', name:'"SICK!!" Hoodie', maker:'Sicko', category:'Apparel', price:260, sizes:['S','M','L','XL'],
-    blurb:'Natural fleece and a running figure layered across the Sicko wordmark.', asset:'assets/sicko-2.png' },
-  {"id": "skull-wappen-rib-zip", "name": "Skull Wappen Zip Bomber", "maker": "Number (N)ine", "category": "Apparel", "price": 520, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "twin skulls, zero explanation. the graphic does the talking.", "asset": "assets/skull-wappen-rib-zip.png"},
-  {"id": "sicko-bfp-red-hoodie", "name": "Born From Pain Hoodie — Red", "maker": "Sicko", "category": "Apparel", "price": 260, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "red on red on red. the slogan is the whole flex.", "asset": "assets/sicko-bfp-red-hoodie.png"},
-  {"id": "sicko-ee-plaid-runner-red", "name": "Plaid Trail Runner — Black/Red", "maker": "Sicko × Eric Emanuel", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "trail sole, tartan upper. built for mud, worn for the timeline.", "asset": "assets/sicko-ee-plaid-runner-red.png"},
-  {"id": "sicko-ee-gingham-runner-white-pink", "name": "Gingham Trail Runner — White/Pink", "maker": "Sicko × Eric Emanuel", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "same chassis, sweeter register. pink that means it.", "asset": "assets/sicko-ee-gingham-runner-white-pink.png"},
-  {"id": "sicko-ee-gingham-runner-black-pink", "name": "Gingham Trail Runner — Black/Pink", "maker": "Sicko × Eric Emanuel", "category": "Footwear", "price": 240, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "black base turns the pink up to eleven.", "asset": "assets/sicko-ee-gingham-runner-black-pink.png"},
-  {"id": "supreme-jesus-5-panel", "name": "Jesus Five-Panel — Black", "maker": "Supreme", "category": "Accessory", "price": 300, "sizes": null, "blurb": "washed cap, halo, cherubs, money in frame. sacred and sarcastic.", "asset": "assets/supreme-jesus-5-panel.png"},
-  {"id": "supreme-nike-track-jacket-black", "name": "Track Jacket — Black", "maker": "Nike × Supreme", "category": "Apparel", "price": 380, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "piped edges, oval on the back. quiet from the front, loud when it leaves.", "asset": "assets/supreme-nike-track-jacket-black.png", "assets": ["assets/supreme-nike-track-jacket-black.png", "assets/supreme-nike-track-jacket-black-angle-2.png"]},
-  {"id": "supreme-pillows-tee-black", "name": "Pillows Tee — Black", "maker": "Supreme", "category": "Apparel", "price": 120, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "logo built out of pastel pillows. soft flex.", "asset": "assets/supreme-pillows-tee-black.png"},
-  {"id": "supreme-brick", "name": "Brick", "maker": "Supreme", "category": "Object", "price": 150, "sizes": null, "blurb": "an actual brick that sold out. the logo did the work, not the object.", "asset": "assets/supreme-brick.png"},
-  {"id": "off-white-arrows-case", "name": "Arrows Phone Case", "maker": "Off-White", "category": "Accessory", "price": 150, "sizes": null, "blurb": "arrows, quote marks, neon type. virgil's language, pocket-sized.", "asset": "assets/off-white-arrows-case.png"},
-  {"id": "awake-zip-up", "name": "Zip-Up — Black", "maker": "Awake NY", "category": "Apparel", "price": 220, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "electric-blue script on black. the zip frames it.", "asset": "assets/awake-zip-up.png"},
-  {"id": "bape-cdg-crewneck", "name": "Crewneck — Grey", "maker": "BAPE × Comme des Garçons", "category": "Apparel", "price": 220, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "three apes, one CDG line. grey crew, zero fuss.", "asset": "assets/bape-cdg-crewneck.png"},
-  {"id": "cdg-bape-black-hoodie", "name": "Hoodie — Black", "maker": "BAPE × Comme des Garçons", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "black hood, three-ape row. the collab at its most wearable.", "asset": "assets/cdg-bape-black-hoodie.png"},
-  {"id": "bape-sta-shearling-brown", "name": "Sta Shearling — Brown", "maker": "A Bathing Ape", "category": "Footwear", "price": 350, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "suede, shearling, heavy sole. the star in winter mode.", "asset": "assets/bape-sta-shearling-brown.png"},
-  {"id": "beats-pill-blue", "name": "Pill — Blue", "maker": "Beats by Dre", "category": "Object", "price": 150, "sizes": null, "blurb": "deep blue capsule. sits next to the red one like a sequel.", "asset": "assets/beats-pill-blue.png", "assets": ["assets/beats-pill-blue.png", "assets/beats-pill-blue-angle-2.png"]},
-  {"id": "chrome-hearts-ugg-cross", "name": "Cross Boots — Black", "maker": "Chrome Hearts × UGG", "category": "Footwear", "price": 1800, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "shearling boots, silver crosses. cozy meets cursed.", "asset": "assets/chrome-hearts-ugg-cross.png"},
-  {"id": "chrome-hearts-ugg-fleur", "name": "Fleur Boots — Black", "maker": "Chrome Hearts × UGG", "category": "Footwear", "price": 1800, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "fleur plaque on worn suede. gets better beat up.", "asset": "assets/chrome-hearts-ugg-fleur.png"},
-  {"id": "firm-cotton-pocket-pants-black", "name": "Six-Pocket Pants — Black", "maker": "Number (N)ine", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "six pockets, nylon shell. cargo, rewritten.", "asset": "assets/firm-cotton-pocket-pants-black.png", "assets": ["assets/firm-cotton-pocket-pants-black.png", "assets/firm-cotton-pocket-pants-black-angle-2.png"]},
-  {"id": "firm-cotton-pocket-pants-grey", "name": "Six-Pocket Pants — Grey", "maker": "Number (N)ine", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "same cut, same nylon, in grey. its own entry.", "asset": "assets/firm-cotton-pocket-pants-grey.png", "assets": ["assets/firm-cotton-pocket-pants-grey.png", "assets/firm-cotton-pocket-pants-grey-angle-2.png"]},
-  {"id": "givenchy-paris-case", "name": "Paris Phone Case", "maker": "Givenchy", "category": "Accessory", "price": 120, "sizes": null, "blurb": "outlined block letters, stacked. paris, pocket-sized.", "asset": "assets/givenchy-paris-case.png"},
-  {"id": "hermes-kelly-messenger-noir", "name": "Kelly Messenger — Noir", "maker": "Hermès", "category": "Bag", "price": 9500, "sizes": null, "blurb": "togo leather, palladium turnlock. the quiet end of the archive.", "asset": "assets/hermes-kelly-messenger-noir.png"},
-  {"id": "heron-preston-hoodie-black", "name": "Herons Hoodie — Black", "maker": "Heron Preston", "category": "Apparel", "price": 480, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "birds printed like a doc still, orange tab like a warning label.", "asset": "assets/heron-preston-hoodie-black.png"},
-  {"id": "lv-silver-chain-bracelet", "name": "Monogram Chain Bracelet — Silver", "maker": "Louis Vuitton", "category": "Jewelry", "price": 700, "sizes": null, "blurb": "flat silver links, monogram cut through. two angles, one piece.", "asset": "assets/lv-silver-chain-bracelet.png", "assets": ["assets/lv-silver-chain-bracelet.png", "assets/lv-silver-chain-bracelet-angle-2.png"]},
-  {"id": "margiela-future-high-black", "name": "Future High — Black", "maker": "Maison Margiela", "category": "Footwear", "price": 850, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "velcro strap, tabi-clean sole. the sneaker that isn't one.", "asset": "assets/margiela-future-high-black.png"},
-  {"id": "nylon-belted-easy-pants", "name": "Belted Nylon Easy Pants — Black", "maker": "Number (N)ine", "category": "Apparel", "price": 280, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "techy nylon, cinched waist, cuffed ankle. built to move.", "asset": "assets/nylon-belted-easy-pants.png", "assets": ["assets/nylon-belted-easy-pants.png", "assets/nylon-belted-easy-pants-angle-2.png", "assets/nylon-belted-easy-pants-angle-3.png"]},
-  {"id": "palm-angels-track-pants-black", "name": "Track Pants — Black", "maker": "Palm Angels", "category": "Apparel", "price": 400, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "white side stripes, logo down the leg.", "asset": "assets/palm-angels-track-pants-black.png"},
-  {"id": "palm-angels-track-pants-light-blue", "name": "Track Pants — Light Blue", "maker": "Palm Angels", "category": "Apparel", "price": 400, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "powder blue, cream stripes. the sunny one.", "asset": "assets/palm-angels-track-pants-light-blue.png"},
-  {"id": "palm-angels-track-pants-red", "name": "Track Pants — Red", "maker": "Palm Angels", "category": "Apparel", "price": 400, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "red, white stripes. the loud one.", "asset": "assets/palm-angels-track-pants-red.png"},
-  {"id": "sicko-bfp-black-hoodie", "name": "Born From Pain Hoodie — Black", "maker": "Sicko", "category": "Apparel", "price": 260, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "chrome wordmark on black. same slogan, colder.", "asset": "assets/sicko-bfp-black-hoodie.png"},
-  {"id": "supreme-gems-tee-black", "name": "Gems Tee — Black", "maker": "Supreme", "category": "Apparel", "price": 130, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "The script logo picked out in rhinestones.", "asset": "assets/supreme-gems-tee-black.png"},
-  {"id": "supreme-nike-corduroy-jacket-black", "name": "Corduroy Hooded Jacket — Black", "maker": "Nike × Supreme", "category": "Apparel", "price": 420, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "cord texture, arc logo across the back. clean front, poster back.", "asset": "assets/supreme-nike-corduroy-jacket-black.png", "assets": ["assets/supreme-nike-corduroy-jacket-black.png", "assets/supreme-nike-corduroy-jacket-black-angle-2.png"]},
-  {"id": "supreme-tyler-tee-white", "name": "Tyler Tee — White", "maker": "Supreme", "category": "Apparel", "price": 150, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "portrait print on a plain white blank. the collab as a photograph.", "asset": "assets/supreme-tyler-tee-white.png"},
-  {"id": "sicko-yeezy-trail-runner-black", "name": "Trail Runner — Black", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "Black upper and sole, with the trail boot profile kept low and compact.", "asset": "assets/sicko-yeezy-01.png"},
-  {"id": "sicko-yeezy-trail-runner-stone", "name": "Trail Runner — Stone", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "A muted stone-grey colourway from upper through the sole.", "asset": "assets/sicko-yeezy-02.png"},
-  {"id": "sicko-yeezy-trail-runner-espresso", "name": "Trail Runner — Espresso", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "Deep espresso brown, tonal from the upper to the outsole.", "asset": "assets/sicko-yeezy-03.png"},
-  {"id": "sicko-yeezy-trail-runner-cream", "name": "Trail Runner — Cream", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "A light cream finish across the upper, hardware and sole.", "asset": "assets/sicko-yeezy-04.png"},
-  {"id": "sicko-yeezy-trail-runner-brown-black", "name": "Trail Runner — Brown/Black", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "Brown upper with darker overlays and a black sole.", "asset": "assets/sicko-yeezy-05.png"},
-  {"id": "sicko-yeezy-trail-runner-white-multi", "name": "Trail Runner — White/Multi", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "White upper paired with a pink, navy and cream outsole.", "asset": "assets/sicko-yeezy-06.png"},
-  {"id": "sicko-yeezy-trail-boot-black", "name": "Trail Boot — Black", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "High-top black colourway with a chunky lug sole and metal hardware.", "asset": "assets/sicko-yeezy-boot-01.png"},
-  {"id": "sicko-yeezy-trail-boot-stone", "name": "Trail Boot — Stone", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "High-top stone-grey colourway, with a tonal sole.", "asset": "assets/sicko-yeezy-boot-02.png"},
-  {"id": "sicko-yeezy-trail-boot-espresso", "name": "Trail Boot — Espresso", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "Dark brown high-top with matching outsole.", "asset": "assets/sicko-yeezy-boot-03.png"},
-  {"id": "sicko-yeezy-trail-boot-cream", "name": "Trail Boot — Cream", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "Cream high-top with a pale, tonal lug sole.", "asset": "assets/sicko-yeezy-boot-04.png"},
-  {"id": "sicko-yeezy-trail-boot-olive-red", "name": "Trail Boot — Olive/Red", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "Olive upper with red laces and red accents through the sole.", "asset": "assets/sicko-yeezy-boot-05.png"},
-  {"id": "sicko-yeezy-trail-boot-brown-black", "name": "Trail Boot — Brown/Black", "maker": "Sicko", "category": "Footwear", "price": 260, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "Brown upper with black overlays and a dark lug sole.", "asset": "assets/sicko-yeezy-boot-06.png"}
+    blurb:'Natural fleece, a running figure dragged through the wordmark — a second Sicko admission, same house as the Storm boot already in the Bloodline.', asset:'assets/sicko-2.png' },
 ];
 const PENDING = [];
 
 function renderPendingMark(){
   return `<div class="pending-mark"><span class="pending-label">pending<br>imagery</span></div>`;
 }
-function renderStage(o, eager = false){
+function renderStage(o){
   return o.asset
-    ? `<img src="${o.asset}" alt="${o.name}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`
+    ? `<img src="${o.asset}" alt="${o.name}" loading="lazy">`
     : renderPendingMark();
 }
 
@@ -1264,7 +770,7 @@ arrivalStageEl.style.transition = 'opacity 50ms linear';
 
 let arrivalObjData = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
 function paintArrival(){
-  arrivalStageEl.innerHTML = renderStage(arrivalObjData, true);
+  arrivalStageEl.innerHTML = renderStage(arrivalObjData);
   arrivalMakerEl.textContent = arrivalObjData.maker;
   arrivalNameEl.textContent = arrivalObjData.name;
 }
@@ -1291,26 +797,27 @@ scheduleArrivalDrift();
 const fieldObjectsEl = document.getElementById('field-objects');
 const shuffled = [...OBJECTS].sort(() => Math.random() - 0.5);
 
-const LEFT_PATTERN = [10, 62, 26, 70, 15, 55, 34, 74, 8, 58, 22, 66, 12, 50, 30, 68, 18, 60, 40, 6, 64, 28];
-const WIDTH_PATTERN = [150, 125, 165, 118, 145, 132, 158, 122, 148, 136];
+/* Field layout: a flowing column. Each object gets a horizontal position
+   (--x, 0 = left edge, 1 = right edge of the free width) and a small size
+   variation (--s). Vertical spacing is a constant CSS gap, so objects can
+   never overlap, and search/filter reflow the column automatically. */
+const X_PATTERN = [0.10, 0.85, 0.30, 0.70, 0.15, 0.60, 0.40, 0.90, 0.05, 0.55, 0.25, 0.75];
+const SCALE_PATTERN = [1.00, 0.94, 1.06, 0.97, 1.03, 0.95, 1.05, 0.98];
 const DURATION_PATTERN = [8, 9, 7, 11, 8, 7, 10, 9, 11, 8];
 
-let cursorTop = 4;
 const wells = [];
 
 shuffled.forEach((o, i) => {
-  const left = LEFT_PATTERN[i % LEFT_PATTERN.length];
-  const width = WIDTH_PATTERN[i % WIDTH_PATTERN.length];
+  const x = X_PATTERN[i % X_PATTERN.length];
+  const s = SCALE_PATTERN[i % SCALE_PATTERN.length];
   const duration = DURATION_PATTERN[i % DURATION_PATTERN.length];
   const jr = (Math.random() * 6 - 3).toFixed(1);
 
   const el = document.createElement('div');
   el.className = 'field-obj';
   el.dataset.id = o.id;
-  el.style.top = cursorTop + 'vh';
-  el.style.left = left + '%';
-  el.style.width = width + 'px';
-  el.style.height = width + 'px';
+  el.style.setProperty('--x', x);
+  el.style.setProperty('--s', s);
   el.style.animationDuration = duration + 's';
   el.style.setProperty('--jitter-r', jr + 'deg');
   el.innerHTML = `
@@ -1327,140 +834,82 @@ shuffled.forEach((o, i) => {
     el,
     obj: o,
     halo: el.querySelector('.halo'),
-    topVh: cursorTop,
-    leftPct: left,
+    capEl: el.querySelector('.cap'),
     dwell: 0,
     episodeOpen: false,
     hue: null,
     neighbor: null
   });
-
-  cursorTop += 20 + (i % 3) * 3;
 });
 
-fieldObjectsEl.style.height = (cursorTop + 14) + 'vh';
-document.getElementById('field').style.minHeight = (cursorTop + 20) + 'vh';
-
+/* Neighbor = the next object in the column (attention bleeds downward) */
 wells.forEach((w, i) => {
-  let best = null, bestD = Infinity;
-  wells.forEach((w2, j) => {
-    if (i === j) return;
-    const d = Math.hypot(w.topVh - w2.topVh, w.leftPct - w2.leftPct);
-    if (d < bestD) { bestD = d; best = w2; }
-  });
-  w.neighbor = best;
+  w.neighbor = wells.length > 1 ? wells[(i + 1) % wells.length] : null;
 });
 
-/* ---- search + index ----
-   One filter drives both the floating field and the index list. */
-const matches = (o, q) => !q
-  || o.name.toLowerCase().includes(q)
-  || o.maker.toLowerCase().includes(q)
-  || o.category.toLowerCase().includes(q);
+/* ---- Search + category filter ---- */
+(function(){
+  const input = document.getElementById('field-search-input');
+  const filtersEl = document.getElementById('field-filters');
+  const emptyEl = document.getElementById('field-empty');
+  const countEl = document.getElementById('field-count');
+  const searchSection = document.getElementById('field-search');
 
-// Index: grouped by house, alphabetical by house, then by name.
-// Collabs ("Nike × Supreme") sit under their full credit line.
-const indexListEl = document.getElementById('index-list');
-const indexSorted = [...OBJECTS].sort((a, b) =>
-  a.maker.localeCompare(b.maker) || a.name.localeCompare(b.name));
-function paintIndex(q){
-  const list = q ? indexSorted.filter(o => matches(o, q)) : indexSorted;
-  let html = '', last = null;
-  list.forEach(o => {
-    if (o.maker !== last){ html += `<div class="index-house">${o.maker}</div>`; last = o.maker; }
-    html += `<button type="button" class="index-row" data-id="${o.id}"><img src="${o.asset}" alt="" loading="lazy"><span class="n">${o.name}</span><span class="c">${o.category}</span></button>`;
-  });
-  indexListEl.innerHTML = html || '<div class="bag-empty">Nothing matches.</div>';
-  document.getElementById('index-count').textContent = String(list.length).padStart(2, '0');
-}
+  const categories = ['All', ...Array.from(new Set(OBJECTS.map(o => o.category))).sort()];
+  let activeCategory = 'All';
 
-function applyFilter(q){
-  let visible = 0;
-  const searching = Boolean(q);
-  const wasSearching = document.body.classList.contains('searching');
-  document.body.classList.toggle('searching', searching);
-  fieldObjectsEl.classList.toggle('searching', searching);
+  filtersEl.innerHTML = categories.map(c =>
+    `<button type="button" data-cat="${c}" class="${c === 'All' ? 'active' : ''}" aria-pressed="${c === 'All'}">${c}</button>`
+  ).join('');
 
-  wells.forEach(w => {
-    const m = matches(w.obj, q);
-    w.el.style.display = m ? '' : 'none';
-    if (m) visible++;
-  });
-
-  let empty = document.getElementById('search-empty');
-  if (!empty){
-    empty = document.createElement('div');
-    empty.id = 'search-empty';
-    empty.textContent = 'No pieces match that search.';
-    fieldObjectsEl.appendChild(empty);
-  }
-  empty.style.display = searching && visible === 0 ? 'block' : 'none';
-
-  if (searching){
-    fieldObjectsEl.style.height = 'auto';
-    document.getElementById('field').style.minHeight = '0';
-    if (!wasSearching) requestAnimationFrame(() =>
-      document.getElementById('field').scrollIntoView({behavior:'smooth', block:'start'})
-    );
-  } else {
-    fieldObjectsEl.style.height = (cursorTop + 14) + 'vh';
-    document.getElementById('field').style.minHeight = (cursorTop + 20) + 'vh';
+  function applyFilters(){
+    const q = input.value.trim().toLowerCase();
+    let visible = 0;
+    wells.forEach(w => {
+      const o = w.obj;
+      const matchesText = !q
+        || o.name.toLowerCase().includes(q)
+        || o.maker.toLowerCase().includes(q)
+        || o.category.toLowerCase().includes(q);
+      const matchesCat = activeCategory === 'All' || o.category === activeCategory;
+      const show = matchesText && matchesCat;
+      w.el.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    const filtered = q || activeCategory !== 'All';
+    countEl.textContent = String(visible).padStart(2,'0') + (filtered ? ' matching' : ' objects');
+    emptyEl.style.display = visible === 0 ? 'block' : 'none';
   }
 
-  document.getElementById('field-count').textContent =
-    searching ? String(visible).padStart(2, '0') + ' matching'
-      : String(OBJECTS.length).padStart(2, '0') + ' objects';
-  paintIndex(q);
-}
-paintIndex('');
+  function reset(){
+    input.value = '';
+    activeCategory = 'All';
+    filtersEl.querySelectorAll('button').forEach(b => {
+      const on = b.dataset.cat === 'All';
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on);
+    });
+    applyFilters();
+  }
 
-const navSearch = document.getElementById('nav-search');
-const searchToggle = document.getElementById('search-toggle');
-const searchInput = document.getElementById('field-search-input');
-searchInput.addEventListener('input', () => applyFilter(searchInput.value.trim().toLowerCase()));
-searchToggle.addEventListener('click', () => {
-  const open = navSearch.classList.toggle('open');
-  searchToggle.setAttribute('aria-expanded', open);
-  if (open){ searchInput.focus(); }
-  else { searchInput.value = ''; applyFilter(''); }
-});
-searchInput.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && navSearch.classList.contains('open')) searchToggle.click();
-});
+  input.addEventListener('input', applyFilters);
 
-const indexEl = document.getElementById('index');
-const indexBack = document.getElementById('index-backdrop');
-function openIndex(){
-  indexEl.classList.add('open'); indexBack.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeIndex(){
-  indexEl.classList.remove('open'); indexBack.classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.getElementById('index-open').addEventListener('click', openIndex);
-document.getElementById('index-close').addEventListener('click', closeIndex);
-indexBack.addEventListener('click', closeIndex);
-window.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && indexEl.classList.contains('open')) closeIndex();
-});
-indexListEl.addEventListener('click', e => {
-  const row = e.target.closest('.index-row');
-  if (!row) return;
-  closeIndex();
-  window.openRecordById(row.dataset.id);
-});
+  filtersEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    activeCategory = btn.dataset.cat;
+    filtersEl.querySelectorAll('button').forEach(b => {
+      const on = b === btn;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on);
+    });
+    applyFilters();
+    // bring the reflowed field back to the top of the list
+    searchSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
-// Reference prices in OBJECTS stay USD. Display-only conversion below.
-// Store price is calculated from the reference price, as one figure —
-// no range, no visible tie back to the reference, so it reads as the
-// object's value rather than a markdown off something higher.
-const USD_TO_ZAR = 17;
-function formatStorePrice(usdPrice){
-  const storeUSD = usdPrice * 0.6;
-  const round = (n) => Math.round(n / 10) * 10; // clean denomination
-  return 'R' + round(storeUSD * USD_TO_ZAR).toLocaleString('en-ZA');
-}
+  document.getElementById('field-empty-reset').addEventListener('click', reset);
+})();
 
 (function(){
   const backdrop = document.getElementById('record-backdrop');
@@ -1474,24 +923,8 @@ function formatStorePrice(usdPrice){
   const sizeRow = document.getElementById('record-size-row');
   const priceEl = document.getElementById('record-price-amount');
 
-  const bagEl = document.getElementById('bag');
-  const addBtn = document.getElementById('record-add');
-  const payBtn = document.getElementById('record-applepay');
-  const bagPay = document.getElementById('bag-applepay');
-  const bagMsg = document.getElementById('bag-msg');
-  const BAG = [];
-  const APPLE = '<span class="applepay-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Pay</span>';
-  const G_PATH = 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z';
-  const MARKS = {
-    'Google Pay': '<span class="wm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + G_PATH + '"/></svg><span class="wm-pay">Pay</span></span>',
-    'Samsung Pay': '<span class="wm wm-samsung">SAMSUNG<span class="wm-pay">Pay</span></span>'
-  };
-  payBtn.innerHTML = APPLE;
-  bagPay.textContent = 'Copy order request';
-
   let recordAssets = [];
   let recordIndex = 0;
-  let current = null;
 
   function paintRecordStage(name){
     const src = recordAssets[recordIndex];
@@ -1514,29 +947,18 @@ function formatStorePrice(usdPrice){
   }
 
   function openRecord(o){
-    current = o;
-    addBtn.textContent = 'Add to Bag';
     recordAssets = (o.assets && o.assets.length) ? o.assets : [o.asset];
     recordIndex = 0;
     paintRecordStage(o.name);
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
-    // Your own first-person line. Only appears if you've written one for this object.
-    const mineEl = document.getElementById('record-mine');
-    mineEl.textContent = o.mine || '';
-    mineEl.style.display = o.mine ? '' : 'none';
-    const scarcityEl = document.getElementById('record-scarcity');
-    scarcityEl.textContent = o.scarcity || '';
-    scarcityEl.style.display = o.scarcity ? '' : 'none';
-    priceEl.textContent = formatStorePrice(o.price);
+    priceEl.textContent = '$' + o.price.toLocaleString('en-US');
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
-      // Optional per-object `out:['S','XL']` marks sizes we don't have right now.
-      sizeRow.innerHTML = o.sizes.map(s => {
-        const out = o.out && o.out.includes(s);
-        return `<button type="button" data-size="${s}"${out ? ' disabled class="out" aria-label="' + s + ', unavailable"' : ''}>${s}</button>`;
-      }).join('');
+      sizeRow.innerHTML = o.sizes.map(s =>
+        `<button type="button" data-size="${s}">${s}</button>`
+      ).join('');
       sizeRow.querySelectorAll('button').forEach(btn => {
         btn.addEventListener('click', () => {
           sizeRow.querySelectorAll('button').forEach(b => b.classList.remove('chosen'));
@@ -1556,291 +978,11 @@ function formatStorePrice(usdPrice){
     document.body.style.overflow = '';
     backdrop.classList.remove('open');
     panel.classList.remove('open');
-    bagEl.classList.remove('open');
-    closeSheet();
   }
-
-  // Bag uses the same formatStorePrice as the record, so the figure
-  // in the bag always matches what was on the record. Totals add up those
-  // displayed figures (digits only), so no second price formula exists.
-  const zarNumber = (label) => parseInt(label.replace(/\D/g, ''), 10) || 0;
-  const zarFormat = (n) => 'R' + n.toLocaleString('en-ZA');
-
-  const chosenSize = () => {
-    const b = sizeRow.querySelector('.chosen');
-    return b ? b.dataset.size : null;
-  };
-  function flash(btn, text){
-    btn.textContent = text;
-    setTimeout(() => { btn.textContent = 'Add to Bag'; }, 1400);
-  }
-  function addCurrent(){
-    if (current.sizes && current.sizes.length && !chosenSize()){
-      flash(addBtn, 'Select a size');
-      return false;
-    }
-    BAG.push({
-      name: current.name, maker: current.maker, asset: current.asset,
-      label: formatStorePrice(current.price), size: chosenSize()
-    });
-    paintBag();
-    return true;
-  }
-  function paintBag(){
-    document.getElementById('bag-count').textContent = BAG.length;
-    const items = document.getElementById('bag-items');
-    items.innerHTML = BAG.length
-      ? BAG.map((b, i) => `
-        <div class="bag-row">
-          <img src="${b.asset}" alt="">
-          <div class="info"><div class="n">${b.name}</div><div class="s">${b.maker}${b.size ? ' · ' + b.size : ''}</div></div>
-          <div class="mono">${b.label}</div>
-          <button class="rm" data-i="${i}" aria-label="Remove">✕</button>
-        </div>`).join('')
-      : '<div class="bag-empty">Nothing here yet.</div>';
-    items.querySelectorAll('.rm').forEach(btn => btn.addEventListener('click', () => {
-      BAG.splice(parseInt(btn.dataset.i, 10), 1);
-      paintBag();
-    }));
-    document.getElementById('bag-total').textContent =
-      zarFormat(BAG.reduce((s, b) => s + zarNumber(b.label), 0));
-    bagPay.disabled = !BAG.length;
-    document.querySelector('.bag .btn-blue').disabled = !BAG.length;
-    bagMsg.textContent = '';
-  }
-  function openBag(){
-    panel.classList.remove('open');
-    backdrop.classList.add('open');
-    bagEl.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  addBtn.addEventListener('click', () => {
-    if (addCurrent()) flash(addBtn, 'Added ✓');
-  });
-  document.getElementById('bag-open').addEventListener('click', openBag);
-  document.getElementById('bag-close').addEventListener('click', closeRecord);
-
-  // Pay sheet — the shortcut that slides up after a wallet is tapped (mock).
-  const sheet = document.getElementById('pay-sheet');
-  const sheetBack = document.getElementById('pay-backdrop');
-  const psConfirm = document.getElementById('ps-confirm');
-  const psMsg = document.getElementById('ps-msg');
-
-  let lastWallet = 'Apple Pay';
-  function openSheet(name){
-    lastWallet = name;
-    const head = document.getElementById('ps-wallet');
-    if (name === 'Apple Pay'){
-      head.innerHTML = APPLE;
-      psConfirm.className = 'btn-black';
-      psConfirm.textContent = 'Pay with Side Button';
-    } else {
-      head.innerHTML = MARKS[name];
-      psConfirm.className = 'btn-blue';
-      psConfirm.textContent = 'Confirm';
-    }
-    document.getElementById('ps-rows').innerHTML = BAG.map(b =>
-      `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
-    ).join('');
-    document.getElementById('ps-total').textContent = document.getElementById('bag-total').textContent;
-    psMsg.textContent = '';
-    sheetBack.classList.add('open');
-    sheet.classList.add('open');
-  }
-  function closeSheet(){
-    sheetBack.classList.remove('open');
-    sheet.classList.remove('open');
-  }
-  function startPay(name, fromRecord){
-    if (fromRecord){ if (!addCurrent()) return; openBag(); }
-    else if (!BAG.length) return;
-    openSheet(name);
-  }
-  payBtn.addEventListener('click', () => startPay('Apple Pay', true));
-  bagPay.addEventListener('click', async () => {
-    if (!BAG.length) return;
-    const request = [
-      'MANIFEST — ACQUISITION REQUEST',
-      '',
-      ...BAG.map((b, i) => (i + 1) + '. ' + b.name + (b.size ? ' / ' + b.size : '') + ' — displayed price ' + b.label),
-      '',
-      'Displayed subtotal: ' + document.getElementById('bag-total').textContent,
-      '',
-      'Please confirm current availability, final shipping, duties (if applicable), delivery estimate and payment instructions.',
-      'This is an enquiry only. No order has been placed and no payment has been taken.'
-    ].join('\n');
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(request);
-      } else {
-        const field = document.createElement('textarea');
-        field.value = request; field.style.position = 'fixed'; field.style.opacity = '0';
-        document.body.appendChild(field); field.select();
-        const copied = document.execCommand('copy'); field.remove();
-        if (!copied) throw new Error('Copy unavailable');
-      }
-      bagMsg.textContent = 'Request copied. Send it through Manifest’s official contact channel. This has not placed an order or taken payment.';
-    } catch (error) {
-      bagMsg.textContent = 'Copy was unavailable. Please note the items and contact Manifest directly. No order or payment has been created.';
-    }
-  });
-  // Blue wallet: shows both names until one is chosen, then wears that
-  // wallet's mark (in both the record and the bag) and stays switchable.
-  const walletEls = Array.from(document.querySelectorAll('.wallet-alt'));
-  function showChosen(name){
-    walletEls.forEach(w => {
-      w.querySelector('.wl').innerHTML = MARKS[name];
-      w.querySelector('.btn-blue').setAttribute('aria-label', name + ', change wallet');
-    });
-  }
-  walletEls.forEach(w => {
-    const btn = w.querySelector('.btn-blue');
-    btn.addEventListener('click', () => {
-      const open = w.classList.toggle('open');
-      btn.setAttribute('aria-expanded', open);
-    });
-    w.querySelectorAll('.wallet-menu button').forEach(m => {
-      const name = m.dataset.wallet;
-      m.innerHTML = MARKS[name];
-      m.setAttribute('aria-label', name);
-      m.addEventListener('click', () => {
-        w.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-        showChosen(name);
-        startPay(name, !!w.closest('.record'));
-      });
-    });
-  });
-  // ---- Receipts (mock): after payment, slips print out of a slot. ----
-  // RECEIPT_MODE: 'both'     = one slip per house (in that house's own look), then the Manifest receipt
-  //               'houses'   = only the per-house slips
-  //               'manifest' = only the single Manifest receipt
-  const RECEIPT_MODE = 'both';
-  const stageR = document.getElementById('rcpt-stage');
-  const pileR = document.getElementById('rcpt-pile');
-  const ROTS = [-3.2, 2.4, -1.6, 3.6, -2.6, 1.8];
-  const DXS = [-24, 20, -12, 28, -28, 10];
-  let rcptRun = 0, rcptTimers = [];
-
-  // House looks. First match wins, so a collab prints on the house listed first
-  // ("Nike × Supreme" -> Supreme, "BAPE × Comme des Garçons" -> BAPE).
-  // Logo images are optional: drop a file at the path and it prints above the wordmark;
-  // if the file is missing the image removes itself and the wordmark stands alone.
-  // Houses with no entry here print on the plain Manifest-style slip.
-  const BRANDS = [
-    { key:'bape',    match:/bathing ape|bape/i, word:'A BATHING APE®', sub:'A BATHING APE®',      logo:'assets/receipt-logos/bape.png',          foot:'Thank you' },
-    { key:'lv',      match:/louis vuitton/i,    word:'LOUIS VUITTON',  sub:'Maison fondée en 1854', logo:'assets/receipt-logos/lv.png',            foot:'Merci' },
-    { key:'supreme', match:/supreme/i,          word:'Supreme',        sub:'',                      logo:'assets/receipt-logos/supreme.png',       foot:'Thank you' },
-    { key:'ow',      match:/off-white/i,        word:'OFF-WHITE™',     sub:'c/o Virgil Abloh™',     logo:'assets/receipt-logos/off-white.png',     foot:'"Thank you"' },
-    { key:'ch',      match:/chrome hearts/i,    word:'CHROME HEARTS',  sub:'',                      logo:'assets/receipt-logos/chrome-hearts.png', foot:'Thank you' },
-    { key:'goyard',  match:/goyard/i,           word:'GOYARD',         sub:'Paris',                 logo:'assets/receipt-logos/goyard.png',        foot:'Merci' }
-  ];
-  const brandOf = (house) => BRANDS.find(b => b.match.test(house));
-
-  function rcptHouseSlip(house, items, no, date){
-    const sub = zarFormat(items.reduce((t, b) => t + zarNumber(b.label), 0));
-    const br = brandOf(house) || { key:'plain', word:house.toUpperCase(), sub:'', logo:'', foot:'Thank you' };
-    const lines = items.map(b =>
-      `<div class="rcpt-item">${b.name}</div>
-       <div class="rcpt-row"><span>${b.size ? 'Size ' + b.size + ' · ' : ''}Qty 1</span><b>${b.label}</b></div>`).join('');
-    return `<div class="rcpt-paper b-${br.key}">
-      <div class="band"></div>
-      ${br.logo ? `<img class="brand-logo" src="${br.logo}" alt="" onerror="this.remove()">` : ''}
-      <div class="brand-word">${br.word}</div>
-      <div class="brand-sub">${br.sub || '&nbsp;'}</div>
-      <div class="rcpt-row"><span>Slip No.</span><b>${no}</b></div>
-      <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
-      <div class="rcpt-rule"></div>
-      ${lines}
-      <div class="rcpt-rule"></div>
-      <div class="rcpt-row rcpt-total"><span>Subtotal</span><b>${sub}</b></div>
-      <div class="bc"></div>
-      <div class="rcpt-note">${br.foot}</div>
-      <div class="rcpt-foot">MANIFEST STORE</div></div>`;
-  }
-  function rcptMainSlip(groups, no, date, wallet){
-    const total = zarFormat([...groups.values()].flat().reduce((t, b) => t + zarNumber(b.label), 0));
-    return `<div class="rcpt-paper">
-      <div class="rcpt-word">MANIFEST</div><div class="rcpt-tag">STORE RECEIPT</div>
-      <div class="rcpt-row"><span>Receipt No.</span><b>${no}</b></div>
-      <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
-      <div class="rcpt-row"><span>Paid with</span><b>${wallet}</b></div>
-      <div class="rcpt-rule"></div>
-      ${[...groups].map(([h, items]) => `<div class="rcpt-group">${h}</div>` +
-        items.map(b => `<div class="rcpt-item">${b.name}</div><div class="rcpt-row"><span>${b.size ? 'Size ' + b.size : '&nbsp;'}</span><b>${b.label}</b></div>`).join('')
-      ).join('')}
-      <div class="rcpt-rule"></div>
-      <div class="rcpt-row rcpt-total"><span>Total</span><b>${total}</b></div>
-      <div class="rcpt-note">Thank you. Your order has been recorded.</div>
-      <div class="rcpt-foot">MANIFEST STORE</div></div>`;
-  }
-  function closeReceipts(){
-    rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
-    if (!stageR.classList.contains('open')) return;
-    stageR.classList.remove('open');
-    document.body.style.overflow = '';
-    BAG.length = 0; paintBag();           // the order is complete (mock)
-  }
-  function runReceipts(){
-    const run = ++rcptRun;
-    const date = new Date().toLocaleDateString('en-ZA');
-    const base = String(Date.now()).slice(-6);
-    const groups = new Map();
-    BAG.forEach(b => { if (!groups.has(b.maker)) groups.set(b.maker, []); groups.get(b.maker).push(b); });
-    const slips = [];
-    if (RECEIPT_MODE !== 'manifest'){
-      [...groups].forEach(([h, items], i) => slips.push({ house: true, i,
-        html: rcptHouseSlip(h, items, `MF-${base}-${String.fromCharCode(65 + i)}`, date) }));
-    }
-    if (RECEIPT_MODE !== 'houses'){
-      slips.push({ house: false, html: rcptMainSlip(groups, `MF-${base}`, date, lastWallet) });
-    }
-    pileR.innerHTML = '';
-    const els = slips.map((sl, n) => {
-      const el = document.createElement('div');
-      el.className = 'rcpt-slip' + (sl.house ? '' : ' main');
-      el.style.zIndex = n + 1;
-      if (sl.house) el.style.transform = `translateX(${DXS[sl.i % DXS.length]}px) rotate(${ROTS[sl.i % ROTS.length]}deg)`;
-      el.innerHTML = sl.html;
-      pileR.appendChild(el);
-      return el;
-    });
-    stageR.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
-    stageR.classList.add('open');
-    els.forEach((el, n) => {
-      rcptTimers.push(setTimeout(() => {
-        if (run !== rcptRun) return;
-        el.classList.add('printing');
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 700 + n * 1900));
-    });
-  }
-  psConfirm.addEventListener('click', () => {
-    if (psConfirm.disabled) return;
-    psConfirm.disabled = true;
-    psMsg.textContent = 'Authorising…';
-    setTimeout(() => { psMsg.textContent = '✓ Done'; }, 800);
-    setTimeout(() => {
-      closeSheet();
-      closeRecord();
-      psConfirm.disabled = false;
-      runReceipts();
-    }, 1500);
-  });
-  document.getElementById('rcpt-done').addEventListener('click', closeReceipts);
-  document.getElementById('ps-cancel').addEventListener('click', closeSheet);
-  sheetBack.addEventListener('click', closeSheet);
-  paintBag();
 
   backdrop.addEventListener('click', closeRecord);
   document.getElementById('record-close').addEventListener('click', closeRecord);
-  window.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (stageR.classList.contains('open')) closeReceipts();
-    else if (sheet.classList.contains('open')) closeSheet(); else closeRecord();
-  });
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeRecord(); });
 
   document.getElementById('arrival-obj').addEventListener('click', () => openRecord(arrivalObjData));
   fieldObjectsEl.addEventListener('click', (e) => {
@@ -1849,12 +991,6 @@ function formatStorePrice(usdPrice){
     const o = OBJECTS.find(x => x.id === el.dataset.id);
     if (o) openRecord(o);
   });
-
-  // Lets the index (and anything else outside this scope) open a record by id.
-  window.openRecordById = (id) => {
-    const o = OBJECTS.find(x => x.id === id);
-    if (o) openRecord(o);
-  };
 })();
 
 document.getElementById('pending-btn').addEventListener('click', function(){
@@ -1995,7 +1131,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     target.style.setProperty('--halo-opacity', opacity.toFixed(3));
     target.style.setProperty('--halo-scale', scale.toFixed(3));
     target.style.setProperty('--halo-color', w.hue || 'transparent');
-    const capEl = isArrival ? arrivalWell.capEl : w.el.querySelector('.cap');
+    const capEl = isArrival ? arrivalWell.capEl : w.capEl;
     capEl.style.setProperty('--cap-opacity', presence.toFixed(3));
   }
 
@@ -2005,8 +1141,6 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     lastFrame = now;
 
     const elapsed = (now - t0) / 1000;
-    const hueTick = now - (window._manifestHueTick || 0) > 1500;
-    if (hueTick) window._manifestHueTick = now;
 
     updateDusk(elapsed);
 
@@ -2023,10 +1157,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       const s = baseScale + bass * 0.025;
       p.el.style.transform = `translate(${x.toFixed(2)}vmax, ${y.toFixed(2)}vmax) scale(${s.toFixed(3)})`;
       p.el.style.opacity = (p.baseOpacity * (1 - bass * 0.06)).toFixed(3);
-      if (hueTick){
-        const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
-        p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
-      }
+      const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
+      p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
     });
 
     motionEnergy *= 0.93;
@@ -2045,7 +1177,11 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     applyWell(arrivalWell, arrivalWell.dwell / MAX, 0.5, true, arrivalVisible ? 1 : 0);
 
     wells.forEach(w => {
-      if (w.el.style.display === 'none') return;
+      // filtered-out objects: skip the work, let any lingering color fade
+      if (w.el.style.display === 'none'){
+        w.dwell = Math.max(0, w.dwell - dt * DECAY);
+        return;
+      }
       const r = w.el.getBoundingClientRect();
       const onscreen = r.bottom > -300 && r.top < window.innerHeight + 300;
       if (!onscreen){
@@ -2084,155 +1220,5 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 })();
 </script>
 
-<script>
-(function(){
-  /* THE WALL — one continuous book inside the page. Plates, in order. `bg` is each image's own edge colour;
-     the room becomes it as you arrive. A group with two ids is a diptych. A plate in STORY gets its written text beside it;
-     every other single plate gets a spread too (plate number, caption set large, source), so no plate sits alone.
-     To add a plate: drop the image in /assets, add a line to PLATES, put its id in BOOK where it belongs. */
-  const PLATES = [{"id": "ev01", "file": "assets/wall-ev-01.jpg", "cap": "Handwritten note, signed Virgil. ©2017.", "src": "Source unknown", "bg": [210, 210, 210], "w": 750, "h": 748}, {"id": "ev02", "file": "assets/wall-ev-02.jpg", "cap": "Quote attributed to Virgil Abloh, printed on tan fabric.", "src": "Source unknown", "bg": [148, 135, 112], "w": 736, "h": 981}, {"id": "ev03", "file": "assets/wall-ev-03.jpg", "cap": "Polaroid, “Cutting Room Floor.” Virgil ©2018.", "src": "Source unknown", "bg": [219, 215, 212], "w": 1024, "h": 780}, {"id": "ev04", "file": "assets/wall-ev-04.jpg", "cap": "Back print: “You actually fell in love with an image.”", "src": "Source unknown", "bg": [105, 105, 105], "w": 1179, "h": 2012}, {"id": "ev05", "file": "assets/wall-ev-05.jpg", "cap": "Portrait.", "src": "Source unknown", "bg": [179, 175, 172], "w": 620, "h": 775}, {"id": "ev06", "file": "assets/wall-ev-06.jpg", "cap": "Tee with Swoosh and “LOGO.”", "src": "Source unknown", "bg": [169, 163, 161], "w": 828, "h": 948}, {"id": "ev07", "file": "assets/wall-ev-07.jpg", "cap": "Tulle above, sneakers on the floor.", "src": "Source unknown", "bg": [124, 119, 116], "w": 988, "h": 1200}, {"id": "ev08", "file": "assets/wall-ev-08.jpg", "cap": "Monogram trunk panel.", "src": "Source unknown", "bg": [94, 78, 67], "w": 900, "h": 1600}, {"id": "ev09", "file": "assets/wall-ev-09.jpg", "cap": "Off-White™ print. Credited: Virgil Abloh, A$AP Rocky.", "src": "Source unknown", "bg": [237, 233, 229], "w": 1200, "h": 1461}, {"id": "ev10", "file": "assets/wall-ev-10.jpg", "cap": "October’s Very Own.", "src": "Source unknown", "bg": [5, 5, 5], "w": 736, "h": 1308}, {"id": "ev11", "file": "assets/wall-ev-11.jpg", "cap": "OVO crew. Black and white.", "src": "Source unknown", "bg": [80, 80, 80], "w": 841, "h": 1024}, {"id": "ev12", "file": "assets/wall-ev-12.jpg", "cap": "Owl hoodie. Black and white.", "src": "Source unknown", "bg": [105, 105, 105], "w": 736, "h": 920}, {"id": "ev13", "file": "assets/wall-ev-13.jpg", "cap": "Embroidered souvenir jacket.", "src": "Source unknown", "bg": [124, 123, 123], "w": 965, "h": 1200}, {"id": "ev14", "file": "assets/wall-ev-14.jpg", "cap": "Back of shirt reads “White Lives Matter.”", "src": "Source unknown", "bg": [107, 106, 102], "w": 828, "h": 1033}, {"id": "ev15", "file": "assets/wall-ev-15.jpg", "cap": "Disc artwork.", "src": "Source unknown", "bg": [231, 234, 234], "w": 700, "h": 700}, {"id": "ev16", "file": "assets/wall-ev-16.jpg", "cap": "Stage.", "src": "Source unknown", "bg": [156, 130, 111], "w": 736, "h": 981}, {"id": "ev17", "file": "assets/wall-ev-17.jpg", "cap": "Tee, back print.", "src": "Source unknown", "bg": [52, 103, 129], "w": 750, "h": 750}, {"id": "ev18", "file": "assets/wall-ev-18.jpg", "cap": "Hoodie, record-target print.", "src": "Source unknown", "bg": [123, 128, 120], "w": 828, "h": 1022}, {"id": "ev19", "file": "assets/wall-ev-19.jpg", "cap": "Sneaker wall.", "src": "Source unknown", "bg": [85, 82, 82], "w": 1200, "h": 1775}, {"id": "ev20", "file": "assets/wall-ev-20.jpg", "cap": "Illustration. Vetements cap.", "src": "Source unknown", "bg": [109, 105, 103], "w": 828, "h": 792}, {"id": "ev21", "file": "assets/wall-ev-21.jpg", "cap": "Flash photograph. Group.", "src": "Source unknown", "bg": [103, 107, 103], "w": 736, "h": 920}, {"id": "ev22", "file": "assets/wall-ev-22.jpg", "cap": "Flash photograph. Red graphic tee.", "src": "Source unknown", "bg": [164, 159, 157], "w": 1080, "h": 1350}, {"id": "ev23", "file": "assets/wall-ev-23.jpg", "cap": "Knit, mural behind.", "src": "Source unknown", "bg": [180, 146, 130], "w": 736, "h": 1181}, {"id": "ev24", "file": "assets/wall-ev-24.jpg", "cap": "Acne Studios.", "src": "Source unknown", "bg": [131, 131, 131], "w": 736, "h": 1041}, {"id": "ev25", "file": "assets/wall-ev-25.jpg", "cap": "Union Square, New York. 2014.", "src": "Source unknown", "bg": [141, 129, 110], "w": 1200, "h": 1600}, {"id": "ev26", "file": "assets/wall-ev-26.jpg", "cap": "Supreme. Repeated print.", "src": "Source unknown", "bg": [169, 146, 154], "w": 736, "h": 1336}, {"id": "ev27", "file": "assets/wall-ev-27.jpg", "cap": "Illustration. “$$$4u.”", "src": "Source unknown", "bg": [245, 237, 236], "w": 736, "h": 736}, {"id": "keef", "file": "assets/wall-keef-box-logo.jpg", "cap": "Chief Keef, twice, in a Supreme box logo.", "src": "Photographer unattributed", "bg": [204, 197, 203], "w": 547, "h": 365}, {"id": "virgil", "file": "assets/wall-virgil-chillidays.jpg", "cap": "Virgil Abloh. “centered, hopeful & thankful AF”", "src": "Receipts c/o @chilldays", "bg": [71, 78, 83], "w": 570, "h": 350}, {"id": "six", "file": "assets/wall-six.jpg", "cap": "One glyph, no explanation.", "src": "Source unknown", "bg": [255, 255, 255], "w": 1000, "h": 1000}, {"id": "owl-camo", "file": "assets/wall-ovo-owl-camo.jpg", "cap": "Gold, camo pavé, V-O in the eyes.", "src": "Source unknown", "bg": [246, 243, 250], "w": 399, "h": 501}, {"id": "owl-ice", "file": "assets/wall-ovo-owl-ice.jpg", "cap": "Ice-blue pavé, engraved back.", "src": "Source unknown", "bg": [59, 65, 60], "w": 447, "h": 447}, {"id": "owl-pair", "file": "assets/wall-ovo-owl-pair.jpg", "cap": "Two owls, two chains.", "src": "Source unknown", "bg": [10, 19, 28], "w": 399, "h": 501}, {"id": "owl-story", "file": "assets/wall-ovo-owl-story.jpg", "cap": "Owl pendant, seen in an Instagram story.", "src": "@jmanziel2 on Instagram", "bg": [48, 46, 42], "w": 640, "h": 1023}, {"id": "owl-rose", "file": "assets/wall-ovo-owl-rosegold.jpg", "cap": "Rose gold and white pavé, marquise perch.", "src": "Watermark reads Iceman Nick", "bg": [15, 15, 15], "w": 1080, "h": 1080}, {"id": "owl-concrete", "file": "assets/wall-ovo-owl-concrete.jpg", "cap": "Baguette-set owl over two more pendants, held in hand.", "src": "Source unknown", "bg": [97, 79, 67], "w": 604, "h": 971}, {"id": "owl-pink", "file": "assets/wall-ovo-owl-pink.jpg", "cap": "Pink pavé, white-stone eyes.", "src": "Source unknown", "bg": [54, 45, 46], "w": 736, "h": 915}, {"id": "owl-cuban", "file": "assets/wall-ovo-owl-cuban.jpg", "cap": "White pavé on a pavé Cuban link.", "src": "Source unknown", "bg": [71, 71, 69], "w": 1080, "h": 1080}, {"id": "red", "file": "assets/wall-three-in-red.jpg", "cap": "Lip gloss, horns, one red field.", "src": "Artist unattributed", "bg": [228, 166, 170], "w": 900, "h": 666}, {"id": "skulls", "file": "assets/wall-skulls-tee.jpg", "cap": "Skulls, powder bleach. Number (N)ine tee.", "src": "Source unknown", "bg": [49, 48, 50], "w": 500, "h": 600}];
-  const STORY = {"keef": {"title": "Box Logo, Doubled", "kicker": "Feature", "deck": "Chief Keef, twice over, in a box logo that never shipped.", "story": ["As Manifest has it, this is an unreleased Supreme box logo, by Virgil — and the shoot around it wasn’t a session so much as a project. Virgil is Virgil: the hand behind much of what hangs on this wall, rarely the one in front of it.", "Pull the frame outward and it lands in Toronto — the 6, Drake’s name for his city — and in Summer Sixteen, the tour.", "The circle around him, October’s Very Own, hasn’t gone anywhere. It’s still OVO now, and the thread runs through the owls on this wall."], "see": ["virgil", "six", "owl-camo"]}, "virgil": {"title": "Cracked Glass", "kicker": "Reference", "deck": "Virgil is Virgil.", "story": ["The same name that stands behind the unreleased box logo that follows, shown the way it reached Manifest: cracked glass, and a caption — “centered, hopeful & thankful AF” — via @chilldays."], "see": ["keef"]}, "six": {"title": "6", "kicker": "Glyph", "deck": "One glyph, no explanation.", "story": ["In Toronto it doesn’t need one. The 6 is Drake’s shorthand for the city — the same 6 the Box Logo frame points toward."], "see": ["keef"]}, "owl-camo": {"title": "OVO Owl — Camo", "kicker": "The owl", "deck": "A pendant worn like a membership.", "story": ["The owl is OVO — October’s Very Own, Drake’s label and the circle that formed around it. This one is gold and camo pavé, V-O in the eyes.", "Chains are where the owl travels now. When you see them on a neck today, Lil Yachty is part of the picture: he’s easy inside that circle. The pieces that follow are the same bird in other stones."], "see": ["keef"]}};
-  const BOOK = [["ev01"], ["ev02"], ["ev03"], ["ev04"], ["ev05"], ["ev06"], ["ev07"], ["ev08"], ["ev09"], ["virgil"], ["keef"], ["ev10"], ["ev11", "ev12"], ["six"], ["owl-camo"], ["owl-ice", "owl-pair"], ["owl-story"], ["owl-rose"], ["owl-concrete", "owl-pink"], ["owl-cuban"], ["ev13", "ev14"], ["skulls"], ["ev15"], ["ev16", "ev17"], ["ev18"], ["ev19"], ["ev20"], ["ev21", "ev22"], ["red"], ["ev23"], ["ev24", "ev25"], ["ev26"], ["ev27"]];
-
-  const wall = document.getElementById('wall'), body = document.getElementById('wall-body'), book = document.getElementById('wall-book');
-  const fadeIn = document.getElementById('wall-fade-in'), fadeOut = document.getElementById('wall-fade-out');
-  const zoom = document.getElementById('wall-zoom'), zimg = zoom.querySelector('img');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const clamp = (x,a=0,b=1) => Math.min(b, Math.max(a,x));
-  const smooth = t => t*t*(3-2*t);
-  const mix = (a,b,t) => a.map((v,i) => v + (b[i]-v)*t);
-  const rgb = c => 'rgb(' + c.map(Math.round).join(',') + ')';
-  const rgba = (c,a) => 'rgba(' + c.map(Math.round).join(',') + ',' + a + ')';
-  const esc = s => String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-  const DARK = [32,28,20], LIGHT = [243,238,228];
-
-  const byId = {}; PLATES.forEach(p => byId[p.id] = p);
-  let n = 0; BOOK.forEach(g => g.forEach(id => byId[id].no = String(++n).padStart(2,'0')));
-  const TOTAL = String(n).padStart(2,'0');
-
-  // cap=false: the caption lives in the text column instead of under the image
-  const figure = (m, cap = true) => '<figure><img src="' + m.file + '" alt="' + esc(m.cap) + '" width="' + m.w + '" height="' + m.h + '" style="--w:' + m.w + ';--ar:' + (m.w / m.h).toFixed(4) + '" loading="lazy">' +
-    (cap ? '<figcaption><span class="n">' + m.no + '</span>' + esc(m.cap) + '<span class="s">' + esc(m.src) + '</span></figcaption>' : '') + '</figure>';
-
-  let spreadN = 0; // alternates which side the image sits on, across stories and notes alike
-  const plates = BOOK.map((ids, i) => {
-    const sec = document.createElement('section'), st = ids.length === 1 && STORY[ids[0]];
-    sec.id = 'plate-' + ids[0];
-    if (st){
-      sec.className = 'plate story' + (spreadN++ % 2 ? ' flip' : '');
-      const see = (st.see || []).map(id => '<a data-see="' + id + '">' + byId[id].no + ' · ' + esc(STORY[id].title) + '</a>').join('');
-      sec.innerHTML = figure(byId[ids[0]]) +
-        '<div class="text"><div class="kicker">' + esc(st.kicker) + '</div><h3>' + esc(st.title) + '</h3>' +
-        '<p class="deck">' + esc(st.deck) + '</p><div class="body">' + st.story.map(s => '<p>' + esc(s) + '</p>').join('') + '</div>' +
-        (see ? '<div class="see"><span>see also</span>' + see + '</div>' : '') + '</div>';
-    } else if (ids.length === 1){
-      // No written story yet: still a full spread. Nothing is invented — the column carries
-      // only what the record already holds: plate number, caption, source.
-      const m = byId[ids[0]];
-      sec.className = 'plate story note' + (spreadN++ % 2 ? ' flip' : '');
-      sec.innerHTML = figure(m, false) +
-        '<div class="text"><div class="ghost" aria-hidden="true">' + m.no + '</div>' +
-        '<div class="kicker">Plate ' + m.no + ' / ' + TOTAL + '</div>' +
-        '<p class="note-cap">' + esc(m.cap) + '</p>' +
-        '<div class="note-src">' + esc(m.src) + '</div></div>';
-    } else {
-      sec.className = 'plate c';
-      sec.innerHTML = '<div class="pair">' + ids.map(id => figure(byId[id])).join('') + '</div>';
-    }
-    book.appendChild(sec);
-    const cols = ids.map(id => byId[id].bg);
-    return { el:sec, ids, bg:[0,1,2].map(c => cols.reduce((a,x) => a + x[c], 0) / cols.length),
-             figs:[...sec.querySelectorAll('figure')], caps:[...sec.querySelectorAll('figcaption')], text:sec.querySelector('.text') };
-  });
-  const c0 = plates[0].bg, cN = plates[plates.length-1].bg;
-  wall.style.setProperty('--wall-bg', rgb(c0));
-  fadeIn.style.background  = 'linear-gradient(180deg,' + rgba(c0,0) + ',' + rgb(c0) + ')';
-  fadeOut.style.background = 'linear-gradient(0deg,' + rgba(cN,0) + ',' + rgb(cN) + ')';
-
-  /* paper sound — synthesised, off by default, its own switch */
-  const paper = document.createElement('button');
-  paper.id = 'paper'; paper.type = 'button'; paper.setAttribute('aria-label','Toggle paper sound'); paper.setAttribute('aria-pressed','false');
-  document.body.appendChild(paper);
-  let ctx = null, master = null, soundOn = false, lastFlip = 0;
-  function noiseBuf(sec){
-    const b = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate*sec)), ctx.sampleRate), d = b.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random()*2 - 1;
-    return b;
-  }
-  function burst(t, dur, f0, f1, peak, q=0.9, attack=0.03){
-    const src = ctx.createBufferSource(); src.buffer = noiseBuf(dur + 0.05);
-    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 450;
-    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = q;
-    bp.frequency.setValueAtTime(f0, t); bp.frequency.exponentialRampToValueAtTime(f1, t + dur);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    src.connect(hp).connect(bp).connect(g).connect(master);
-    src.start(t); src.stop(t + dur + 0.05);
-  }
-  function rustle(){
-    if (!soundOn || !ctx) return;
-    const now = performance.now(); if (now - lastFlip < 380) return; lastFlip = now;
-    const t = ctx.currentTime + 0.01, v = 0.85 + Math.random()*0.3;
-    burst(t, 0.26*v, 1300, 4600, 0.55, 0.7, 0.07);
-    for (let i = 0; i < 4; i++) burst(t + 0.17 + i*0.045 + Math.random()*0.02, 0.014, 2600 + Math.random()*2400, 3000, 0.16, 1.4, 0.003);
-    burst(t + 0.08, 0.05, 220, 160, 0.10, 0.6, 0.01);
-  }
-  paper.addEventListener('click', () => {
-    if (!ctx){ ctx = new (window.AudioContext || window.webkitAudioContext)(); master = ctx.createGain(); master.gain.value = 0.32; master.connect(ctx.destination); }
-    if (ctx.state === 'suspended') ctx.resume();
-    soundOn = !soundOn; paper.classList.toggle('on', soundOn); paper.setAttribute('aria-pressed', soundOn);
-    if (soundOn) rustle();
-  });
-
-  /* colour + presence. Continuous: no snapping, no pages. Live rects, so lazy images can't throw it off. */
-  let active = -1, queued = false;
-  function frame(){
-    queued = false;
-    const wr = wall.getBoundingClientRect(), vh = innerHeight;
-    const inView = wr.top < vh && wr.bottom > 0;
-    paper.classList.toggle('show', inView);
-    if (!inView){ document.body.classList.remove('on-dark'); return; }
-
-    const vc = vh / 2, cs = plates.map(p => { const r = p.el.getBoundingClientRect(); return r.top + r.height/2; });
-    let bg;
-    if (vc <= cs[0]) bg = plates[0].bg;
-    else if (vc >= cs[cs.length-1]) bg = plates[plates.length-1].bg;
-    else { let i = 0; while (vc > cs[i+1]) i++; bg = mix(plates[i].bg, plates[i+1].bg, smooth((vc - cs[i]) / (cs[i+1] - cs[i]))); }
-    const lum = (0.2126*bg[0] + 0.7152*bg[1] + 0.0722*bg[2]) / 255;
-    const fg = mix(LIGHT, DARK, smooth(clamp((lum - 0.40) / 0.18)));
-    wall.style.setProperty('--wall-bg', rgb(bg));
-    wall.style.setProperty('--wall-fg', rgb(fg));
-    wall.style.setProperty('--wall-line', rgba(fg, 0.18));
-    paper.style.color = rgb(fg);
-    const br = body.getBoundingClientRect();
-    document.body.classList.toggle('on-dark', br.top < 36 && br.bottom > 36 && lum < 0.45);
-
-    let nearest = 0, nd = Infinity;
-    plates.forEach((p, i) => {
-      const off = vc - cs[i], d = Math.abs(off);
-      if (d < nd){ nd = d; nearest = i; }
-      const pres = smooth(clamp(1 - d / (vh * 0.85))), cap = smooth(clamp((pres - 0.45) / 0.4)), dy = reduce ? 0 : -off * 0.05;
-      p.figs.forEach((f, k) => { f.style.opacity = pres.toFixed(3); f.style.transform = 'translate3d(0,' + (dy * (k ? 1.25 : 1)).toFixed(1) + 'px,0)'; });
-      p.caps.forEach(c => c.style.opacity = cap.toFixed(3));
-      if (p.text){ p.text.style.opacity = cap.toFixed(3); p.text.style.transform = 'translate3d(0,' + dy.toFixed(1) + 'px,0)'; }
-    });
-    if (nearest !== active){ const first = active === -1; active = nearest; if (!first) rustle(); }
-  }
-  const request = () => { if (!queued){ queued = true; requestAnimationFrame(frame); } };
-  addEventListener('scroll', request, { passive:true });
-  addEventListener('resize', request);
-  addEventListener('load', request);
-
-  book.addEventListener('click', e => {
-    const a = e.target.closest('a[data-see]');
-    if (a){ const t = document.getElementById('plate-' + a.dataset.see); if (t) t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block:'center' }); return; }
-    const im = e.target.closest('figure img');
-    if (im){ zimg.src = im.currentSrc || im.src; zimg.alt = im.alt; zoom.classList.add('open'); }
-  });
-  zoom.addEventListener('click', () => zoom.classList.remove('open'));
-  addEventListener('keydown', e => { if (e.key === 'Escape') zoom.classList.remove('open'); });
-  request();
-})();
-</script>
 </body>
 </html>
