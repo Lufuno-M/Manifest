@@ -6,7 +6,7 @@
 <title>MANIFEST</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:wght@400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:ital,wght@0,400;0,500;0,600;0,800;1,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 
   :root{
@@ -133,9 +133,10 @@
     letter-spacing:0.04em; color:var(--ink);
   }
   .arrival .thesis{
-    margin-top:10px;
+    margin-top:10px; min-height:1.5em;
     font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
     color:var(--ink-soft);
+    transition:opacity .8s ease;
   }
   .arrival-obj-wrap{
     position:relative;
@@ -329,6 +330,7 @@
   }
   .record-backdrop.open{ opacity:1; pointer-events:auto; }
   .record{
+    --pad: clamp(24px,5vw,48px);
     position:fixed; z-index:201;
     left:50%; top:50%;
     transform: translate(-50%,-46%);
@@ -337,7 +339,7 @@
     background:#FCFBF8;
     border-radius:2px;
     box-shadow:0 30px 60px rgba(20,18,26,0.28);
-    padding:40px clamp(24px,5vw,48px) 36px;
+    padding:40px var(--pad) 0;
     opacity:0; pointer-events:none;
     transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
   }
@@ -348,7 +350,6 @@
     letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
     padding:6px 8px;
   }
-  .record-prov{ text-align:center; margin-bottom:18px; opacity:.7; }
   .record-stage{ width:100%; max-width:260px; margin:0 auto; }
   .record-stage img{ width:100%; height:auto; object-fit:contain; }
   .record-dots{
@@ -374,11 +375,6 @@
     font-family:'Fraunces', serif; font-style:italic;
     font-size:14px; line-height:1.6; color:#3A382F;
   }
-  .record-mine{
-    margin-top:16px; padding-top:16px; border-top:1px solid var(--hairline);
-    text-align:center; font-family:'Fraunces',serif; font-size:15px; line-height:1.6; color:var(--ink);
-  }
-  .record-mine::before{ content:"— "; color:var(--ink-soft); }
   .record-scarcity{
     margin-top:14px; text-align:center;
     font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft);
@@ -402,39 +398,71 @@
   .record-size-row button.out{ opacity:0.35; text-decoration:line-through; cursor:default; }
   .record-size-row button.out:hover{ border-color:var(--hairline); }
   .record-size-row button.chosen{ border-color:var(--ink); color:var(--ink); font-weight:600; }
+  .record-size-row.nudge{ animation:nudge .4s; }
+  @keyframes nudge{ 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+  .size-hint{
+    margin-top:10px; min-height:14px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#A8632B;
+  }
   .record-price{
-    margin-top:26px; text-align:center;
-    padding-top:22px; border-top:1px solid var(--hairline);
+    margin-top:22px; text-align:center;
+    padding-top:20px; border-top:1px solid var(--hairline);
   }
   .record-price .amount{
     font-family:'Fraunces', serif; font-size:20px; color:var(--ink);
   }
 
-  /* ---- bag + wallet buttons ---- */
-  .record-actions{ margin-top:20px; }
-  .action-row{ display:flex; gap:10px; }
+  /* ---- buying: one primary action, one secondary, everything else tucked away ----
+     The record's action area stays pinned to the bottom of the panel, so the
+     next step is always under the thumb, however long the object's text runs. */
+  .record-actions{
+    position:sticky; bottom:0;
+    margin:18px calc(-1 * var(--pad)) 0;
+    padding:16px var(--pad) 26px;
+    background:linear-gradient(rgba(252,251,248,0), #FCFBF8 16px);
+  }
   .btn-black{
-    display:flex; align-items:center; justify-content:center; gap:6px;
-    height:48px; width:100%;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    height:52px; width:100%;
     background:#000; color:#fff; border-radius:6px;
     font-family:'Archivo', sans-serif; font-size:15px; font-weight:500;
     transition: opacity 0.25s ease;
   }
   .btn-black:hover{ opacity:0.85; }
   .btn-black:disabled{ opacity:0.3; cursor:default; }
-  .action-row .btn-black:first-child{ flex:1; }
-  .action-row .btn-pay{ flex:0 0 38%; }
+  .btn-pre{ font-weight:400; opacity:.85; }
+  .btn-line{
+    display:flex; align-items:center; justify-content:center;
+    height:46px; width:100%; margin-top:10px;
+    border:1px solid var(--ink); border-radius:6px; color:var(--ink);
+    font-family:'Archivo', sans-serif; font-size:14px; font-weight:500;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .btn-line:hover{ background:var(--ink); color:#fff; }
+  .alt-row{
+    margin-top:12px; display:flex; justify-content:center; gap:18px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
+  }
+  .alt-row button{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:inherit; padding:4px 2px; border-bottom:1px solid var(--hairline); }
+  .alt-row button:hover{ color:var(--ink); }
+  .alt-chips{ display:none; justify-content:center; gap:8px; margin-top:10px; }
+  .alt-chips.open{ display:flex; }
+  .alt-chips button{ border:1px solid var(--hairline); border-radius:5px; padding:8px 11px; color:var(--ink); transition:border-color .25s ease; }
+  .alt-chips button:hover{ border-color:var(--ink-soft); }
+  .alt-chips button.on{ border-color:var(--ink); }
+
   .applepay-mark{
     display:inline-flex; align-items:center; gap:3px;
     font-family:'Archivo', sans-serif; font-size:20px; font-weight:600; letter-spacing:-0.01em;
   }
-  .applepay-mark svg{ width:16px; height:19px; fill:#fff; margin-top:-2px; }
-  .gpay-note, .gpay-link{
-    margin-top:10px; text-align:center;
-    font-family:'JetBrains Mono', monospace; font-size:10px;
-    letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft);
-  }
-  .gpay-link{ width:100%; padding:6px; }
+  .applepay-mark svg{ width:16px; height:19px; fill:currentColor; margin-top:-2px; }
+  .alt-chips .applepay-mark{ font-size:15px; }
+  .alt-chips .applepay-mark svg{ width:12px; height:14px; }
+  .wm{ display:inline-flex; align-items:center; gap:6px; font-family:'Archivo', sans-serif; font-weight:500; letter-spacing:0.01em; line-height:1; }
+  .wm svg{ width:16px; height:16px; fill:currentColor; }
+  .wm-pay{ font-size:15px; font-weight:500; }
+  .wm-samsung{ font-weight:700; font-size:12px; letter-spacing:0.16em; gap:0; }
+  .wm-samsung .wm-pay{ letter-spacing:0.01em; margin-left:6px; }
 
   .bag{
     position:fixed; top:0; right:0; bottom:0; z-index:202;
@@ -472,32 +500,10 @@
     margin-top:10px; min-height:14px; text-align:center;
     font-size:10px; color:var(--ink-soft);
   }
+  #bag-count.pulse{ animation:pulse .5s ease; display:inline-block; }
+  @keyframes pulse{ 40%{ transform:scale(1.5); } }
 
-/* ---- blue wallet (Google Pay / Samsung Pay) + pay sheet ---- */
-.btn-blue{
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  height:44px; width:100%;
-  background:#1a73e8; color:#fff; border-radius:6px;
-  font-family:'Archivo', sans-serif; font-size:14px; font-weight:500;
-  transition: opacity 0.25s ease;
-}
-.btn-blue:hover{ opacity:0.9; }
-.btn-blue:disabled{ opacity:0.3; cursor:default; }
-.btn-blue .chev{ font-size:11px; transition: transform 0.25s var(--ease); }
-.wallet-alt{ margin-top:10px; }
-.wallet-alt.open .btn-blue .chev{ transform:rotate(180deg); }
-.wallet-menu{ display:none; margin-top:6px; border:1px solid rgba(26,115,232,0.35); border-radius:6px; overflow:hidden; }
-.wallet-alt.open .wallet-menu{ display:grid; }
-.wallet-menu button{ display:flex; align-items:center; padding:13px 14px; text-align:left; font-family:'Archivo', sans-serif; font-size:14px; color:#1a4fa0; }
-.wm{ display:inline-flex; align-items:center; gap:6px; font-family:'Archivo', sans-serif; font-weight:500; letter-spacing:0.01em; line-height:1; }
-.wm svg{ width:16px; height:16px; fill:currentColor; }
-.wm-pay{ font-size:15px; font-weight:500; }
-.wm-samsung{ font-weight:700; font-size:12px; letter-spacing:0.16em; gap:0; }
-.wm-samsung .wm-pay{ letter-spacing:0.01em; margin-left:6px; }
-.btn-blue .wl{ font-size:14px; }
-.wallet-menu button + button{ border-top:1px solid rgba(26,115,232,0.2); }
-.wallet-menu button:hover{ background:rgba(26,115,232,0.08); }
-
+/* ---- pay sheet ---- */
 .pay-sheet-backdrop{
   position:fixed; inset:0; z-index:400; background:rgba(20,18,26,0.45);
   opacity:0; pointer-events:none; transition: opacity 0.3s var(--ease);
@@ -511,14 +517,13 @@
 }
 .pay-sheet.open{ transform:translate(-50%, 0); }
 .ps-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-family:'Archivo', sans-serif; font-weight:600; font-size:17px; }
-.ps-head .applepay-mark{ color:#000; }
-.ps-head .applepay-mark svg{ fill:#000; }
+.ps-head .applepay-mark, .ps-head .wm{ color:#000; }
 .ps-head button{ font-size:14px; color:#1a73e8; font-weight:400; }
 .ps-row{ display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.08); font-size:14px; }
 .ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
 .ps-msg{ margin-top:10px; min-height:14px; text-align:center; font-size:11px; color:#6b6b73; }
 
-/* ---- receipts: printed after payment (mock) ---- */
+/* ---- receipts: printed after payment (mock). One slip per house, each on its own paper. ---- */
 .rcpt-stage{
   position:fixed; inset:0; z-index:500; overflow-y:auto; overflow-x:hidden;
   background:rgba(11,9,6,0.975); opacity:0; pointer-events:none;
@@ -532,34 +537,35 @@
 }
 .rcpt-pile{ display:flex; flex-direction:column; align-items:center; padding:0 0 18vh; }
 .rcpt-slip{
-  position:relative; width:min(290px,80vw); margin-top:-40px;
+  position:relative; width:min(300px,82vw); margin-top:-40px;
   filter:drop-shadow(0 8px 12px rgba(0,0,0,.45));
   clip-path:inset(0 0 100% 0);
 }
 .rcpt-slip:first-child{ margin-top:6px; }
-.rcpt-slip.main{ width:min(320px,86vw); margin-top:-22px; }
 .rcpt-slip.printing{ animation:rcptPrint 1.7s steps(30,end) forwards; }
 @keyframes rcptPrint{ from{ clip-path:inset(0 0 100% 0); } to{ clip-path:inset(-20px -20px -20px -20px); } }
 .rcpt-paper{
-  background:#fbfbf8; color:#161616; padding:22px 20px 36px;
+  --paper:#fbfbf8; --ink:#161616; --mute:#777; --rule:#999;
+  background:var(--paper); color:var(--ink); padding:22px 20px 36px;
   font-family:'JetBrains Mono',monospace; font-size:11px; line-height:17px;
   -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 7px) no-repeat,radial-gradient(circle at 5px 7px,transparent 4px,#000 4.5px) bottom/10px 7px repeat-x;
           mask:linear-gradient(#000 0 0) top/100% calc(100% - 7px) no-repeat,radial-gradient(circle at 5px 7px,transparent 4px,#000 4.5px) bottom/10px 7px repeat-x;
 }
-.rcpt-word{ text-align:center; font-family:'Archivo',sans-serif; font-weight:800; font-size:25px; letter-spacing:5px; }
-.rcpt-tag{ text-align:center; font-size:8.5px; letter-spacing:1.4px; text-transform:uppercase; color:#777; margin:4px 0 14px; }
+.rcpt-paper .band{ margin:-22px -20px 16px; height:var(--bh,0); background:var(--band,none); }
+.rcpt-paper .brand-logo{ display:block; height:44px; margin:0 auto 8px; object-fit:contain; }
+.rcpt-paper .brand-word{ text-align:center; }
+.rcpt-paper .brand-sub{ text-align:center; font-size:8.5px; letter-spacing:1.4px; text-transform:uppercase; color:var(--mute); margin:4px 0 14px; }
 .rcpt-row{ display:flex; justify-content:space-between; gap:12px; }
-.rcpt-row span{ color:#555; }
+.rcpt-row span{ color:var(--mute); }
 .rcpt-row b{ font-weight:400; text-align:right; }
-.rcpt-rule{ border-top:1px dashed #999; margin:11px 0; }
-.rcpt-label{ color:#555; }
-.rcpt-house{ font-weight:700; font-size:13px; }
+.rcpt-rule{ border-top:1px dashed var(--rule); margin:11px 0; }
 .rcpt-item{ font-weight:700; margin-top:6px; }
-.rcpt-group{ margin-top:9px; font-size:9px; letter-spacing:1.4px; text-transform:uppercase; color:#777; }
-.rcpt-total{ font-weight:700; font-size:13px; border-top:1px solid #161616; padding-top:6px; margin-top:6px; }
-.rcpt-total span{ color:#161616; }
-.rcpt-note{ margin-top:12px; text-align:center; font-size:10px; line-height:15px; color:#444; }
-.rcpt-foot{ margin-top:12px; text-align:center; font-size:8.5px; letter-spacing:2px; text-transform:uppercase; color:#888; }
+.rcpt-via{ font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--mute); }
+.rcpt-total{ font-weight:700; font-size:13px; border-top:1px solid var(--ink); padding-top:6px; margin-top:6px; }
+.rcpt-total span{ color:var(--ink); }
+.rcpt-paper .bc{ height:34px; margin-top:14px; background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 4px,var(--ink) 4px 5px,transparent 5px 8px,var(--ink) 8px 11px,transparent 11px 12px); }
+.rcpt-note{ margin-top:12px; text-align:center; font-size:10px; line-height:15px; opacity:.8; }
+.rcpt-fine{ margin-top:10px; text-align:center; font-size:8px; letter-spacing:1.6px; text-transform:uppercase; color:var(--mute); }
 .rcpt-done{
   position:fixed; top:14px; right:16px; z-index:6; color:#EDEAF2; font-family:'JetBrains Mono',monospace;
   font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:8px 10px; opacity:.7;
@@ -696,49 +702,6 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   .pair figure:nth-child(2){ margin-bottom:0; }
   .pair figure img{ width:min(calc(var(--w) * 1px), 78vw, calc(36svh * var(--ar))); }
 }
-
-/* ---- house-branded slips: each house prints on its own paper ---- */
-.rcpt-paper .brand-logo{ display:block; height:44px; margin:0 auto 8px; object-fit:contain; }
-.rcpt-paper .brand-word{ text-align:center; }
-.rcpt-paper .brand-sub{ text-align:center; font-size:8.5px; letter-spacing:1.4px; text-transform:uppercase; color:#777; margin:4px 0 14px; }
-.rcpt-paper .bc{ height:34px; margin-top:14px; background:repeating-linear-gradient(90deg,#161616 0 2px,transparent 2px 4px,#161616 4px 5px,transparent 5px 8px,#161616 8px 11px,transparent 11px 12px); }
-.rcpt-paper .band{ margin:-22px -20px 16px; }
-
-/* BAPE: camo band, heavy sans wordmark */
-.b-bape .band{ height:20px; background:
-  radial-gradient(circle at 20% 40%,#2f4a2b 0 7px,transparent 8px),
-  radial-gradient(circle at 62% 70%,#1d2f1b 0 6px,transparent 7px),
-  radial-gradient(circle at 88% 30%,#5d7234 0 7px,transparent 8px), #7f9150; background-size:52px 20px; }
-.b-bape .brand-word{ font-family:'Archivo',sans-serif; font-weight:800; font-size:19px; letter-spacing:2px; }
-
-/* Louis Vuitton: warm paper, spaced serif */
-.b-lv{ background:#f6efe1; }
-.b-lv .band{ height:14px; background:repeating-linear-gradient(90deg,#8a6a3a 0 1px,transparent 1px 9px); opacity:.55; }
-.b-lv .brand-word{ font-family:'Fraunces',serif; font-weight:400; font-size:19px; letter-spacing:6px; }
-
-/* Supreme: red box */
-.b-supreme .band{ display:none; }
-.b-supreme .brand-word{ background:#da1f26; color:#fff; font-family:'Archivo',sans-serif; font-weight:800; font-style:italic; font-size:24px; letter-spacing:-.5px; padding:6px 0; margin:0 auto 6px; width:70%; }
-
-/* Off-White: hazard stripe, quote marks */
-.b-ow .band{ height:12px; background:repeating-linear-gradient(135deg,#161616 0 8px,#fbfbf8 8px 16px); }
-.b-ow .brand-word{ font-family:'Archivo',sans-serif; font-weight:600; font-size:17px; letter-spacing:3px; }
-.b-ow .rcpt-label::before,.b-ow .rcpt-label::after{ content:'"'; }
-
-/* Chrome Hearts: black paper, silver type */
-.b-ch{ background:#0e0e0e; color:#c9c9c9; }
-.b-ch .rcpt-row span,.b-ch .rcpt-label,.b-ch .brand-sub{ color:#8a8a8a; }
-.b-ch .rcpt-rule{ border-top-color:#444; }
-.b-ch .rcpt-total{ border-top-color:#c9c9c9; } .b-ch .rcpt-total span{ color:#c9c9c9; }
-.b-ch .rcpt-note{ color:#a8a8a8; }
-.b-ch .bc{ background:repeating-linear-gradient(90deg,#c9c9c9 0 2px,transparent 2px 4px,#c9c9c9 4px 5px,transparent 5px 8px); }
-.b-ch .band{ height:6px; background:#c9c9c9; }
-.b-ch .brand-word{ font-family:'Fraunces',serif; font-size:19px; letter-spacing:5px; }
-
-/* Goyard: chevron band */
-.b-goyard{ background:#f4ecda; }
-.b-goyard .band{ height:16px; background:repeating-linear-gradient(135deg,#1f3a2e 0 4px,#c8a35a 4px 8px,#f4ecda 8px 12px); }
-.b-goyard .brand-word{ font-family:'Fraunces',serif; font-size:19px; letter-spacing:7px; }
 </style>
 </head>
 <body>
@@ -797,7 +760,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   <div class="wordmark-nav">MANIFEST</div>
   <div class="nav-right">
     <div class="nav-search" id="nav-search">
-      <input type="text" id="field-search-input" placeholder="name, house, category" autocomplete="off" aria-label="Search the archive by name, house, or category">
+      <input type="text" id="field-search-input" placeholder="name, house, category" autocomplete="off" aria-label="Search by name, house, or category">
       <button class="nav-btn" id="search-toggle" type="button" aria-expanded="false">Search</button>
     </div>
     <button class="nav-btn" id="index-open" type="button" aria-label="Open index"><span class="burger"><i></i><i></i><i></i></span></button>
@@ -808,7 +771,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 
 <section class="arrival" id="arrival">
   <div class="wordmark display">Manifest</div>
-  <div class="thesis">from the collection of Lufuno</div>
+  <div class="thesis" id="thesis">recognized objects</div>
   <div class="arrival-obj-wrap" id="arrival-obj">
     <div class="halo" id="arrival-halo"></div>
     <div class="stage" id="arrival-stage"></div>
@@ -823,7 +786,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 </section>
 
 <section class="field-note">
-  <p>every object here is mine. hold still near one and the room answers in color.</p>
+  <p id="field-note-text">hold still near a piece and the room answers in color.</p>
 </section>
 
 <nav class="field-filters" id="field-filters" aria-label="Filter by category"></nav>
@@ -833,7 +796,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 </section>
 
 <div class="field-empty" id="field-empty">
-  <p>nothing in the collection answers to that.</p>
+  <p>nothing here answers to that.</p>
   <button type="button" id="field-empty-reset">back to everything</button>
 </div>
 
@@ -862,34 +825,21 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 <div class="record-backdrop" id="record-backdrop"></div>
 <div class="record" id="record" role="dialog" aria-modal="true" aria-labelledby="record-name">
   <button class="record-close" id="record-close" aria-label="Close">Close ✕</button>
-  <div class="record-prov eyebrow">from my collection</div>
   <div class="record-stage" id="record-stage"></div>
   <div class="record-dots" id="record-dots" style="display:none;"></div>
   <div class="record-maker eyebrow" id="record-maker"></div>
   <div class="record-name" id="record-name"></div>
   <div class="record-blurb" id="record-blurb"></div>
-  <div class="record-mine" id="record-mine" style="display:none;"></div>
   <div class="record-scarcity" id="record-scarcity" style="display:none;"></div>
   <div class="record-sizes" id="record-sizes" style="display:none;">
     <div class="eyebrow label">Sizes</div>
     <div class="record-size-row" id="record-size-row"></div>
+    <div class="size-hint" id="size-hint" aria-live="polite"></div>
   </div>
   <div class="record-price">
     <div class="amount" id="record-price-amount"></div>
   </div>
-  <div class="record-actions">
-    <div class="action-row">
-      <button class="btn-black" id="record-add">Add to Bag</button>
-      <button class="btn-black btn-pay" id="record-applepay" aria-label="Buy with Apple Pay"></button>
-    </div>
-    <div class="wallet-alt">
-      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false"><span class="wl">Google Pay · Samsung Pay</span> <span class="chev">▾</span></button>
-      <div class="wallet-menu" role="menu">
-        <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
-        <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
-      </div>
-    </div>
-  </div>
+  <div class="record-actions" id="record-actions"></div>
 </div>
 
 <aside class="bag" id="bag" aria-label="Bag">
@@ -900,14 +850,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   <div class="bag-items" id="bag-items"></div>
   <div class="bag-foot">
     <div class="bag-total"><span class="eyebrow">Total</span><span class="amount" id="bag-total"></span></div>
-    <button class="btn-black" id="bag-applepay" aria-label="Pay with Apple Pay"></button>
-    <div class="wallet-alt">
-      <button class="btn-blue" type="button" aria-haspopup="true" aria-expanded="false"><span class="wl">Google Pay · Samsung Pay</span> <span class="chev">▾</span></button>
-      <div class="wallet-menu" role="menu">
-        <button type="button" role="menuitem" data-wallet="Google Pay">Google Pay</button>
-        <button type="button" role="menuitem" data-wallet="Samsung Pay">Samsung Pay</button>
-      </div>
-    </div>
+    <div id="bag-express"></div>
     <div class="bag-msg" id="bag-msg"></div>
   </div>
 </aside>
@@ -936,7 +879,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   <div class="rcpt-pile" id="rcpt-pile"></div>
 </div>
 
-<footer>MANIFEST — from the collection of Lufuno</footer>
+<footer>MANIFEST — recognized objects</footer>
 
 <div class="wall-zoom" id="wall-zoom"><img alt=""></div>
 
@@ -1002,7 +945,6 @@ const AMBIENCE = (() => {
 
 <script>
 /* Optional per-object fields:
-     mine:'...'      your own first-person line (where you got it, why you kept it). Shown in the record only if set.
      scarcity:'...'  release context.
      out:['S','XL']  sizes unavailable. */
 const OBJECTS = [
@@ -1206,6 +1148,44 @@ function renderStage(o){
 document.getElementById('field-count').textContent =
   String(OBJECTS.length).padStart(2,'0') + ' objects';
 
+/* ---- voice: the opening line varies. One per visit, then it turns over
+   each time the arrival object changes. Add lines freely. ---- */
+const THESIS = [
+  'if you know, you know',
+  'worn once, talked about for years',
+  'the pieces the timeline never forgot',
+  'sold out in minutes. remembered for years',
+  'everything here had a line around it',
+  'what the group chat still asks about',
+  'grails, in no particular order',
+  'the ones you saw and never found',
+  'seen on everyone, owned by few',
+  'heat, kept in the light',
+  'the drop that never really ended',
+  'hype, up close'
+];
+const NOTES = [
+  'hold still near a piece and the room answers in color.',
+  'nothing here is sorted. drift, stop, look.',
+  'stay on one a moment — the room remembers.',
+  'scroll slow. the pieces notice.',
+  'every piece here had a line around it once. take your time.'
+];
+const thesisEl = document.getElementById('thesis');
+let thesisI = Math.floor(Math.random() * THESIS.length);
+thesisEl.textContent = THESIS[thesisI];
+document.getElementById('field-note-text').textContent = NOTES[Math.floor(Math.random() * NOTES.length)];
+function rotateThesis(){
+  thesisEl.style.opacity = '0';
+  setTimeout(() => {
+    let n;
+    do { n = Math.floor(Math.random() * THESIS.length); } while (n === thesisI && THESIS.length > 1);
+    thesisI = n;
+    thesisEl.textContent = THESIS[n];
+    thesisEl.style.opacity = '1';
+  }, 850);
+}
+
 const arrivalStageEl = document.getElementById('arrival-stage');
 const arrivalMakerEl = document.getElementById('arrival-maker');
 const arrivalNameEl = document.getElementById('arrival-name');
@@ -1223,6 +1203,7 @@ function scheduleArrivalDrift(){
   const wait = 10000 + Math.random() * 7000;
   setTimeout(() => {
     arrivalStageEl.style.opacity = '0';
+    rotateThesis();
     setTimeout(() => {
       let next = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
       while (next.id === arrivalObjData.id && OBJECTS.length > 1){
@@ -1412,22 +1393,78 @@ function formatRecognizedValue(usdPrice){
   const blurbEl = document.getElementById('record-blurb');
   const sizesWrap = document.getElementById('record-sizes');
   const sizeRow = document.getElementById('record-size-row');
+  const sizeHint = document.getElementById('size-hint');
   const priceEl = document.getElementById('record-price-amount');
-
+  const countEl = document.getElementById('bag-count');
   const bagEl = document.getElementById('bag');
-  const addBtn = document.getElementById('record-add');
-  const payBtn = document.getElementById('record-applepay');
-  const bagPay = document.getElementById('bag-applepay');
   const bagMsg = document.getElementById('bag-msg');
   const BAG = [];
+
+  /* ---- wallets ----
+     One primary wallet, chosen for the device (or the last one the visitor picked).
+     The other two are one small tap away, never competing for attention. */
+  const WALLETS = ['Apple Pay', 'Google Pay', 'Samsung Pay'];
   const APPLE = '<span class="applepay-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Pay</span>';
   const G_PATH = 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z';
   const MARKS = {
+    'Apple Pay': APPLE,
     'Google Pay': '<span class="wm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + G_PATH + '"/></svg><span class="wm-pay">Pay</span></span>',
     'Samsung Pay': '<span class="wm wm-samsung">SAMSUNG<span class="wm-pay">Pay</span></span>'
   };
-  payBtn.innerHTML = APPLE;
-  bagPay.innerHTML = APPLE;
+  function detectWallet(){
+    try { const s = localStorage.getItem('mf-wallet'); if (WALLETS.includes(s)) return s; } catch(e){}
+    const ua = navigator.userAgent;
+    if (/SamsungBrowser|SM-[A-Z]\d/.test(ua)) return 'Samsung Pay';
+    if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua))) return 'Apple Pay';
+    return 'Google Pay';
+  }
+  let wallet = detectWallet();
+
+  function paintWallet(){
+    document.querySelectorAll('.ex-main').forEach(btn => {
+      const pre = btn.closest('[data-pre]').dataset.pre;
+      btn.innerHTML = '<span class="btn-pre">' + pre + '</span>' + MARKS[wallet];
+      btn.setAttribute('aria-label', pre + ' ' + wallet);
+    });
+    document.querySelectorAll('.alt-chips button').forEach(b => b.classList.toggle('on', b.dataset.w === wallet));
+  }
+  function setWallet(name){
+    wallet = name;
+    try { localStorage.setItem('mf-wallet', name); } catch(e){}
+    paintWallet();
+  }
+  function mountExpress(host, pre, mainId, afterMain, altExtra){
+    host.dataset.pre = pre;
+    host.innerHTML =
+      '<button type="button" class="btn-black ex-main" id="' + mainId + '"></button>' + (afterMain || '') +
+      '<div class="alt-row"><button type="button" class="ex-toggle" aria-expanded="false">Other wallets</button>' + (altExtra || '') + '</div>' +
+      '<div class="alt-chips">' + WALLETS.map(w => '<button type="button" data-w="' + w + '" aria-label="' + w + '">' + MARKS[w] + '</button>').join('') + '</div>';
+    const tog = host.querySelector('.ex-toggle'), chips = host.querySelector('.alt-chips');
+    tog.addEventListener('click', () => {
+      const o = chips.classList.toggle('open');
+      tog.setAttribute('aria-expanded', o);
+    });
+    chips.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      setWallet(b.dataset.w);
+      chips.classList.remove('open');
+      tog.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  /* Record: the wallet is the primary action (fewest steps to done), Add to Bag is
+     the quieter outline beneath it, and the bag link only appears once there is a bag. */
+  mountExpress(document.getElementById('record-actions'), 'Buy with', 'record-pay',
+    '<button type="button" class="btn-line" id="record-add">Add to Bag</button>',
+    '<button type="button" id="record-viewbag" hidden>View bag</button>');
+  mountExpress(document.getElementById('bag-express'), 'Pay with', 'bag-pay');
+  paintWallet();
+
+  const addBtn = document.getElementById('record-add');
+  const payBtn = document.getElementById('record-pay');
+  const viewBagBtn = document.getElementById('record-viewbag');
+  const bagPay = document.getElementById('bag-pay');
 
   let recordAssets = [];
   let recordIndex = 0;
@@ -1456,16 +1493,13 @@ function formatRecognizedValue(usdPrice){
   function openRecord(o){
     current = o;
     addBtn.textContent = 'Add to Bag';
+    sizeHint.textContent = '';
     recordAssets = (o.assets && o.assets.length) ? o.assets : [o.asset];
     recordIndex = 0;
     paintRecordStage(o.name);
     makerEl.textContent = o.maker;
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
-    // Your own first-person line. Only appears if you've written one for this object.
-    const mineEl = document.getElementById('record-mine');
-    mineEl.textContent = o.mine || '';
-    mineEl.style.display = o.mine ? '' : 'none';
     const scarcityEl = document.getElementById('record-scarcity');
     scarcityEl.textContent = o.scarcity || '';
     scarcityEl.style.display = o.scarcity ? '' : 'none';
@@ -1481,6 +1515,7 @@ function formatRecognizedValue(usdPrice){
         btn.addEventListener('click', () => {
           sizeRow.querySelectorAll('button').forEach(b => b.classList.remove('chosen'));
           btn.classList.add('chosen');
+          sizeHint.textContent = '';
         });
       });
     } else {
@@ -1505,29 +1540,33 @@ function formatRecognizedValue(usdPrice){
   // displayed figures (digits only), so no second price formula exists.
   const zarNumber = (label) => parseInt(label.replace(/\D/g, ''), 10) || 0;
   const zarFormat = (n) => 'R' + n.toLocaleString('en-ZA');
+  const sumOf = (list) => zarFormat(list.reduce((t, b) => t + zarNumber(b.label), 0));
 
   const chosenSize = () => {
     const b = sizeRow.querySelector('.chosen');
     return b ? b.dataset.size : null;
   };
+  // Missing size is answered where the problem is: the size row shakes and says so.
+  function sizeMissing(){
+    if (!(current.sizes && current.sizes.length) || chosenSize()) return false;
+    sizeHint.textContent = 'Select a size';
+    sizeRow.classList.remove('nudge'); void sizeRow.offsetWidth; sizeRow.classList.add('nudge');
+    sizesWrap.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    return true;
+  }
+  function itemFromCurrent(){
+    if (sizeMissing()) return null;
+    return { name: current.name, maker: current.maker, asset: current.asset,
+             label: formatRecognizedValue(current.price), size: chosenSize() };
+  }
   function flash(btn, text){
     btn.textContent = text;
     setTimeout(() => { btn.textContent = 'Add to Bag'; }, 1400);
   }
-  function addCurrent(){
-    if (current.sizes && current.sizes.length && !chosenSize()){
-      flash(addBtn, 'Select a size');
-      return false;
-    }
-    BAG.push({
-      name: current.name, maker: current.maker, asset: current.asset,
-      label: formatRecognizedValue(current.price), size: chosenSize()
-    });
-    paintBag();
-    return true;
-  }
   function paintBag(){
-    document.getElementById('bag-count').textContent = BAG.length;
+    countEl.textContent = BAG.length;
+    viewBagBtn.hidden = !BAG.length;
+    viewBagBtn.textContent = 'View bag · ' + BAG.length;
     const items = document.getElementById('bag-items');
     items.innerHTML = BAG.length
       ? BAG.map((b, i) => `
@@ -1542,10 +1581,8 @@ function formatRecognizedValue(usdPrice){
       BAG.splice(parseInt(btn.dataset.i, 10), 1);
       paintBag();
     }));
-    document.getElementById('bag-total').textContent =
-      zarFormat(BAG.reduce((s, b) => s + zarNumber(b.label), 0));
+    document.getElementById('bag-total').textContent = sumOf(BAG);
     bagPay.disabled = !BAG.length;
-    document.querySelector('.bag .btn-blue').disabled = !BAG.length;
     bagMsg.textContent = '';
   }
   function openBag(){
@@ -1556,34 +1593,33 @@ function formatRecognizedValue(usdPrice){
   }
 
   addBtn.addEventListener('click', () => {
-    if (addCurrent()) flash(addBtn, 'Added ✓');
+    const it = itemFromCurrent();
+    if (!it) return;
+    BAG.push(it);
+    paintBag();
+    countEl.classList.remove('pulse'); void countEl.offsetWidth; countEl.classList.add('pulse');
+    flash(addBtn, 'Added ✓');
   });
+  viewBagBtn.addEventListener('click', openBag);
   document.getElementById('bag-open').addEventListener('click', openBag);
   document.getElementById('bag-close').addEventListener('click', closeRecord);
 
-  // Pay sheet — the shortcut that slides up after a wallet is tapped (mock).
+  // Pay sheet — slides up after the wallet button is tapped (mock).
+  // From a record, the wallet pays for that one object only (the bag is untouched).
+  // From the bag, it pays for everything in the bag.
   const sheet = document.getElementById('pay-sheet');
   const sheetBack = document.getElementById('pay-backdrop');
   const psConfirm = document.getElementById('ps-confirm');
   const psMsg = document.getElementById('ps-msg');
+  let order = [], orderFromBag = false;
 
-  let lastWallet = 'Apple Pay';
-  function openSheet(name){
-    lastWallet = name;
-    const head = document.getElementById('ps-wallet');
-    if (name === 'Apple Pay'){
-      head.innerHTML = APPLE;
-      psConfirm.className = 'btn-black';
-      psConfirm.textContent = 'Pay with Side Button';
-    } else {
-      head.innerHTML = MARKS[name];
-      psConfirm.className = 'btn-blue';
-      psConfirm.textContent = 'Confirm';
-    }
-    document.getElementById('ps-rows').innerHTML = BAG.map(b =>
+  function openSheet(){
+    document.getElementById('ps-wallet').innerHTML = MARKS[wallet];
+    psConfirm.textContent = wallet === 'Apple Pay' ? 'Pay with Side Button' : 'Confirm';
+    document.getElementById('ps-rows').innerHTML = order.map(b =>
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
     ).join('');
-    document.getElementById('ps-total').textContent = document.getElementById('bag-total').textContent;
+    document.getElementById('ps-total').textContent = sumOf(order);
     psMsg.textContent = '';
     sheetBack.classList.add('open');
     sheet.classList.add('open');
@@ -1592,131 +1628,131 @@ function formatRecognizedValue(usdPrice){
     sheetBack.classList.remove('open');
     sheet.classList.remove('open');
   }
-  function startPay(name, fromRecord){
-    if (fromRecord){ if (!addCurrent()) return; openBag(); }
-    else if (!BAG.length) return;
-    openSheet(name);
-  }
-  payBtn.addEventListener('click', () => startPay('Apple Pay', true));
-  bagPay.addEventListener('click', () => startPay('Apple Pay', false));
-  // Blue wallet: shows both names until one is chosen, then wears that
-  // wallet's mark (in both the record and the bag) and stays switchable.
-  const walletEls = Array.from(document.querySelectorAll('.wallet-alt'));
-  function showChosen(name){
-    walletEls.forEach(w => {
-      w.querySelector('.wl').innerHTML = MARKS[name];
-      w.querySelector('.btn-blue').setAttribute('aria-label', name + ', change wallet');
-    });
-  }
-  walletEls.forEach(w => {
-    const btn = w.querySelector('.btn-blue');
-    btn.addEventListener('click', () => {
-      const open = w.classList.toggle('open');
-      btn.setAttribute('aria-expanded', open);
-    });
-    w.querySelectorAll('.wallet-menu button').forEach(m => {
-      const name = m.dataset.wallet;
-      m.innerHTML = MARKS[name];
-      m.setAttribute('aria-label', name);
-      m.addEventListener('click', () => {
-        w.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-        showChosen(name);
-        startPay(name, !!w.closest('.record'));
-      });
-    });
+  payBtn.addEventListener('click', () => {
+    const it = itemFromCurrent();
+    if (!it) return;
+    order = [it]; orderFromBag = false;
+    openSheet();
   });
-  // ---- Receipts (mock): after payment, slips print out of a slot. ----
-  // RECEIPT_MODE: 'both'     = one slip per house (in that house's own look), then the Manifest receipt
-  //               'houses'   = only the per-house slips
-  //               'manifest' = only the single Manifest receipt
-  const RECEIPT_MODE = 'both';
+  bagPay.addEventListener('click', () => {
+    if (!BAG.length) return;
+    order = BAG.slice(); orderFromBag = true;
+    openSheet();
+  });
+
+  // ---- Receipts (mock): after payment, one slip per house prints out of the slot,
+  // each on that house's own paper. Items from the same house share a slip, even
+  // across collabs ("Nike × Supreme" prints on Supreme's slip, with its credit line).
   const stageR = document.getElementById('rcpt-stage');
   const pileR = document.getElementById('rcpt-pile');
   const ROTS = [-3.2, 2.4, -1.6, 3.6, -2.6, 1.8];
   const DXS = [-24, 20, -12, 28, -28, 10];
   let rcptRun = 0, rcptTimers = [];
 
-  // House looks. First match wins, so a collab prints on the house listed first
-  // ("Nike × Supreme" -> Supreme, "BAPE × Comme des Garçons" -> BAPE).
-  // Logo images are optional: drop a file at the path and it prints above the wordmark;
-  // if the file is missing the image removes itself and the wordmark stands alone.
-  // Houses with no entry here print on the plain Manifest-style slip.
+  // Word styles
+  const A = (fw, fs, ls, x = '') => "font-family:'Archivo',sans-serif;font-weight:" + fw + ";font-size:" + fs + "px;letter-spacing:" + ls + "px;" + x;
+  const F = (fs, ls, x = '') => "font-family:'Fraunces',serif;font-weight:400;font-size:" + fs + "px;letter-spacing:" + ls + "px;" + x;
+  // B(key, match, wordmark, sub-line, thank-you line, slip prefix, look)
+  // look: paper, ink, mute, rule, band (css background), bh (band height), wcss (wordmark style), q (quote the lines)
+  const B = (k, m, w, s, f, p, o = {}) => ({ k, m, w, s, f, p, ...o });
+  // Order matters: first match wins, so a collab prints on the house listed first
+  // (Supreme before Nike, Off-White before Nike, Yeezy before Adidas, and so on).
+  // Logo images are optional: drop a file at assets/receipt-logos/<key>.png and it prints
+  // above the wordmark; if the file is missing the image removes itself.
   const BRANDS = [
-    { key:'bape',    match:/bathing ape|bape/i, word:'A BATHING APE®', sub:'BAPE® store copy',      logo:'assets/receipt-logos/bape.png',          foot:'Thank you' },
-    { key:'lv',      match:/louis vuitton/i,    word:'LOUIS VUITTON',  sub:'Maison fondée en 1854', logo:'assets/receipt-logos/lv.png',            foot:'Merci' },
-    { key:'supreme', match:/supreme/i,          word:'Supreme',        sub:'',                      logo:'assets/receipt-logos/supreme.png',       foot:'Thank you' },
-    { key:'ow',      match:/off-white/i,        word:'OFF-WHITE™',     sub:'c/o Virgil Abloh™',     logo:'assets/receipt-logos/off-white.png',     foot:'"Thank you"' },
-    { key:'ch',      match:/chrome hearts/i,    word:'CHROME HEARTS',  sub:'',                      logo:'assets/receipt-logos/chrome-hearts.png', foot:'Thank you' },
-    { key:'goyard',  match:/goyard/i,           word:'GOYARD',         sub:'Paris',                 logo:'assets/receipt-logos/goyard.png',        foot:'Merci' }
+    B('bape', /bathing ape|bape/i, 'A BATHING APE®', 'BAPE® store copy', 'Thank you', 'BAPE',
+      { bh:'20px', wcss:A(800,19,2),
+        band:'radial-gradient(circle at 20% 40%,#2f4a2b 0 7px,transparent 8px),radial-gradient(circle at 62% 70%,#1d2f1b 0 6px,transparent 7px),radial-gradient(circle at 88% 30%,#5d7234 0 7px,transparent 8px),#7f9150 0 0/52px 20px' }),
+    B('lv', /louis vuitton/i, 'LOUIS VUITTON', 'Maison fondée en 1854', 'Merci', 'LV',
+      { paper:'#f6efe1', bh:'14px', band:'repeating-linear-gradient(90deg,rgba(138,106,58,.55) 0 1px,transparent 1px 9px)', wcss:F(19,6) }),
+    B('supreme', /supreme/i, 'Supreme', '', 'Thank you', 'SUP',
+      { wcss:A(800,24,-.5,'font-style:italic;background:#da1f26;color:#fff;padding:6px 0;margin:0 auto 6px;width:70%;') }),
+    B('off-white', /off-white/i, 'OFF-WHITE™', 'c/o Virgil Abloh™', '"Thank you"', 'OW',
+      { bh:'12px', band:'repeating-linear-gradient(135deg,#161616 0 8px,#fbfbf8 8px 16px)', wcss:A(600,17,3), q:true }),
+    B('chrome-hearts', /chrome hearts/i, 'CHROME HEARTS', '', 'Thank you', 'CH',
+      { paper:'#0e0e0e', ink:'#c9c9c9', mute:'#8a8a8a', rule:'#444', bh:'6px', band:'#c9c9c9', wcss:F(19,5) }),
+    B('goyard', /goyard/i, 'GOYARD', 'Paris', 'Merci', 'GY',
+      { paper:'#f4ecda', bh:'16px', band:'repeating-linear-gradient(135deg,#1f3a2e 0 4px,#c8a35a 4px 8px,#f4ecda 8px 12px)', wcss:F(19,7) }),
+    B('hermes', /herm[eè]s/i, 'HERMÈS', '24, Faubourg Saint-Honoré · Paris', 'Merci', 'HRM',
+      { paper:'#f8f1e6', bh:'10px', band:'#f37021', wcss:F(20,8) }),
+    B('balenciaga', /balenciaga/i, 'BALENCIAGA', 'Paris', 'Thank you', 'BLC', { wcss:A(800,18,4) }),
+    B('margiela', /margiela|mm6/i, 'MAISON MARGIELA', 'Paris', 'Merci', 'MM', { paper:'#fafaf7', wcss:A(400,15,3) }),
+    B('vetements', /vetements|coming soon/i, 'VETEMENTS', 'Zürich · Paris', 'Thank you', 'VTM', { wcss:A(800,17,5) }),
+    B('number-nine', /number \(n\)ine/i, 'NUMBER (N)INE', 'Tokyo', 'Thank you', 'N9', { paper:'#efece4', wcss:F(17,4) }),
+    B('palace', /palace/i, 'PALACE', 'Skateboards · London', 'Thank you', 'PLC', { wcss:A(800,22,1,'font-style:italic;') }),
+    B('sicko', /sicko/i, 'SICKO', 'Born From Pain', 'Thank you', 'SCK', { wcss:A(800,22,2) }),
+    B('awake', /awake/i, 'AWAKE NY', 'New York', 'Thank you', 'AWK', { paper:'#f4f0e6', wcss:F(18,5) }),
+    B('palm-angels', /palm angels/i, 'PALM ANGELS', 'Los Angeles · Milano', 'Thank you', 'PA',
+      { bh:'8px', band:'#161616', wcss:A(600,17,4) }),
+    B('needles', /needles/i, 'NEEDLES', 'Nepenthes · Tokyo', 'Thank you', 'NDL', { wcss:A(600,17,5) }),
+    B('kaws', /kaws/i, 'KAWS', 'Original Fake', 'Thank you', 'KWS', { wcss:A(800,24,8) }),
+    B('murakami', /murakami/i, 'KAIKAI KIKI', 'Takashi Murakami · Tokyo', 'Arigato', 'KKK',
+      { paper:'#fffdf0', bh:'10px', band:'linear-gradient(90deg,#f2559a,#f7a31c,#ffe14d,#3cb878,#2d9be0,#8a5bd6)', wcss:F(18,4) }),
+    B('cpfm', /cactus plant|cpfm/i, 'CACTUS PLANT FLEA MARKET', 'CPFM', 'Thank you', 'CPFM', { wcss:A(800,12,1) }),
+    B('vlone', /vlone/i, 'VLONE', 'Friends Alone', 'Thank you', 'VL', { wcss:A(800,24,6,'color:#ff6a00;') }),
+    B('yeezy', /yeezy/i, 'YEEZY', '', 'Thank you', 'YZY', { paper:'#f2efe8', wcss:A(600,22,10) }),
+    B('adidas', /adidas/i, 'adidas', 'Herzogenaurach', 'Thank you', 'ADI',
+      { bh:'15px', band:'linear-gradient(#161616 0 3px,transparent 3px 6px,#161616 6px 9px,transparent 9px 12px,#161616 12px 15px)', wcss:A(800,22,1) }),
+    B('nike', /\bnike\b/i, 'NIKE', 'Beaverton, Oregon', 'Just do it.', 'NKE', { wcss:A(800,24,2,'font-style:italic;') }),
+    B('beats', /beats/i, 'Beats by Dre', '', 'Thank you', 'BTS', { bh:'10px', band:'#e10600', wcss:A(800,18,0) }),
+    B('givenchy', /givenchy/i, 'GIVENCHY', 'Paris', 'Merci', 'GVC', { wcss:F(20,8) }),
+    B('heron-preston', /heron preston/i, 'HERON PRESTON', '', 'Thank you', 'HP', { bh:'10px', band:'#ff5a1f', wcss:A(600,15,3) }),
+    B('raf-simons', /raf simons/i, 'RAF SIMONS', 'Antwerp', 'Thank you', 'RS', { wcss:A(400,17,6) }),
+    B('revenge', /revenge/i, 'REVENGE', '', 'Thank you', 'RVG', { wcss:A(800,20,3) }),
+    B('vivet', /vivet/i, 'VIVET', '', 'Thank you', 'VVT', { wcss:A(800,20,6) }),
+    B('ambush', /ambush/i, 'AMBUSH', 'Tokyo', 'Thank you', 'AMB', { wcss:A(800,19,5) }),
+    B('youngboy', /youngboy/i, 'YOUNGBOY NEVER BROKE AGAIN', '', 'Thank you', 'NBA', { wcss:A(800,11,1) })
   ];
-  const brandOf = (house) => BRANDS.find(b => b.match.test(house));
+  const brandOf = (house) => BRANDS.find(b => b.m.test(house));
 
-  function rcptHouseSlip(house, items, no, date){
-    const sub = zarFormat(items.reduce((t, b) => t + zarNumber(b.label), 0));
-    const br = brandOf(house) || { key:'plain', word:house.toUpperCase(), sub:'', logo:'', foot:'Thank you' };
+  function slipHTML(br, items, no, date){
+    const q = (s) => br.q ? '"' + s + '"' : s;
+    const look = { paper:br.paper, ink:br.ink, mute:br.mute, rule:br.rule || br.mute, band:br.band, bh:br.bh };
+    const vars = Object.entries(look).filter(([, v]) => v).map(([k, v]) => '--' + k + ':' + v).join(';');
     const lines = items.map(b =>
-      `<div class="rcpt-item">${b.name}</div>
-       <div class="rcpt-row"><span>${b.size ? 'Size ' + b.size + ' · ' : ''}Qty 1</span><b>${b.label}</b></div>`).join('');
-    return `<div class="rcpt-paper b-${br.key}">
+      `<div class="rcpt-item">${b.name}</div>` +
+      (b.maker.includes('×') ? `<div class="rcpt-via">${b.maker}</div>` : '') +
+      `<div class="rcpt-row"><span>${q((b.size ? 'Size ' + b.size + ' · ' : '') + 'Qty 1')}</span><b>${b.label}</b></div>`).join('');
+    return `<div class="rcpt-paper" style="${vars}">
       <div class="band"></div>
-      ${br.logo ? `<img class="brand-logo" src="${br.logo}" alt="" onerror="this.remove()">` : ''}
-      <div class="brand-word">${br.word}</div>
-      <div class="brand-sub">${br.sub || '&nbsp;'}</div>
+      ${br.k !== 'plain' ? `<img class="brand-logo" src="assets/receipt-logos/${br.k}.png" alt="" onerror="this.remove()">` : ''}
+      <div class="brand-word" style="${br.wcss}">${br.w}</div>
+      <div class="brand-sub">${br.s || '&nbsp;'}</div>
       <div class="rcpt-row"><span>Slip No.</span><b>${no}</b></div>
       <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
       <div class="rcpt-rule"></div>
       ${lines}
       <div class="rcpt-rule"></div>
-      <div class="rcpt-row rcpt-total"><span>Subtotal</span><b>${sub}</b></div>
+      <div class="rcpt-row rcpt-total"><span>Total</span><b>${sumOf(items)}</b></div>
       <div class="bc"></div>
-      <div class="rcpt-note">${br.foot}</div>
-      <div class="rcpt-foot">From the collection of Lufuno</div></div>`;
-  }
-  function rcptMainSlip(groups, no, date, wallet){
-    const total = zarFormat([...groups.values()].flat().reduce((t, b) => t + zarNumber(b.label), 0));
-    return `<div class="rcpt-paper">
-      <div class="rcpt-word">MANIFEST</div><div class="rcpt-tag">a record of recognized objects</div>
-      <div class="rcpt-row"><span>Receipt No.</span><b>${no}</b></div>
-      <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
-      <div class="rcpt-row"><span>Paid with</span><b>${wallet}</b></div>
-      <div class="rcpt-rule"></div>
-      ${[...groups].map(([h, items]) => `<div class="rcpt-group">${h}</div>` +
-        items.map(b => `<div class="rcpt-item">${b.name}</div><div class="rcpt-row"><span>${b.size ? 'Size ' + b.size : '&nbsp;'}</span><b>${b.label}</b></div>`).join('')
-      ).join('')}
-      <div class="rcpt-rule"></div>
-      <div class="rcpt-row rcpt-total"><span>Total</span><b>${total}</b></div>
-      <div class="rcpt-note">It has been recognized, and it is yours to keep.</div>
-      <div class="rcpt-foot">From the collection of Lufuno</div></div>`;
+      <div class="rcpt-note">${br.f}</div>
+      <div class="rcpt-fine">Keep this slip</div></div>`;
   }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
     if (!stageR.classList.contains('open')) return;
     stageR.classList.remove('open');
     document.body.style.overflow = '';
-    BAG.length = 0; paintBag();           // the order is complete (mock)
+    if (orderFromBag){ BAG.length = 0; paintBag(); }   // the order is complete (mock)
   }
   function runReceipts(){
     const run = ++rcptRun;
     const date = new Date().toLocaleDateString('en-ZA');
     const base = String(Date.now()).slice(-6);
     const groups = new Map();
-    BAG.forEach(b => { if (!groups.has(b.maker)) groups.set(b.maker, []); groups.get(b.maker).push(b); });
-    const slips = [];
-    if (RECEIPT_MODE !== 'manifest'){
-      [...groups].forEach(([h, items], i) => slips.push({ house: true, i,
-        html: rcptHouseSlip(h, items, `MF-${base}-${String.fromCharCode(65 + i)}`, date) }));
-    }
-    if (RECEIPT_MODE !== 'houses'){
-      slips.push({ house: false, html: rcptMainSlip(groups, `MF-${base}`, date, lastWallet) });
-    }
+    order.forEach(b => {
+      const br = brandOf(b.maker) || { k:'plain', w:b.maker.toUpperCase(), s:'', f:'Thank you', p:'MF', wcss:A(800,16,3) };
+      const key = br.k === 'plain' ? 'plain:' + b.maker : br.k;
+      if (!groups.has(key)) groups.set(key, { br, items: [] });
+      groups.get(key).items.push(b);
+    });
     pileR.innerHTML = '';
-    const els = slips.map((sl, n) => {
+    const els = [...groups.values()].map((g, i) => {
       const el = document.createElement('div');
-      el.className = 'rcpt-slip' + (sl.house ? '' : ' main');
-      el.style.zIndex = n + 1;
-      if (sl.house) el.style.transform = `translateX(${DXS[sl.i % DXS.length]}px) rotate(${ROTS[sl.i % ROTS.length]}deg)`;
-      el.innerHTML = sl.html;
+      el.className = 'rcpt-slip';
+      el.style.zIndex = i + 1;
+      el.style.transform = `translateX(${DXS[i % DXS.length]}px) rotate(${ROTS[i % ROTS.length]}deg)`;
+      el.innerHTML = slipHTML(g.br, g.items, `${g.br.p}-${base}${groups.size > 1 ? '-' + String.fromCharCode(65 + i) : ''}`, date);
       pileR.appendChild(el);
       return el;
     });
@@ -1779,7 +1815,9 @@ document.getElementById('pending-btn').addEventListener('click', function(){
 document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   <div class="row"><span class="name">${p.name}</span><span>${p.note}</span></div>
 `).join('');
+</script>
 
+<script>
 (function(){
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) return;
