@@ -1110,7 +1110,7 @@ const OBJECTS = [
   {"id": "firm-cotton-pocket-pants-black", "name": "Six-Pocket Pants — Black", "maker": "Number (N)ine", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "six pockets, nylon shell. cargo, rewritten.", "asset": "assets/firm-cotton-pocket-pants-black.png", "assets": ["assets/firm-cotton-pocket-pants-black.png", "assets/firm-cotton-pocket-pants-black-angle-2.png"]},
   {"id": "firm-cotton-pocket-pants-grey", "name": "Six-Pocket Pants — Grey", "maker": "Number (N)ine", "category": "Apparel", "price": 300, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "same cut, same nylon, in grey. its own entry.", "asset": "assets/firm-cotton-pocket-pants-grey.png", "assets": ["assets/firm-cotton-pocket-pants-grey.png", "assets/firm-cotton-pocket-pants-grey-angle-2.png"]},
   {"id": "givenchy-paris-case", "name": "Paris Phone Case", "maker": "Givenchy", "category": "Accessory", "price": 120, "sizes": null, "blurb": "outlined block letters, stacked. paris, pocket-sized.", "asset": "assets/givenchy-paris-case.png"},
-  {"id": "hermes-kelly-messenger-noir", "name": "Kelly Messenger — Noir", "maker": "Hermès", "category": "Bag", "price": 9500, "sizes": null, "blurb": "togo leather, palladium turnlock. the quiet end of the archive.", "asset": "assets/hermes-kelly-messenger-noir.png"},
+  {"id": "hermes-kelly-messenger-noir", "name": "Kelly Messenger — Noir", "maker": "Hermès", "category": "Bag", "price": 9500, "zar": 17365, "sizes": null, "blurb": "togo leather, palladium turnlock. the quiet end of the archive.", "asset": "assets/hermes-kelly-messenger-noir.png"},
   {"id": "heron-preston-hoodie-black", "name": "Herons Hoodie — Black", "maker": "Heron Preston", "category": "Apparel", "price": 480, "sizes": ["XS", "S", "M", "L", "XL"], "blurb": "birds printed like a doc still, orange tab like a warning label.", "asset": "assets/heron-preston-hoodie-black.png"},
   {"id": "lv-silver-chain-bracelet", "name": "Monogram Chain Bracelet — Silver", "maker": "Louis Vuitton", "category": "Jewelry", "price": 700, "sizes": null, "blurb": "flat silver links, monogram cut through. two angles, one piece.", "asset": "assets/lv-silver-chain-bracelet.png", "assets": ["assets/lv-silver-chain-bracelet.png", "assets/lv-silver-chain-bracelet-angle-2.png"]},
   {"id": "margiela-future-high-black", "name": "Future High — Black", "maker": "Maison Margiela", "category": "Footwear", "price": 850, "sizes": ["7", "8", "9", "10", "11", "12", "13"], "blurb": "velcro strap, tabi-clean sole. the sneaker that isn't one.", "asset": "assets/margiela-future-high-black.png"},
@@ -1133,6 +1133,10 @@ const OBJECTS = [
   {"id": "kaws-together-brown", "name": "Together — Brown", "maker": "KAWS", "category": "Object", "price": 650, "sizes": null, "blurb": "two companions, one embrace. the X-eyes soften into something tender.", "asset": "assets/kaws-together-brown.png"},
   {"id": "kaws-companion-keychain-brown", "name": "Companion Keychain — Brown", "maker": "KAWS", "category": "Accessory", "price": 150, "sizes": null, "blurb": "the Companion shrunk to hang off a bag. same X-eyes, pocket scale.", "asset": "assets/kaws-companion-keychain-brown.png"},
   {"id": "murakami-flower-pillow-pink", "name": "Flower Cushion — Pink (Red Mouth)", "maker": "Takashi Murakami", "category": "Object", "price": 450, "sizes": null, "blurb": "pink and pale-pink petals, yellow face, a wide red mouth. plush enough to forget it's a signature.", "asset": "assets/murakami-flower-pillow-pink.png"},
+  {"id": "hermes-kelly-25-rose-mexico", "name": "Kelly 25 — Rose Mexico", "maker": "Hermès", "category": "Bag", "price": 9500, "sizes": null, "blurb": "rose mexico, palladium turnlock. the small kelly, loud in colour only.", "asset": "assets/hermes-kelly-25-rose-mexico.png"},
+  {"id": "hermes-kelly-28-blue", "name": "Kelly 28 — Blue", "maker": "Hermès", "category": "Bag", "price": 9800, "sizes": null, "blurb": "electric blue, gold hardware, the clochette hanging. its own entry.", "asset": "assets/hermes-kelly-28-blue.png"},
+  {"id": "hermes-birkin-35-blue", "name": "Birkin 35 — Blue", "maker": "Hermès", "category": "Bag", "price": 11500, "sizes": null, "blurb": "pale blue taurillon clémence, palladium. four views.", "asset": "assets/hermes-birkin-35-blue.png", "assets": ["assets/hermes-birkin-35-blue.png", "assets/hermes-birkin-35-blue-angle-2.png", "assets/hermes-birkin-35-blue-angle-3.png", "assets/hermes-birkin-35-blue-angle-4.png"]},
+  {"id": "hermes-birkin-35-orange", "name": "Birkin 35 — Orange", "maker": "Hermès", "category": "Bag", "price": 11000, "sizes": null, "blurb": "orange clémence, gold hardware. the one you can see from across the room.", "asset": "assets/hermes-birkin-35-orange.png"},
 ];
 const PENDING = [];
 
@@ -1377,7 +1381,8 @@ indexListEl.addEventListener('click', e => {
 // no range, no visible tie back to the reference, so it reads as the
 // object's value rather than a markdown off something higher.
 const USD_TO_ZAR = 17;
-function formatRecognizedValue(usdPrice){
+function formatRecognizedValue(usdPrice, zar){
+  if (zar) return 'R' + zar.toLocaleString('en-ZA');
   const recognizedUSD = usdPrice * 0.6;
   const round = (n) => Math.round(n / 10) * 10; // clean denomination
   return 'R' + round(recognizedUSD * USD_TO_ZAR).toLocaleString('en-ZA');
@@ -1503,7 +1508,7 @@ function formatRecognizedValue(usdPrice){
     const scarcityEl = document.getElementById('record-scarcity');
     scarcityEl.textContent = o.scarcity || '';
     scarcityEl.style.display = o.scarcity ? '' : 'none';
-    priceEl.textContent = formatRecognizedValue(o.price);
+    priceEl.textContent = formatRecognizedValue(o.price, o.zar);
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
       // Optional per-object `out:['S','XL']` marks sizes we don't have right now.
@@ -1557,7 +1562,7 @@ function formatRecognizedValue(usdPrice){
   function itemFromCurrent(){
     if (sizeMissing()) return null;
     return { name: current.name, maker: current.maker, asset: current.asset,
-             label: formatRecognizedValue(current.price), size: chosenSize() };
+             label: formatRecognizedValue(current.price, current.zar), size: chosenSize() };
   }
   function flash(btn, text){
     btn.textContent = text;
