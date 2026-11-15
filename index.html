@@ -764,6 +764,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
       <button class="nav-btn" id="search-toggle" type="button" aria-expanded="false">Search</button>
     </div>
     <button class="nav-btn" id="index-open" type="button" aria-label="Open index"><span class="burger"><i></i><i></i><i></i></span></button>
+    <button class="nav-btn" id="sound-btn" type="button" aria-pressed="false" aria-label="Toggle ambient sound">Sound off</button>
     <button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button>
     <span id="field-count">— objects</span>
   </div>
@@ -896,6 +897,12 @@ const AMBIENCE = (() => {
   let ctx, gainNode, filterNode, playing = false, ready = false;
   const el = document.getElementById('ambient');
   const dot = document.getElementById('ambience-toggle');
+  const label = document.getElementById('sound-btn');
+  function paintLabel(){
+    if (!label) return;
+    label.textContent = playing ? 'Sound on' : 'Sound off';
+    label.setAttribute('aria-pressed', playing ? 'true' : 'false');
+  }
 
   function init(){
     if (ready) return;
@@ -933,12 +940,14 @@ const AMBIENCE = (() => {
       setTimeout(() => { if (!playing) el.pause(); }, 1600);
     }
     playing = !playing;
+    paintLabel();
   }
 
   function setIntensity(v){
     if (!ready) return;
   }
 
+  if (label) label.addEventListener('click', toggle);
   return { toggle, setIntensity };
 })();
 </script>
