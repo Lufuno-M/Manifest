@@ -683,8 +683,16 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 
 .wall-foot{ position:relative; text-align:center; padding:4vh 24px 12vh; font-size:10px; letter-spacing:.08em; opacity:.5; }
 
-/* the paper sound has its own dot, next to the ambience dot, and only appears over the wall */
-#paper{ position:fixed; right:46px; bottom:24px; z-index:1000; width:8px; height:8px; padding:0; border:none; border-radius:50%;
+/* ambient sound: a plain text button, bottom right */
+.sound-btn{ position:fixed; right:24px; bottom:20px; z-index:1000; padding:6px 0;
+  font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink-soft); opacity:.75; transition:opacity .6s ease, color .5s ease; }
+.sound-btn:hover, .sound-btn.on{ opacity:1; }
+.sound-btn.on{ color:var(--ink); }
+body.on-dark .sound-btn{ color:#EDEAF2; }
+
+/* the paper sound has its own dot, next to the sound button, and only appears over the wall */
+#paper{ position:fixed; right:116px; bottom:24px; z-index:1000; width:8px; height:8px; padding:0; border:none; border-radius:50%;
   background:currentColor; color:#7A7160; opacity:0; pointer-events:none; cursor:pointer; transition:opacity .8s ease, box-shadow .8s ease; }
 #paper::after{ content:""; position:absolute; inset:-14px; }
 #paper.show{ opacity:.3; pointer-events:auto; }
@@ -764,7 +772,6 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
       <button class="nav-btn" id="search-toggle" type="button" aria-expanded="false">Search</button>
     </div>
     <button class="nav-btn" id="index-open" type="button" aria-label="Open index"><span class="burger"><i></i><i></i><i></i></span></button>
-    <button class="nav-btn" id="sound-btn" type="button" aria-pressed="false" aria-label="Toggle ambient sound">Sound off</button>
     <button class="bag-btn" id="bag-open" aria-label="Open bag">Bag <span id="bag-count">0</span></button>
     <span id="field-count">— objects</span>
   </div>
@@ -885,23 +892,17 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
 <div class="wall-zoom" id="wall-zoom"><img alt=""></div>
 
 <audio id="ambient" src="assets/manifest-ambient.mp3" loop preload="metadata" style="display:none"></audio>
-<button id="ambience-toggle" aria-label="sound" onclick="AMBIENCE.toggle()"
-  style="position:fixed; bottom:24px; right:24px; width:8px; height:8px;
-  border-radius:50%; background:var(--champagne-gold, #d4af37);
-  border:none; opacity:0.3; transition:opacity 0.8s ease, box-shadow 0.8s ease;
-  cursor:pointer; z-index:1000; padding:0;">
-</button>
+<button id="ambience-toggle" class="sound-btn" type="button" aria-pressed="false" aria-label="Toggle ambient sound" onclick="AMBIENCE.toggle()">Sound off</button>
 
 <script>
 const AMBIENCE = (() => {
   let ctx, gainNode, filterNode, playing = false, ready = false;
   const el = document.getElementById('ambient');
   const dot = document.getElementById('ambience-toggle');
-  const label = document.getElementById('sound-btn');
   function paintLabel(){
-    if (!label) return;
-    label.textContent = playing ? 'Sound on' : 'Sound off';
-    label.setAttribute('aria-pressed', playing ? 'true' : 'false');
+    dot.textContent = playing ? 'Sound on' : 'Sound off';
+    dot.classList.toggle('on', playing);
+    dot.setAttribute('aria-pressed', playing ? 'true' : 'false');
   }
 
   function init(){
@@ -931,12 +932,8 @@ const AMBIENCE = (() => {
     if (!playing){
       el.play();
       fade(0.35);
-      dot.style.opacity = '0.85';
-      dot.style.boxShadow = '0 0 6px var(--champagne-gold, #d4af37)';
     } else {
       fade(0, 1.5);
-      dot.style.opacity = '0.3';
-      dot.style.boxShadow = 'none';
       setTimeout(() => { if (!playing) el.pause(); }, 1600);
     }
     playing = !playing;
@@ -947,7 +944,6 @@ const AMBIENCE = (() => {
     if (!ready) return;
   }
 
-  if (label) label.addEventListener('click', toggle);
   return { toggle, setIntensity };
 })();
 </script>
