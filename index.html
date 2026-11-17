@@ -576,6 +576,66 @@
   .rcpt-slip.printing{ animation:none; }
 }
 
+/* ---- BAPE: its own two documents. In-store ticket (sans, bold labels) and the online order page. ---- */
+.rcpt-paper.bape{ font-family:'Archivo',Arial,Helvetica,sans-serif; font-size:10.5px; line-height:14px; --paper:#fff; --ink:#111; --mute:#555; --rule:#111; }
+.bape .bp-logo{ display:block; height:46px; margin:0 auto 6px; object-fit:contain; }
+.bape .bp-word{ text-align:center; font-weight:800; font-size:13px; margin-bottom:12px; }
+.bape .bp-store{ text-align:center; margin-bottom:10px; }
+.bape .bp-meta{ margin-bottom:10px; }
+.bape .bp-g{ display:grid; grid-template-columns:1fr 60px 24px 64px; text-align:right; }
+.bape .bp-h{ font-weight:700; border-bottom:1px solid #111; padding-bottom:3px; margin-bottom:4px; }
+.bape .bp-h span:first-child{ text-align:left; }
+.bape .bp-it{ margin-top:4px; }
+.bape .bp-line{ border-top:1px solid #111; margin:8px 0 6px; }
+.bape .bp-sum div, .bape .bp-tender div{ display:flex; justify-content:space-between; }
+.bape .bp-sum{ margin-left:34%; }
+.bape .bp-sum .t{ font-weight:700; }
+.bape .bp-tender{ margin-top:10px; }
+.bape .bp-tender .th{ font-weight:700; }
+.bape .bp-bc svg{ display:block; width:100%; height:36px; margin-top:16px; }
+.bape .bp-bcn{ text-align:center; font-size:8.5px; letter-spacing:1px; margin-top:2px; }
+.bape .bp-foot{ text-align:center; margin-top:12px; font-size:10px; }
+.bp-flip{ font:inherit; color:inherit; background:none; border:0; padding:0; cursor:pointer; text-decoration:underline; text-underline-offset:2px; }
+.doc-order{
+  display:none; background:#fff; color:#111; padding:12px 14px 22px; border-radius:3px;
+  font-family:'Archivo',Arial,Helvetica,sans-serif; font-size:11px; line-height:15px;
+}
+.rcpt-slip.flipped .rcpt-paper{ display:none; }
+.rcpt-slip.flipped .doc-order{ display:block; }
+.bo-top{ display:flex; align-items:center; justify-content:space-between; height:44px; }
+.bo-top img{ height:40px; }
+.bo-burger{ display:flex; flex-direction:column; gap:4px; width:20px; }
+.bo-burger i{ display:block; height:2px; background:#111; }
+.bo-cart{ display:flex; align-items:center; gap:4px; font-weight:700; }
+.bo-back{ display:block; margin:16px 0 12px; font-weight:800; font-size:12px; letter-spacing:.6px; text-transform:uppercase; text-decoration:none; }
+.bo-h{ font-weight:800; font-size:22px; line-height:26px; margin-bottom:14px; }
+.bo-cols, .bo-row{ display:grid; grid-template-columns:44px 1fr 26px 62px; gap:8px; align-items:start; }
+.bo-cols{ font-weight:700; border-bottom:2px solid #ddd; padding-bottom:6px; }
+.bo-cols b:first-child{ grid-column:1 / 3; }
+.bo-row{ padding:14px 0; border-bottom:1px solid #ddd; }
+.bo-row img{ width:44px; height:44px; object-fit:contain; }
+.bo-row .nm{ text-transform:uppercase; }
+.bo-row .mt{ margin-top:5px; overflow-wrap:anywhere; color:#444; }
+.bo-fulfil{ display:flex; gap:8px; margin-top:16px; }
+.bo-total{ display:flex; justify-content:space-between; font-weight:800; font-size:13px; margin-top:14px; padding-top:10px; border-top:2px solid #ddd; }
+
+/* ---- Supreme: the parcel invoice (Courier, box logo, Order Detail with thumbnail) ---- */
+.rcpt-paper.supreme{ font-family:'Courier New',Courier,monospace; font-size:10.5px; line-height:14px; --paper:#fff; --ink:#111; --mute:#444; }
+.supreme .sp-box{ display:inline-block; background:#da1f26; color:#fff; font:italic 800 22px/1 'Archivo',Arial,sans-serif; letter-spacing:-.6px; padding:6px 10px 7px; }
+.supreme .sp-ord{ margin:14px 0 2px; font-weight:700; font-size:11.5px; }
+.supreme .sp-date{ margin-bottom:12px; }
+.supreme .sp-hd{ font-weight:700; margin-bottom:8px; }
+.supreme .sp-it{ display:grid; grid-template-columns:42px 1fr auto; gap:8px; align-items:start; margin-bottom:10px; }
+.supreme .sp-it img{ width:42px; height:42px; object-fit:contain; }
+.supreme .sp-rule{ border-top:1px solid #111; margin:10px 0; }
+.supreme .sp-tot{ margin-left:30%; }
+.supreme .sp-tot div{ display:flex; justify-content:space-between; }
+.supreme .sp-tot .t{ font-weight:700; }
+.supreme .sp-from{ margin-top:14px; }
+.supreme .sp-from b{ font-weight:700; }
+.supreme .sp-bc svg{ display:block; width:62%; height:30px; margin-top:16px; }
+.supreme .sp-fine{ margin-top:12px; font-size:9px; color:#444; }
+
 /* ---- nav ---- */
 .nav-right{ display:flex; align-items:center; gap:18px; }
 .bag-btn, .nav-btn{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink); padding:2px 0; }
@@ -1658,6 +1718,13 @@ function formatRecognizedValue(usdPrice, zar){
   const ROTS = [-3.2, 2.4, -1.6, 3.6, -2.6, 1.8];
   const DXS = [-24, 20, -12, 28, -28, 10];
   let rcptRun = 0, rcptTimers = [];
+  pileR.addEventListener('click', (e) => {   // BAPE: flip between the slip and the order page
+    const f = e.target.closest('[data-bp-flip]');
+    if (!f) return;
+    const slip = f.closest('.rcpt-slip');
+    slip.classList.toggle('flipped');
+    slip.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
 
   // Word styles
   const A = (fw, fs, ls, x = '') => "font-family:'Archivo',sans-serif;font-weight:" + fw + ";font-size:" + fs + "px;letter-spacing:" + ls + "px;" + x;
@@ -1671,12 +1738,12 @@ function formatRecognizedValue(usdPrice, zar){
   // above the wordmark; if the file is missing the image removes itself.
   const BRANDS = [
     B('bape', /bathing ape|bape/i, 'A BATHING APE®', 'BAPE® store copy', 'Thank you', 'BAPE',
-      { bh:'20px', wcss:A(800,19,2),
+      { r:bapeSlip, bh:'20px', wcss:A(800,19,2),
         band:'radial-gradient(circle at 20% 40%,#2f4a2b 0 7px,transparent 8px),radial-gradient(circle at 62% 70%,#1d2f1b 0 6px,transparent 7px),radial-gradient(circle at 88% 30%,#5d7234 0 7px,transparent 8px),#7f9150 0 0/52px 20px' }),
     B('lv', /louis vuitton/i, 'LOUIS VUITTON', 'Maison fondée en 1854', 'Merci', 'LV',
       { paper:'#f6efe1', bh:'14px', band:'repeating-linear-gradient(90deg,rgba(138,106,58,.55) 0 1px,transparent 1px 9px)', wcss:F(19,6) }),
     B('supreme', /supreme/i, 'Supreme', '', 'Thank you', 'SUP',
-      { wcss:A(800,24,-.5,'font-style:italic;background:#da1f26;color:#fff;padding:6px 0;margin:0 auto 6px;width:70%;') }),
+      { r:supremeSlip, wcss:A(800,24,-.5,'font-style:italic;background:#da1f26;color:#fff;padding:6px 0;margin:0 auto 6px;width:70%;') }),
     B('off-white', /off-white/i, 'OFF-WHITE™', 'c/o Virgil Abloh™', '"Thank you"', 'OW',
       { bh:'12px', band:'repeating-linear-gradient(135deg,#161616 0 8px,#fbfbf8 8px 16px)', wcss:A(600,17,3), q:true }),
     B('chrome-hearts', /chrome hearts/i, 'CHROME HEARTS', '', 'Thank you', 'CH',
@@ -1713,9 +1780,108 @@ function formatRecognizedValue(usdPrice, zar){
     B('ambush', /ambush/i, 'AMBUSH', 'Tokyo', 'Thank you', 'AMB', { wcss:A(800,19,5) }),
     B('youngboy', /youngboy/i, 'YOUNGBOY NEVER BROKE AGAIN', '', 'Thank you', 'NBA', { wcss:A(800,11,1) })
   ];
+  // ---- BAPE: its own two documents. The in-store ticket (prints) and the online order page
+  // (tap "Order page" on the slip; tap "Back to slip" to return). Manifest is the issuer on both:
+  // house look and structure, Manifest's facts (order ref, items, ZAR, wallet).
+  const C39 = { '0':'nnnwwnwnn','1':'wnnwnnnnw','2':'nnwwnnnnw','3':'wnwwnnnnn','4':'nnnwwnnnw','5':'wnnwwnnnn','6':'nnwwwnnnn','7':'nnnwnnwnw','8':'wnnwnnwnn','9':'nnwwnnwnn',
+    A:'wnnnnwnnw',B:'nnwnnwnnw',C:'wnwnnwnnn',D:'nnnnwwnnw',E:'wnnnwwnnn',F:'nnwnwwnnn',G:'nnnnnwwnw',H:'wnnnnwwnn',I:'nnwnnwwnn',J:'nnnnwwwnn',K:'wnnnnnnww',L:'nnwnnnnww',M:'wnwnnnnwn',
+    N:'nnnnwnnww',O:'wnnnwnnwn',P:'nnwnwnnwn',Q:'nnnnnnwww',R:'wnnnnnwwn',S:'nnwnnnwwn',T:'nnnnwnwwn',U:'wwnnnnnnw',V:'nwwnnnnnw',W:'wwwnnnnnn',X:'nwnnwnnnw',Y:'wwnnwnnnn',Z:'nwwnwnnnn',
+    '-':'nwnnnnwnw','.':'wwnnnnwnn',' ':'nwwnnnwnn','*':'nwnnwnwnn' };
+  function code39(txt){   // a real Code 39 barcode of the Manifest order ref
+    const s = '*' + txt.toUpperCase().replace(/[^0-9A-Z\-. ]/g, '-') + '*';
+    let x = 0, bars = '';
+    for (const ch of s){
+      const p = C39[ch];
+      for (let i = 0; i < 9; i++){
+        const w = p[i] === 'w' ? 3 : 1;
+        if (i % 2 === 0) bars += `<rect x="${x}" y="0" width="${w}" height="40"/>`;
+        x += w;
+      }
+      x += 1;
+    }
+    return `<svg viewBox="0 0 ${x} 40" preserveAspectRatio="none" aria-hidden="true" fill="#111">${bars}</svg>`;
+  }
+  const BP_VAT = 0.15;   // SA VAT, shown as included in the price. Set to 0 to drop the VAT line.
+  const BP_TRUCK = '<svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#111" stroke-width="1.4" aria-hidden="true"><rect x="1" y="3" width="15" height="11"/><path d="M16 6h5l4 4v4h-9z"/><circle cx="6" cy="16" r="2" fill="#fff"/><circle cx="20" cy="16" r="2" fill="#fff"/></svg>';
+  const BP_CART = '<svg width="24" height="22" viewBox="0 0 24 22" fill="none" stroke="#111" stroke-width="1.4" aria-hidden="true"><path d="M1 2h4l3 11h11l3-8H6"/><circle cx="9" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg>';
+  // The online order page, shared by every house: house wordmark in the header, house-themed,
+  // Manifest's facts. BAPE passes its own header (logo); other houses get their wordmark.
+  const bpRef = (b) => (b.asset || '').split('/').pop().replace(/\.[a-z0-9]+$/i, '');
+  function orderPage(items, no, date, head){
+    const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
+    const lines = items.map(b =>
+      `<div class="bo-row"><img src="${b.asset}" alt="" onerror="this.style.visibility='hidden'"><div><div class="nm">${b.name}</div><div class="mt">${b.maker}</div>${b.size ? `<div class="mt">Size: ${b.size}</div>` : ''}<div class="mt">SKU: ${bpRef(b)}</div></div><span>1</span><b>${b.label}</b></div>`).join('');
+    return `<div class="doc-order">
+      <div class="bo-top"><span class="bo-burger"><i></i><i></i><i></i></span>${head}<span class="bo-cart">${BP_CART}${items.length}</span></div>
+      <button type="button" class="bp-flip bo-back" data-bp-flip>‹ Back to slip</button>
+      <div class="bo-h">Order #${no}</div>
+      <div class="bo-cols"><b>Product</b><b>Qty</b><b>Total</b></div>
+      ${lines}
+      <div class="bo-fulfil">${BP_TRUCK}<div><b>Confirmed ${date}:</b><br>Manifest<br>#${no}</div></div>
+      <div class="bo-total"><span>Total</span><span>${zarFormat(total)}</span></div>
+    </div>`;
+  }
+  function bapeSlip(items, no, date){
+    const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
+    const vat = Math.round(total * BP_VAT / (1 + BP_VAT));
+    const time = new Date().toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
+    const ref = bpRef;
+    const nm = (b) => (b.name + (b.size ? ' ' + b.size : '')).toUpperCase();
+    const logo = '<img class="bp-logo" src="assets/receipt-logos/bape.png" alt="" onerror="this.remove()">';
+    const rows = items.map(b =>
+      `<div class="bp-it">${ref(b)} - ${nm(b)}</div><div class="bp-g"><span></span><span>${b.label}</span><span>1</span><span>${b.label}</span></div>`).join('');
+    return `<div class="rcpt-paper bape">
+      ${logo}
+      <div class="bp-word">*A BATHING APE*®</div>
+      <div class="bp-store"><b>MANIFEST</b><br>Collector's archive · Online</div>
+      <div class="bp-meta"><b>Order #:</b> ${no}<br><b>Channel:</b> Online<br><b>Collector:</b> Lufuno M.<br>${date} ${time}</div>
+      <div class="bp-g bp-h"><span>Item</span><span>Price</span><span>Qty</span><span>Total</span></div>
+      ${rows}
+      <div class="bp-line"></div>
+      <div class="bp-sum">
+        <div><span>Subtotal:</span><b>${zarFormat(total - vat)}</b></div>
+        ${vat ? `<div><span>VAT (15%):</span><b>${zarFormat(vat)}</b></div>` : ''}
+        <div class="t"><span>Total:</span><b>${zarFormat(total)}</b></div>
+      </div>
+      <div class="bp-tender">
+        <div class="th"><span>Tender</span><span>Amount</span></div>
+        <div><span>${wallet}</span><span>${zarFormat(total)}</span></div>
+        <div class="th"><span>Net Payment:</span><span>${zarFormat(total)}</span></div>
+        <div class="th"><span>Change:</span><span>${zarFormat(0)}</span></div>
+      </div>
+      <div class="bp-bc">${code39(no)}</div>
+      <div class="bp-bcn">${no}</div>
+      <div class="bp-foot">Thank you for shopping at Manifest.</div>
+      <div class="rcpt-fine"><button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div>
+    </div>
+    ${orderPage(items, no, date, '<img src="assets/receipt-logos/bape.png" alt="" onerror="this.outerHTML=\'<b>A BATHING APE®</b>\'">')}`;
+  }
+  function supremeSlip(items, no, date){
+    const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
+    const vat = Math.round(total * BP_VAT / (1 + BP_VAT));
+    const rows = items.map(b =>
+      `<div class="sp-it"><img src="${b.asset}" alt="" onerror="this.style.visibility='hidden'"><div>${b.name}${b.maker.includes('×') ? '<br>' + b.maker : ''}${b.size ? '<br>Size: ' + b.size : ''}</div><span>${b.label}</span></div>`).join('');
+    return `<div class="rcpt-paper supreme">
+      <span class="sp-box">Supreme</span>
+      <div class="sp-ord">Order #${no}</div>
+      <div class="sp-date">${date}</div>
+      <div class="sp-hd">Order Detail</div>
+      ${rows}
+      <div class="sp-rule"></div>
+      <div class="sp-tot">
+        <div><span>Subtotal</span><span>${zarFormat(total - vat)}</span></div>
+        ${vat ? `<div><span>VAT</span><span>${zarFormat(vat)}</span></div>` : ''}
+        <div class="t"><span>Total</span><span>${zarFormat(total)}</span></div>
+      </div>
+      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Collector's archive · Online<br><b>Paid with</b> ${wallet}</div>
+      <div class="sp-bc">${code39(no)}</div>
+      <div class="sp-fine">Thank you for your order.</div>
+    </div>`;
+  }
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
 
   function slipHTML(br, items, no, date){
+    if (br.r) return br.r(items, no, date);   // houses with their own document (BAPE)
     const q = (s) => br.q ? '"' + s + '"' : s;
     const look = { paper:br.paper, ink:br.ink, mute:br.mute, rule:br.rule || br.mute, band:br.band, bh:br.bh };
     const vars = Object.entries(look).filter(([, v]) => v).map(([k, v]) => '--' + k + ':' + v).join(';');
@@ -1736,7 +1902,8 @@ function formatRecognizedValue(usdPrice, zar){
       <div class="rcpt-row rcpt-total"><span>Total</span><b>${sumOf(items)}</b></div>
       <div class="bc"></div>
       <div class="rcpt-note">${br.f}</div>
-      <div class="rcpt-fine">Keep this slip</div></div>`;
+      <div class="rcpt-fine">Keep this slip · <button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div></div>` +
+      orderPage(items, no, date, `<span style="${/background/.test(br.wcss || '') ? br.wcss : (br.wcss || '').replace(/color:[^;]+;?/g, '') + ';color:#111'};text-align:center">${br.w}</span>`);
   }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
