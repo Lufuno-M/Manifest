@@ -2549,42 +2549,42 @@ function formatRecognizedValue(usdPrice, zar){
     const style = '--doc-bg:' + design.bg + ';--doc-ink:' + design.ink + ';--doc-accent:' + design.accent + ';--doc-muted:' + design.muted + ';--doc-line:' + design.line + ';--doc-font:' + design.font + ';--doc-weight:' + design.weight + ';--doc-track:' + design.track + ';--doc-hero-ink:' + design.heroInk + ';--doc-motif:' + design.motif + ';';
     const language = {
       bape:["Your pieces are yours.","Your selection is confirmed. Keep this order record with the pieces."],
-      lv:["Your order is confirmed","Thank you for choosing Manifest. Your purchase details are below."],
-      cartier:["A purchase to keep","This document records the piece selected through Manifest."],
-      supreme:["Order received.","Your Manifest order is confirmed. Item and payment details follow."],
-      "off-white":["OBJECT / ORDER","A record of the object selected through Manifest."],
-      "chrome-hearts":["Acquisition record","The selected pieces are recorded here, together with their order details."],
-      goyard:["Your selection","Your chosen piece has been recorded in this Manifest order."],
+      lv:["Your order is confirmed","Thank you for your purchase. Your order details are below."],
+      cartier:["A purchase to keep","This document records your selected piece."],
+      supreme:["Order received.","Your order is confirmed. Item and payment details follow."],
+      "off-white":["OBJECT / ORDER","A record of the selected object."],
+      "chrome-hearts":["Acquisition record","The selected pieces and their order details are recorded here."],
+      goyard:["Your selection","Your chosen piece has been recorded in this order."],
       hermes:["Purchase confirmation","Your selected piece and its purchase details are set out below."],
-      balenciaga:["ORDER CONFIRMED","A clear record of the objects included in this Manifest order."],
-      margiela:["Purchase details","A considered record of the selected piece, prepared by Manifest."],
+      balenciaga:["ORDER CONFIRMED","A clear record of the objects included in this order."],
+      margiela:["Purchase details","A considered record of the selected piece."],
       vetements:["ORDER / OBJECT","The order is confirmed. The details are deliberately kept direct."],
       "number-nine":["An order, recorded","A record of the selected object and its place in this purchase."],
       palace:["Order locked.","Your selection is confirmed. Here are the details."],
       sicko:["Order details","SICKÖ / BORN FROM PAIN. A record of the selected pieces and payment."],
-      awake:["Good things, incoming.","Your Manifest order is confirmed. Here's what you've selected."],
+      awake:["Good things, incoming.","Your order is confirmed. Here's what you've selected."],
       "palm-angels":["Purchase record","The selected pieces and their order details, brought together."],
-      needles:["Selected pieces","A quiet record of the pieces acquired through Manifest."],
-      kaws:["Your selection, confirmed","The objects listed here are part of your Manifest order."],
+      needles:["Selected pieces","A quiet record of the pieces acquired."],
+      kaws:["Your selection, confirmed","The objects listed here are part of your order."],
       murakami:["A little colour, on its way.","Your selection is confirmed. The details of your Manifest order follow."],
       cpfm:["ORDER / SELECTION","Your selected object has been recorded. Keep this document with your order."],
-      vlone:["ORDER CONFIRMED","Your selection has been secured through Manifest."],
+      vlone:["ORDER CONFIRMED","Your selection has been secured."],
       yeezy:["Order details","A considered, uncomplicated record of your Manifest purchase."],
       adidas:["Order confirmation","Your purchase details are listed below."],
-      nike:["You're all set.","Your Manifest order is confirmed. Here's the breakdown."],
+      nike:["You're all set.","Your order is confirmed. Here's the breakdown."],
       beats:["Purchase confirmed","Your selected item and payment details are recorded below."],
-      givenchy:["Purchase record","A record of your selected piece, issued by Manifest."],
+      givenchy:["Purchase record","A record of your selected piece."],
       "heron-preston":["ORDER / CONFIRMATION","The selected piece is confirmed. Purchase details follow."],
-      "raf-simons":["Object / acquisition","A considered record of the selected piece and its acquisition through Manifest."],
+      "raf-simons":["Object / acquisition","A considered record of the selected piece and its acquisition."],
       revenge:["Order details","A straightforward record of the selected pieces and payment."],
       vivet:["Purchase details","A record of the selected object, prepared for your order."],
       ambush:["Order confirmed","Your selected pieces are recorded below."],
-      youngboy:["ORDER SECURED","Your Manifest selection is confirmed. The order details follow."]
-    }[br.k] || ["Order details","Your purchase through Manifest is confirmed."];
+      youngboy:["ORDER SECURED","Your selection is confirmed. The order details follow."]
+    }[br.k] || ["Order details","Your purchase is confirmed."];
     const intro = '<div class="doc-title">' + safeRecordText(language[0]) + '</div><p class="doc-copy">' + safeRecordText(language[1]) + '</p>';
-    const sourceLine = br.k === "sicko" ? '<div class="doc-brand-caption">BORN FROM PAIN · SELECTED THROUGH MANIFEST</div>' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '<div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div>' : br.k === "revenge" ? '<div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div>' : '';
+    const sourceLine = br.k === "sicko" ? '' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '' : br.k === "revenge" ? '<div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div>' : '';
     const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKÖ",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
-    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><div class="doc-issuer">MANIFEST <span>· PURCHASE DOCUMENT</span></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Sold by Manifest. Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
+    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Sold by Manifest. Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
     if (br.k === 'bape') return bapeSlip(items, no, date);
@@ -2604,27 +2604,6 @@ function formatRecognizedValue(usdPrice, zar){
     document.body.style.overflow = '';
     if (orderFromBag){ BAG.length = 0; paintBag(); }
   }
-  function combinedPurchaseDocument(items, no, date){
-    const total = items.reduce((sum, item) => sum + zarNumber(item.label), 0);
-    const rows = items.map(item =>
-      '<div class="cp-item">' +
-        '<img src="' + safeRecordText(item.asset || '') + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
-        '<div><b>' + safeRecordText(item.name) + '</b><small>' +
-          safeRecordText(item.maker) + (item.size ? ' · SIZE ' + safeRecordText(item.size) : '') + ' · QTY 1' +
-        '</small></div><strong>' + safeRecordText(item.label) + '</strong>' +
-      '</div>'
-    ).join('');
-    return '<div class="rcpt-paper combined-purchase">' +
-      '<div class="cp-top"><div><div class="cp-kicker">Purchase record</div><div class="cp-title">Purchase document</div></div></div>' +
-      '<div class="cp-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div>' +
-      '<div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div>' +
-      '<div class="cp-head"><span>ITEM / BRAND</span><span>AMOUNT</span></div>' +
-      '<div class="cp-items">' + rows + '</div>' +
-      '<div class="cp-total"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div>' +
-      '<div class="cp-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div>' +
-      '<div class="cp-foot"><span>Purchase details</span><span>' + safeRecordText(no) + '</span></div>' +
-      '</div>';
-  }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
     if (!stageR.classList.contains('open')) return;
@@ -2635,27 +2614,41 @@ function formatRecognizedValue(usdPrice, zar){
   function runReceipts(){
     const run = ++rcptRun;
     const date = new Date().toLocaleDateString('en-ZA');
-    const ref = 'PO-' + String(Date.now()).slice(-6);
-    const documentItems = order.map(item => {
-      const currentAmount = zarNumber(item.label);
-      const finalAmount = Math.round(currentAmount * 0.70);
-      return { ...item, label: zarFormat(finalAmount) };
+    const base = String(Date.now()).slice(-6);
+    const groups = new Map();
+    order.forEach(item => {
+      const br = BRANDS.find(candidate => candidate.m.test(item.maker)) ||
+        B('plain', /.*/, String(item.maker).toUpperCase(), '', 'Thank you', 'ORD');
+      const key = br.k === 'plain' ? 'plain:' + item.maker : br.k;
+      if (!groups.has(key)) groups.set(key, { br, items: [] });
+      const finalAmount = Math.round(zarNumber(item.label) * 0.70);
+      groups.get(key).items.push({ ...item, label: zarFormat(finalAmount) });
     });
     pileR.innerHTML = '';
-    const el = document.createElement('div');
-    el.className = 'rcpt-slip';
-    el.dataset.receiptType = 'purchase';
-    el.style.zIndex = '1';
-    el.innerHTML = combinedPurchaseDocument(documentItems, ref, date);
-    pileR.appendChild(el);
+    const slips = [];
+    [...groups.values()].forEach((group, index) => {
+      const ref = group.br.p + '-' + base + (groups.size > 1 ? '-' + String.fromCharCode(65 + index) : '');
+      const el = document.createElement('div');
+      el.className = 'rcpt-slip';
+      el.dataset.receiptType = 'brand';
+      el.style.zIndex = String(index + 1);
+      el.innerHTML = slipHTML(group.br, group.items, ref, date);
+      if (el.querySelector('.rcpt-paper.supreme')) el.classList.add('supreme-slip');
+      if (el.querySelector('.rcpt-paper.bape')) el.classList.add('bape-slip');
+      if (el.querySelector('.rcpt-paper.raf-simons-slip')) el.classList.add('raf-slip');
+      pileR.appendChild(el);
+      slips.push(el);
+    });
     stageR.scrollTop = 0;
     document.body.style.overflow = 'hidden';
     stageR.classList.add('open');
-    rcptTimers.push(setTimeout(() => {
-      if (run !== rcptRun) return;
-      el.classList.add('printing');
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 350));
+    slips.forEach((el, index) => {
+      rcptTimers.push(setTimeout(() => {
+        if (run !== rcptRun) return;
+        el.classList.add('printing');
+        if (index === 0) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 350 + index * 650));
+    });
   }
   psConfirm.addEventListener('click', () => {
     if (psConfirm.disabled) return;
