@@ -906,6 +906,35 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
   .pair figure:nth-child(2){ margin-bottom:0; }
   .pair figure img{ width:min(calc(var(--w) * 1px), 78vw, calc(36svh * var(--ar))); }
 }
+
+/* Checkout motion: quiet, small, staged and deliberately unhurried. */
+.ps-msg.is-processing,.ps-msg.complete{
+  height:112px; gap:13px; margin:8px 0 2px;
+  transition:height .55s cubic-bezier(.2,.7,.2,1),opacity .55s ease;
+}
+.ps-loader{width:30px;height:24px;display:flex;align-items:center;justify-content:center;gap:4px}
+.ps-loader i{display:block;width:4px;height:4px;border-radius:50%;background:#9b9ba1;opacity:.28;animation:ps-fragment 1.65s ease-in-out infinite}
+.ps-loader i:nth-child(2){animation-delay:.2s}
+.ps-loader i:nth-child(3){animation-delay:.4s}
+.ps-status{font:400 11px 'Archivo',sans-serif;letter-spacing:.045em;color:#555;transition:opacity .22s ease,transform .22s ease}
+.ps-status.is-changing{opacity:0;transform:translateY(3px)}
+.ps-success-mark{
+  width:27px;height:27px;border:1px solid #bfc0c4;border-radius:50%;
+  background:transparent;color:#222;display:grid;place-items:center;
+  animation:ps-arrive .7s cubic-bezier(.2,.75,.25,1) both;
+}
+.ps-success-mark svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.45;stroke-linecap:round;stroke-linejoin:round}
+.pay-sheet[data-wallet="google"] .ps-success-mark,.pay-sheet[data-wallet="samsung"] .ps-success-mark{background:transparent;color:#222}
+@keyframes ps-fragment{
+  0%,100%{opacity:.25;transform:translateY(1px) scale(.82)}
+  35%{opacity:.9;transform:translateY(-2px) scale(1)}
+  65%{opacity:.45;transform:translateY(0) scale(.9)}
+}
+@keyframes ps-arrive{0%{opacity:0;transform:scale(.86)}65%{opacity:1;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){
+  .ps-loader i,.ps-success-mark{animation:none}
+  .ps-status{transition:none}
+}
 </style>
 </head>
 <body>
@@ -2116,15 +2145,40 @@ function formatRecognizedValue(usdPrice, zar){
   psConfirm.addEventListener('click', () => {
     if (psConfirm.disabled) return;
     psConfirm.disabled = true;
-    psMsg.className = 'ps-msg is-processing'; psMsg.innerHTML = '<span class="ps-orbit" aria-hidden="true"></span><span class="ps-status">Confirming</span>'; sheet.classList.add('processing');
-    setTimeout(() => { psMsg.className = 'ps-msg complete'; psMsg.innerHTML = '<span class="ps-success-mark" aria-hidden="true">✓</span><span class="ps-status">Complete</span>'; sheet.classList.remove('processing'); sheet.classList.add('confirmed'); }, 800);
+    const stages = [
+      ['Connecting to wallet', 850],
+      ['Verifying payment', 1150],
+      ['Securing your order', 1050]
+    ];
+    let elapsed = 0;
+    psMsg.className = 'ps-msg is-processing';
+    psMsg.innerHTML = '<span class="ps-loader" aria-hidden="true"><i></i><i></i><i></i></span><span class="ps-status">Connecting to wallet</span>';
+    sheet.classList.add('processing');
+    stages.forEach(([label, duration], index) => {
+      if (index === 0) return;
+      elapsed += stages[index - 1][1];
+      setTimeout(() => {
+        const status = psMsg.querySelector('.ps-status');
+        if (status) {
+          status.classList.add('is-changing');
+          setTimeout(() => { status.textContent = label; status.classList.remove('is-changing'); }, 220);
+        }
+      }, elapsed);
+    });
+    const processingTime = stages.reduce((sum, stage) => sum + stage[1], 0);
+    setTimeout(() => {
+      psMsg.className = 'ps-msg complete';
+      psMsg.innerHTML = '<span class="ps-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7"/></svg></span><span class="ps-status">Payment complete</span>';
+      sheet.classList.remove('processing');
+      sheet.classList.add('confirmed');
+    }, processingTime);
     setTimeout(() => {
       sheet.classList.remove('confirmed','processing');
       closeSheet();
       closeRecord();
       psConfirm.disabled = false;
       runReceipts();
-    }, 1500);
+    }, processingTime + 1050);
   });
   document.getElementById('rcpt-done').addEventListener('click', closeReceipts);
   document.getElementById('ps-cancel').addEventListener('click', closeSheet);
