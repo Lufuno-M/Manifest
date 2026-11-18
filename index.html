@@ -1225,6 +1225,42 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .doc-ticket{width:100mm!important;margin:0 auto!important}
 }
 
+
+/* The consolidated Manifest summary is its own landscape purchase document. */
+.rcpt-paper.manifest-record{width:100%;max-width:780px;padding:38px 44px 34px;background:#f7f7f3!important;color:#181a18!important;border:1px solid #c9ccc4!important;font-family:'Archivo',Arial,sans-serif}
+.manifest-record .mf-band{height:8px;margin:-38px -44px 28px;background:linear-gradient(90deg,#171a18 0 72%,#a9b68c 72% 100%)}
+.manifest-record .mf-kicker{font:600 9px 'JetBrains Mono',monospace;letter-spacing:.2em;color:#5d6259}
+.manifest-record .mf-kicker span{color:#888d83}
+.manifest-record .mf-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin:24px 0 26px}
+.manifest-record .mf-title{font:400 32px/1.05 Georgia,serif;letter-spacing:-.03em}
+.manifest-record .mf-heading p{font:12px/1.6 'Archivo',Arial,sans-serif;color:#74796f;margin:9px 0 0}
+.manifest-record .mf-total{display:grid;gap:7px;text-align:right;white-space:nowrap}
+.manifest-record .mf-total span,.manifest-record .mf-meta span,.manifest-record .mf-items-label{font:8px 'JetBrains Mono',monospace;letter-spacing:.12em;color:#777d72}
+.manifest-record .mf-total b{font:600 16px 'JetBrains Mono',monospace}
+.manifest-record .mf-meta{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:20px;padding:15px 0;border-top:1px solid #c8ccc2;border-bottom:1px solid #c8ccc2}
+.manifest-record .mf-meta div{display:grid;gap:6px;min-width:0}
+.manifest-record .mf-meta b{font:600 10px 'JetBrains Mono',monospace;overflow-wrap:anywhere}
+.manifest-record .mf-items-label{display:flex;justify-content:space-between;padding:18px 0 8px}
+.manifest-record .mf-items{border-top:1px solid #c8ccc2;display:grid;grid-template-columns:1fr 1fr;column-gap:28px}
+.manifest-record .mr-object{padding:13px 0;border-bottom:1px solid #d6d8d1}
+.manifest-record .mr-object-name{font:600 13px/1.4 'Archivo',Arial,sans-serif}
+.manifest-record .mr-object-meta{font:9px/1.5 'JetBrains Mono',monospace;color:#777d72;margin-top:4px}
+.manifest-record .mr-row{display:flex;justify-content:space-between;gap:10px;margin-top:8px}
+.manifest-record .mr-row span{font:8px 'JetBrains Mono',monospace;color:#777d72}
+.manifest-record .mr-row b{font:600 10px 'JetBrains Mono',monospace}
+.manifest-record .mf-footer{display:flex;justify-content:space-between;gap:18px;padding-top:18px;margin-top:18px;border-top:1px solid #aeb3a8;font:8px 'JetBrains Mono',monospace;letter-spacing:.1em}
+@media(max-width:600px){
+ .rcpt-paper.manifest-record{padding:28px 23px}
+ .manifest-record .mf-band{margin:-28px -23px 22px}
+ .manifest-record .mf-heading{display:block}
+ .manifest-record .mf-total{text-align:left;margin-top:18px}
+ .manifest-record .mf-meta{grid-template-columns:1fr 1fr}
+ .manifest-record .mf-items{grid-template-columns:1fr}
+}
+@media print{
+ #rcpt-stage .manifest-record{width:178mm!important;max-width:none!important;margin:0 auto!important}
+}
+
 </style>
 </head>
 <body>
@@ -2445,8 +2481,8 @@ function formatRecognizedValue(usdPrice, zar){
   }
   function manifestReceipt(items, no, date){
     const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
-    const rows = items.map(b => '<div class="mr-object"><div class="mr-object-name">' + safeRecordText(b.name) + '</div><div class="mr-object-meta">' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</div><div class="mr-row"><span>PRICE</span><b>' + safeRecordText(b.label) + '</b></div></div>').join('');
-    return '<div class="rcpt-paper manifest-record"><div class="mr-kicker">MANIFEST</div><div class="mr-rule"></div><div class="mr-row"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="mr-row"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="mr-rule"></div>' + rows + '<div class="mr-rule"></div><div class="mr-total"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div><div class="mr-payment"><strong>PAYMENT</strong>' + safeRecordText(wallet) + '</div><div class="mr-code">' + safeRecordText(no) + '</div></div>';
+    const rows = items.map(b => '<div class="mr-object"><div class="mr-object-name">' + safeRecordText(b.name) + '</div><div class="mr-object-meta">' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</div><div class="mr-row"><span>MANIFEST PRICE</span><b>' + safeRecordText(b.label) + '</b></div></div>').join('');
+    return '<div class="rcpt-paper manifest-record"><div class="mf-band"></div><div class="mf-kicker">MANIFEST <span>· PURCHASE SUMMARY</span></div><div class="mf-heading"><div><div class="mf-title">The order, together.</div><p>A complete record of this purchase from Manifest.</p></div><div class="mf-total"><span>ORDER TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="mf-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div><span>PREPARED FOR</span><b>' + safeRecordText(receiptCustomer || 'Customer') + '</b></div></div><div class="mf-items-label"><span>OBJECTS IN THIS ORDER</span><span>MANIFEST PRICE</span></div><div class="mf-items">' + rows + '</div><div class="mf-footer"><span>PAID WITH · ' + safeRecordText(wallet) + '</span><b>' + safeRecordText(no) + '</b></div></div>';
   }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
