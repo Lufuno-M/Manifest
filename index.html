@@ -1064,10 +1064,10 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .rcpt-slip{display:block!important;width:auto!important;max-width:none!important;margin:0 auto!important;clip-path:none!important;filter:none!important;break-after:page;page-break-after:always}
  #rcpt-stage .rcpt-slip:last-child{break-after:auto;page-break-after:auto}
  #rcpt-stage .rcpt-paper{width:100%!important;max-width:none!important;box-shadow:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
- #rcpt-stage .doc-email{width:180mm!important;min-height:120mm!important;margin:0 auto!important}
- #rcpt-stage .doc-card{width:160mm!important;min-height:105mm!important;margin:0 auto!important}
- #rcpt-stage .doc-wide{width:190mm!important;min-height:105mm!important;margin:0 auto!important}
- #rcpt-stage .doc-statement{width:170mm!important;min-height:110mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-email{width:170mm!important;min-height:120mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-card{width:150mm!important;min-height:105mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-wide{width:178mm!important;min-height:105mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-statement{width:160mm!important;min-height:110mm!important;margin:0 auto!important}
  #rcpt-stage .doc-ticket{width:100mm!important;margin:0 auto!important}
 }
 
@@ -1220,8 +1220,8 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .doc-card{width:160mm!important;min-height:105mm!important;margin:0 auto!important}
  #rcpt-stage .doc-wide{width:190mm!important;min-height:105mm!important;margin:0 auto!important}
  #rcpt-stage .doc-statement{width:170mm!important;min-height:110mm!important;margin:0 auto!important}
- #rcpt-stage .doc-editorial{width:160mm!important;min-height:110mm!important;margin:0 auto!important}
- #rcpt-stage .doc-colour{width:175mm!important;min-height:120mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-editorial{width:150mm!important;min-height:110mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-colour{width:165mm!important;min-height:120mm!important;margin:0 auto!important}
  #rcpt-stage .doc-ticket{width:100mm!important;margin:0 auto!important}
 }
 
@@ -2402,15 +2402,42 @@ function formatRecognizedValue(usdPrice, zar){
     const rows = items.map(b => '<div class="doc-item"><div class="doc-item-main"><b>' + safeRecordText(b.name) + '</b><small>' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
     const style = '--doc-bg:' + design.bg + ';--doc-ink:' + design.ink + ';--doc-accent:' + design.accent + ';--doc-muted:' + design.muted + ';--doc-line:' + design.line + ';--doc-font:' + design.font + ';--doc-weight:' + design.weight + ';--doc-track:' + design.track + ';--doc-hero-ink:' + design.heroInk + ';--doc-motif:' + design.motif + ';';
     const greeting = receiptCustomer ? '<p class="doc-copy">Prepared for ' + safeRecordText(receiptCustomer) + '.</p>' : '';
-    const intro = {
-      email:'<div class="doc-subject">MANIFEST · ORDER CONFIRMATION</div><div class="doc-title">Your order is confirmed</div><p class="doc-copy">Thank you for choosing Manifest. Your purchase details are set out below.</p>',
-      card:'<div class="doc-title">Purchase record</div><p class="doc-copy">A considered selection, acquired through Manifest.</p>',
-      wide:'<div class="doc-title">Order / object record</div><p class="doc-copy">The following pieces form part of this Manifest order.</p>',
-      statement:'<div class="doc-title">Order confirmed.</div><p class="doc-copy">A Manifest purchase. Details and itemisation follow.</p>',
-      editorial:'<div class="doc-title">The order, in detail.</div><p class="doc-copy">A record of the selected piece and its acquisition through Manifest.</p>',
-      colour:'<div class="doc-title">Good choice.</div><p class="doc-copy">Your Manifest order is confirmed. Here is what is coming with you.</p>',
-      ticket:'<div class="doc-title">Order details</div>'
-    }[design.format] || '<div class="doc-title">Order details</div>';
+    const language = {
+      bape:["Your pieces are yours.","Your selection is confirmed. Keep this order record with the pieces."],
+      lv:["Your order is confirmed","Thank you for choosing Manifest. Your purchase details are below."],
+      cartier:["A purchase to keep","This document records the piece selected through Manifest."],
+      supreme:["Order received.","Your Manifest order is confirmed. Item and payment details follow."],
+      "off-white":["OBJECT / ORDER","A record of the object selected through Manifest."],
+      "chrome-hearts":["Acquisition record","The selected pieces are recorded here, together with their order details."],
+      goyard:["Your selection","Your chosen piece has been recorded in this Manifest order."],
+      hermes:["Purchase confirmation","Your selected piece and its purchase details are set out below."],
+      balenciaga:["ORDER CONFIRMED","A clear record of the objects included in this Manifest order."],
+      margiela:["Purchase details","A considered record of the selected piece, prepared by Manifest."],
+      vetements:["ORDER / OBJECT","The order is confirmed. The details are deliberately kept direct."],
+      "number-nine":["An order, recorded","A record of the selected object and its place in this purchase."],
+      palace:["Order locked.","Your selection is confirmed. Here are the details."],
+      sicko:["THE ORDER IS IN.","Your selected pieces have been recorded by Manifest."],
+      awake:["Good things, incoming.","Your Manifest order is confirmed. Here's what you've selected."],
+      "palm-angels":["Purchase record","The selected pieces and their order details, brought together."],
+      needles:["Selected pieces","A quiet record of the pieces acquired through Manifest."],
+      kaws:["Your selection, confirmed","The objects listed here are part of your Manifest order."],
+      murakami:["A little colour, on its way.","Your selection is confirmed. The details of your Manifest order follow."],
+      cpfm:["ORDER / SELECTION","Your selected object has been recorded. Keep this document with your order."],
+      vlone:["ORDER CONFIRMED","Your selection has been secured through Manifest."],
+      yeezy:["Order details","A considered, uncomplicated record of your Manifest purchase."],
+      adidas:["Order confirmation","Your purchase details are listed below."],
+      nike:["You're all set.","Your Manifest order is confirmed. Here's the breakdown."],
+      beats:["Purchase confirmed","Your selected item and payment details are recorded below."],
+      givenchy:["Purchase record","A record of your selected piece, issued by Manifest."],
+      "heron-preston":["ORDER / CONFIRMATION","The selected piece is confirmed. Purchase details follow."],
+      "raf-simons":["Object / acquisition","A considered record of the selected piece and its acquisition through Manifest."],
+      revenge:["IT'S YOURS.","Your Manifest order is confirmed. Keep the details close."],
+      vivet:["Purchase details","A record of the selected object, prepared for your order."],
+      ambush:["Order confirmed","Your selected pieces are recorded below."],
+      youngboy:["ORDER SECURED","Your Manifest selection is confirmed. The order details follow."]
+    }[br.k] || ["Order details","Your purchase through Manifest is confirmed."];
+    const intro = '<div class="doc-title">' + safeRecordText(language[0]) + '</div><p class="doc-copy">' + safeRecordText(language[1]) + '</p>';
+    const greeting = receiptCustomer ? '<p class="doc-copy doc-customer">Prepared for ' + safeRecordText(receiptCustomer) + '.</p>' : '';
     const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
     return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><div class="doc-issuer">MANIFEST <span>· PURCHASE DOCUMENT</span></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div><div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div></header>' + intro + greeting + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Sold by Manifest. Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
