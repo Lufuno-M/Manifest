@@ -587,6 +587,32 @@
   .rcpt-slip.printing{ animation:none; }
 }
 
+/* Receipt output: separate, upright sheets with deliberate spacing. */
+.rcpt-pile{gap:30px;padding:22px 16px 18vh}
+.rcpt-slip{width:min(390px,92vw);margin:0;transform:none!important;filter:drop-shadow(0 10px 24px rgba(0,0,0,.28))}
+.rcpt-slip:first-child{margin-top:0}
+.rcpt-slip .rcpt-paper{width:100%;box-sizing:border-box}
+.rcpt-paper.manifest-record{min-height:0;padding:30px 26px 34px}
+.manifest-record .mr-object{margin:0;padding:13px 0}
+.manifest-record .mr-object-name{overflow-wrap:anywhere}
+.manifest-record .mr-row{align-items:flex-start}
+.manifest-record .mr-row b{text-align:right;overflow-wrap:anywhere}
+.manifest-record .mr-payment{margin-top:18px}
+@media(max-width:480px){
+  .rcpt-pile{gap:22px;padding:18px 12px 15vh}
+  .rcpt-slip{width:min(390px,94vw)}
+}
+@media print{
+  @page{margin:10mm}
+  html,body{background:#fff!important}
+  body>*:not(#rcpt-stage){display:none!important}
+  #rcpt-stage{position:static!important;inset:auto!important;overflow:visible!important;background:#fff!important;opacity:1!important;pointer-events:auto!important}
+  #rcpt-stage .rcpt-slot,#rcpt-stage .rcpt-done{display:none!important}
+  #rcpt-stage .rcpt-pile{display:block!important;padding:0!important}
+  #rcpt-stage .rcpt-slip{display:block!important;width:80mm!important;max-width:100%!important;margin:0 auto 0!important;clip-path:none!important;filter:none!important;break-after:page;page-break-after:always}
+  #rcpt-stage .rcpt-slip:last-child{break-after:auto;page-break-after:auto}
+  #rcpt-stage .rcpt-paper{width:100%!important;box-shadow:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 /* Raf Simons AW05 — a narrow printed slip, using the collection's archival label language. */
 .rcpt-paper.raf-simons-slip{
   width:100%;padding:25px 21px 30px;background:#f2f0e9;color:#171714;
@@ -2034,12 +2060,17 @@ function formatRecognizedValue(usdPrice, zar){
     if (br.r) return br.r(items, no, date);
     return brandReceipt(br, items, no, date);
   }
+  function manifestReceipt(items, no, date){
+    const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
+    const rows = items.map(b => '<div class="mr-object"><div class="mr-object-name">' + safeRecordText(b.name) + '</div><div class="mr-object-meta">' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</div><div class="mr-row"><span>MANIFEST VALUE</span><b>' + safeRecordText(b.label) + '</b></div></div>').join('');
+    return '<div class="rcpt-paper manifest-record"><div class="mr-kicker">MANIFEST / ACQUISITION RECORD</div><div class="mr-title">The record of acquisition.</div><div class="mr-sub">A record of the objects collected.</div><div class="mr-rule"></div><div class="mr-row"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="mr-row"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="mr-rule"></div>' + rows + '<div class="mr-rule"></div><div class="mr-total"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div><div class="mr-payment"><strong>PAYMENT</strong>' + safeRecordText(wallet) + '<small>Manifest collector record</small></div><div class="mr-code">' + safeRecordText(no) + '</div><div class="mr-issuer"><strong>MANIFEST</strong>THE ARCHIVE OF ATTENTION</div></div>';
+  }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
     if (!stageR.classList.contains('open')) return;
     stageR.classList.remove('open');
     document.body.style.overflow = '';
-    if (orderFromBag){ BAG.length = 0; paintBag(); }   // the order is complete (mock)
+    if (orderFromBag){ BAG.length = 0; paintBag(); }
   }
   function runReceipts(){
     const run = ++rcptRun;
@@ -2050,27 +2081,36 @@ function formatRecognizedValue(usdPrice, zar){
       const br = brandOf(b.maker) || { k:'plain', w:b.maker.toUpperCase(), s:'', f:'Thank you', p:'MF', wcss:A(800,16,3) };
       const key = br.k === 'plain' ? 'plain:' + b.maker : br.k;
       if (!groups.has(key)) groups.set(key, { br, items: [] });
-      groups.get(key).items.push(b);
+      // Retail/store copy is always 20% below the Manifest catalogue value.
+      const retailItem = { ...b, label: zarFormat(Math.round(zarNumber(b.label) * 0.8)) };
+      groups.get(key).items.push(retailItem);
     });
     pileR.innerHTML = '';
-    const els = [...groups.values()].map((g, i) => {
+    const slips = [];
+    const addSlip = (html, type, ref) => {
       const el = document.createElement('div');
       el.className = 'rcpt-slip';
-      el.style.zIndex = i + 1;
-      el.style.transform = `translateX(${DXS[i % DXS.length]}px) rotate(${ROTS[i % ROTS.length]}deg)`;
-      el.innerHTML = slipHTML(g.br, g.items, `${g.br.p}-${base}${groups.size > 1 ? '-' + String.fromCharCode(65 + i) : ''}`, date);
+      el.dataset.receiptType = type;
+      el.style.zIndex = String(slips.length + 1);
+      el.innerHTML = html;
       pileR.appendChild(el);
-      return el;
+      slips.push(el);
+    };
+    // One consolidated Manifest record first, followed by one retail receipt per house.
+    addSlip(manifestReceipt(order, 'MF-' + base, date), 'manifest', 'MF-' + base);
+    [...groups.values()].forEach((g, i) => {
+      const ref = g.br.p + '-' + base + (groups.size > 1 ? '-' + String.fromCharCode(65 + i) : '');
+      addSlip(slipHTML(g.br, g.items, ref, date), 'retail', ref);
     });
     stageR.scrollTop = 0;
     document.body.style.overflow = 'hidden';
     stageR.classList.add('open');
-    els.forEach((el, n) => {
+    slips.forEach((el, n) => {
       rcptTimers.push(setTimeout(() => {
         if (run !== rcptRun) return;
         el.classList.add('printing');
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 700 + n * 1900));
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 350 + n * 650));
     });
   }
   psConfirm.addEventListener('click', () => {
