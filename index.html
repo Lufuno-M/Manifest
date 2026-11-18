@@ -2566,10 +2566,10 @@ function formatRecognizedValue(usdPrice, zar){
       "palm-angels":["Purchase record","The selected pieces and their order details, brought together."],
       needles:["Selected pieces","A quiet record of the pieces acquired."],
       kaws:["Your selection, confirmed","The objects listed here are part of your order."],
-      murakami:["A little colour, on its way.","Your selection is confirmed. The details of your Manifest order follow."],
+      murakami:["A little colour, on its way.","Your selection is confirmed. The details of your order follow."],
       cpfm:["ORDER / SELECTION","Your selected object has been recorded. Keep this document with your order."],
       vlone:["ORDER CONFIRMED","Your selection has been secured."],
-      yeezy:["Order details","A considered, uncomplicated record of your Manifest purchase."],
+      yeezy:["Order details","A considered, uncomplicated record of your purchase."],
       adidas:["Order confirmation","Your purchase details are listed below."],
       nike:["You're all set.","Your order is confirmed. Here's the breakdown."],
       beats:["Purchase confirmed","Your selected item and payment details are recorded below."],
@@ -2582,9 +2582,9 @@ function formatRecognizedValue(usdPrice, zar){
       youngboy:["ORDER SECURED","Your selection is confirmed. The order details follow."]
     }[br.k] || ["Order details","Your purchase is confirmed."];
     const intro = '<div class="doc-title">' + safeRecordText(language[0]) + '</div><p class="doc-copy">' + safeRecordText(language[1]) + '</p>';
-    const sourceLine = br.k === "sicko" ? '' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '' : br.k === "revenge" ? '<div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div>' : '';
+    const sourceLine = br.k === "sicko" ? '' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '' : br.k === "revenge" ? '<div class="doc-brand-caption"></div>' : '';
     const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKÖ",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
-    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Sold by Manifest. Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
+    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
     if (br.k === 'bape') return bapeSlip(items, no, date);
