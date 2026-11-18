@@ -522,6 +522,10 @@
 .ps-row{ display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.08); font-size:14px; }
 .ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
 .ps-msg{ margin-top:10px; min-height:14px; text-align:center; font-size:11px; color:#6b6b73; }
+.ps-msg.complete{ display:flex; align-items:center; justify-content:center; gap:7px; color:#246B45; }
+.ps-msg .ps-check{ display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border:1px solid currentColor; border-radius:50%; font-size:11px; line-height:1; animation:ps-check-in .42s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ps-check-in{ 0%{ opacity:0; transform:scale(.35) rotate(-35deg); } 65%{ opacity:1; transform:scale(1.18) rotate(8deg); } 100%{ transform:scale(1) rotate(0); } }
+@media (prefers-reduced-motion:reduce){ .ps-msg .ps-check{ animation:none; } }
 
 /* ---- receipts: printed after payment (mock). One slip per house, each on its own paper. ---- */
 .rcpt-stage{
@@ -577,6 +581,73 @@
   .rcpt-slip{ clip-path:none; }
   .rcpt-slip.printing{ animation:none; }
 }
+
+/* ---- Manifest acquisition records: distinct document grammars, not a shared receipt skin. ---- */
+.rcpt-paper.manifest-record{width:100%;min-height:260px;padding:25px 22px 30px;background:#fbfaf6;color:#171717;font-family:'JetBrains Mono',monospace}
+.manifest-record .mr-kicker{font-size:8px;letter-spacing:.19em;text-transform:uppercase;color:#777}
+.manifest-record .mr-title{margin:15px 0 5px;font-size:18px;line-height:1.15;font-weight:500}
+.manifest-record .mr-sub{font-size:9px;line-height:1.5;color:#777}
+.manifest-record .mr-rule{border-top:1px solid currentColor;opacity:.35;margin:16px 0}
+.manifest-record .mr-row{display:flex;justify-content:space-between;gap:14px;padding:4px 0;font-size:9px;line-height:1.5}
+.manifest-record .mr-row span:first-child{color:#777}
+.manifest-record .mr-row b{text-align:right;font-weight:500}
+.manifest-record .mr-object{padding:10px 0}
+.manifest-record .mr-object-name{font-size:13px;line-height:1.35;font-weight:600}
+.manifest-record .mr-object-meta{margin-top:5px;font-size:9px;color:#777;line-height:1.5}
+.manifest-record .mr-total{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:700}
+.manifest-record .mr-payment{margin-top:14px;padding:10px;border:1px solid #aaa;font-size:9px;line-height:1.6}
+.manifest-record .mr-payment strong{display:block;font-size:10px;letter-spacing:.08em}
+.manifest-record .mr-payment small{display:block;margin-top:3px;color:#777;font-size:8px}
+.manifest-record .mr-issuer{margin-top:17px;font-size:9px;line-height:1.5}
+.manifest-record .mr-issuer strong{display:block;letter-spacing:.13em}
+.manifest-record .mr-code{margin-top:13px;font-size:8px;letter-spacing:.16em;color:#777}
+.manifest-record.lv-record{background:#f3ead8;color:#30271d;font-family:'Fraunces',serif;padding:30px 24px 34px}
+.lv-record .mr-kicker,.lv-record .mr-row,.lv-record .mr-sub,.lv-record .mr-object-meta,.lv-record .mr-code{font-family:'JetBrains Mono',monospace}
+.lv-record .mr-title{font-size:23px;letter-spacing:.025em}
+.lv-record .mr-rule{border-top-style:double;border-top-width:3px;opacity:.5}
+.lv-record .mr-object-name{font-size:16px;font-weight:400}
+.lv-record .mr-issuer{text-align:center;letter-spacing:.04em}
+.goyard-record{background:#f0e7d2!important;color:#29372d!important;border:5px double #a78a55}
+.goyard-record .mr-title{text-align:center;letter-spacing:.22em;font-size:20px}
+.goyard-record .mr-kicker,.goyard-record .mr-code{text-align:center}
+.goyard-record .mr-object{border-top:1px dotted #9a875f;border-bottom:1px dotted #9a875f;margin:12px 0}
+.hermes-record{background:#f4e8d8!important;border-top:9px solid #e87524}
+.hermes-record .mr-title{font-family:'Fraunces',serif;font-size:24px}
+.hermes-record .mr-total{border-top:1px solid #b65a24;padding-top:12px}
+.margiela-record{background:#fafaf7!important;color:#222!important;font-family:'Archivo',sans-serif!important}
+.margiela-record .mr-kicker{letter-spacing:.3em}
+.margiela-record .mr-title{font-size:16px;letter-spacing:.2em;text-transform:uppercase}
+.margiela-record .mr-object-name{font-size:20px;font-weight:400}
+.margiela-record .mr-issuer{border-top:1px solid #222;padding-top:12px}
+.offwhite-record{background:#f8f8f5!important;color:#111!important;font-family:'JetBrains Mono',monospace!important}
+.offwhite-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:23px}
+.offwhite-record .mr-kicker,.offwhite-record .mr-issuer{letter-spacing:.04em}
+.offwhite-record .mr-rule{border-top:2px solid #111;opacity:1}
+.chrome-record{background:#101010!important;color:#e6e2dc!important;border:1px solid #aaa}
+.chrome-record .mr-kicker,.chrome-record .mr-row span:first-child,.chrome-record .mr-sub,.chrome-record .mr-object-meta,.chrome-record .mr-code{color:#aaa}
+.chrome-record .mr-title{font-family:'Fraunces',serif;letter-spacing:.16em;font-size:19px}
+.chrome-record .mr-rule{border-color:#aaa;opacity:.7}
+.chrome-record .mr-payment{border-color:#777}
+.chrome-record .mr-payment small{color:#aaa}
+.raf-record{background:#eeeae2!important;color:#191919!important;font-family:'Archivo',sans-serif!important;padding:30px 24px 38px}
+.raf-record .mr-kicker{font-family:'JetBrains Mono',monospace}
+.raf-record .mr-title{font-family:'Fraunces',serif;font-size:28px;letter-spacing:-.025em}
+.raf-record .mr-object{margin:18px 0;padding:18px 0;border-top:1px solid #aaa;border-bottom:1px solid #aaa}
+.raf-record .mr-object-name{font-size:18px;font-weight:400}
+.raf-record .mr-payment{background:#fff;border:0}
+.recognition-record{background:#f1f0eb!important;color:#171717!important;border-left:8px solid #171717}
+.recognition-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;font-size:22px}
+.recognition-record .mr-object-name{font-size:16px}
+.industrial-record{background:#f5f5f2!important;color:#111!important;border:1px solid #111}
+.industrial-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;letter-spacing:-.04em;font-size:22px}
+.industrial-record .mr-kicker{background:#111;color:#fff;display:inline-block;padding:4px 6px}
+
+.athletic-record{background:#f5f5f2!important;color:#111!important;border-top:5px solid #111}
+.athletic-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase}
+.athletic-record .mr-object{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid #bbb}
+.technology-record{background:#eceef0!important;color:#15191d!important;font-family:'Archivo',sans-serif!important;border:1px solid #b9c0c7}
+.technology-record .mr-title{font-size:18px;font-weight:600}
+.technology-record .mr-payment{background:#fff;border-color:#c2c8ce}
 
 /* ---- BAPE: its own two documents. In-store ticket (sans, bold labels) and the online order page. ---- */
 .rcpt-paper.bape{ font-family:'Archivo',Arial,Helvetica,sans-serif; font-size:10.5px; line-height:14px; --paper:#fff; --ink:#111; --mute:#555; --rule:#111; }
@@ -1528,10 +1599,10 @@ function formatRecognizedValue(usdPrice, zar){
 
   /* Record: the wallet is the primary action (fewest steps to done), Add to Bag is
      the quieter outline beneath it, and the bag link only appears once there is a bag. */
-  mountExpress(document.getElementById('record-actions'), 'Buy with', 'record-pay',
+  mountExpress(document.getElementById('record-actions'), 'Continue with', 'record-pay',
     '<button type="button" class="btn-line" id="record-add">Add to Bag</button>',
     '<button type="button" id="record-viewbag" hidden>View bag</button>');
-  mountExpress(document.getElementById('bag-express'), 'Pay with', 'bag-pay');
+  mountExpress(document.getElementById('bag-express'), 'Continue with', 'bag-pay');
   paintWallet();
 
   const addBtn = document.getElementById('record-add');
@@ -1688,12 +1759,12 @@ function formatRecognizedValue(usdPrice, zar){
 
   function openSheet(){
     document.getElementById('ps-wallet').innerHTML = MARKS[wallet];
-    psConfirm.textContent = wallet === 'Apple Pay' ? 'Pay with Side Button' : 'Confirm';
+    psConfirm.textContent = wallet === 'Apple Pay' ? 'Continue demo checkout' : 'Complete checkout demo';
     document.getElementById('ps-rows').innerHTML = order.map(b =>
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
     ).join('');
     document.getElementById('ps-total').textContent = sumOf(order);
-    psMsg.textContent = '';
+    psMsg.textContent = ''; psMsg.classList.remove('complete');
     sheetBack.classList.add('open');
     sheet.classList.add('open');
   }
@@ -1713,7 +1784,7 @@ function formatRecognizedValue(usdPrice, zar){
     openSheet();
   });
 
-  // ---- Receipts (mock): after payment, one slip per house prints out of the slot,
+  // ---- Acquisition records: after the checkout demonstration, one Manifest record per house prints out of the slot,
   // each on that house's own paper. Items from the same house share a slip, even
   // across collabs ("Nike × Supreme" prints on Supreme's slip, with its credit line).
   const stageR = document.getElementById('rcpt-stage');
@@ -1805,7 +1876,6 @@ function formatRecognizedValue(usdPrice, zar){
     return `<svg viewBox="0 0 ${x} 40" preserveAspectRatio="none" aria-hidden="true" fill="#111">${bars}</svg>`;
   }
   const COLLECTOR_NAME = '';   // leave empty: Manifest doesn't know who is paying. Set a name here only if the slip should carry one.
-  const BP_VAT = 0.15;   // SA VAT, shown as included in the price. Set to 0 to drop the VAT line.
   const BP_TRUCK = '<svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#111" stroke-width="1.4" aria-hidden="true"><rect x="1" y="3" width="15" height="11"/><path d="M16 6h5l4 4v4h-9z"/><circle cx="6" cy="16" r="2" fill="#fff"/><circle cx="20" cy="16" r="2" fill="#fff"/></svg>';
   const BP_CART = '<svg width="24" height="22" viewBox="0 0 24 22" fill="none" stroke="#111" stroke-width="1.4" aria-hidden="true"><path d="M1 2h4l3 11h11l3-8H6"/><circle cx="9" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg>';
   // The online order page, shared by every house: house wordmark in the header, house-themed,
@@ -1821,13 +1891,13 @@ function formatRecognizedValue(usdPrice, zar){
       <div class="bo-h">Order #${no}</div>
       <div class="bo-cols"><b>Product</b><b>Qty</b><b>Total</b></div>
       ${lines}
-      <div class="bo-fulfil">${BP_TRUCK}<div><b>Confirmed ${date}:</b><br>Issued by Manifest<br>#${no}</div></div>
+      <div class="bo-fulfil">${BP_TRUCK}<div><b>Checkout demonstration ${date}:</b><br>Issued by Manifest<br>#${no}<br><small>No funds transferred.</small></div></div>
       <div class="bo-total"><span>Total</span><span>${zarFormat(total)}</span></div>
     </div>`;
   }
   function bapeSlip(items, no, date){
     const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
-    const vat = Math.round(total * BP_VAT / (1 + BP_VAT));
+    const vat = 0;
     const time = new Date().toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
     const ref = bpRef;
     const nm = (b) => (b.name + (b.size ? ' ' + b.size : '')).toUpperCase();
@@ -1837,7 +1907,7 @@ function formatRecognizedValue(usdPrice, zar){
     return `<div class="rcpt-paper bape">
       ${logo}
       <div class="bp-word">*A BATHING APE*®</div>
-      <div class="bp-store">Issued by <b>MANIFEST</b><br>Collector's archive · Online</div>
+      <div class="bp-store">Issued by <b>MANIFEST</b><br>Independent collector documentation · Not brand-issued</div>
       <div class="bp-meta"><b>Order #:</b> ${no}<br><b>Channel:</b> Online<br>${COLLECTOR_NAME ? '<b>Collector:</b> ' + COLLECTOR_NAME + '<br>' : ''}${date} ${time}</div>
       <div class="bp-g bp-h"><span>Item</span><span>Price</span><span>Qty</span><span>Total</span></div>
       ${rows}
@@ -1848,20 +1918,19 @@ function formatRecognizedValue(usdPrice, zar){
         <div class="t"><span>Total:</span><b>${zarFormat(total)}</b></div>
       </div>
       <div class="bp-tender">
-        <div class="th"><span>Tender</span><span>Amount</span></div>
-        <div><span>${wallet}</span><span>${zarFormat(total)}</span></div>
-        <div class="th"><span>Net Payment:</span><span>${zarFormat(total)}</span></div>
+        <div class="th"><span>Selected wallet</span><span>${wallet}</span></div>
+        <div><span>Checkout step</span><span>Complete</span></div>
       </div>
       <div class="bp-bc">${code39(no)}</div>
       <div class="bp-bcn">${no}</div>
-      <div class="bp-foot">Thank you for shopping at Manifest.</div>
+      <div class="bp-foot">Checkout demonstration completed.<br><small>No funds transferred · Not a payment receipt.</small></div>
       <div class="rcpt-fine"><button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div>
     </div>
     ${orderPage(items, no, date, '<img src="assets/receipt-logo-bape.png" alt="" onerror="this.outerHTML=\'<b>A BATHING APE®</b>\'">')}`;
   }
   function supremeSlip(items, no, date){
     const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
-    const vat = Math.round(total * BP_VAT / (1 + BP_VAT));
+    const vat = 0;
     const rows = items.map(b =>
       `<div class="sp-it"><img src="${b.asset}" alt="" onerror="this.style.visibility='hidden'"><div>${b.name}${b.maker.includes('×') ? '<br>' + b.maker : ''}${b.size ? '<br>Size: ' + b.size : ''}</div><span>${b.label}</span></div>`).join('');
     return `<div class="rcpt-paper supreme">
@@ -1876,14 +1945,82 @@ function formatRecognizedValue(usdPrice, zar){
         ${vat ? `<div><span>VAT</span><span>${zarFormat(vat)}</span></div>` : ''}
         <div class="t"><span>Total</span><span>${zarFormat(total)}</span></div>
       </div>
-      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Collector's archive · Online<br><b>Paid with</b> ${wallet}</div>
+      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Independent collector record · Not brand-issued<br><b>Selected wallet</b> ${wallet}<br><b>Checkout</b> Demonstration completed<br><small>No funds transferred · Not a payment receipt.</small></div>
       <div class="sp-bc">${code39(no)}</div>
-      <div class="sp-fine">Thank you for your order.</div>
+      <div class="sp-fine">Retained in the Manifest archive.</div>
     </div>`;
   }
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
 
+  // Each acquisition record has its own document grammar. These are Manifest-authored
+  // records inspired by each house's visual language, never documents issued by the houses.
+  const RECORD_KIND = {
+    lv:'lv', goyard:'goyard', hermes:'hermes', margiela:'margiela',
+    'off-white':'offwhite', 'chrome-hearts':'chrome', 'raf-simons':'raf',
+    sicko:'recognition', yeezy:'recognition', murakami:'recognition',
+    'number-nine':'margiela', vetements:'industrial', balenciaga:'industrial',
+    palace:'industrial', revenge:'industrial', vlone:'industrial', ambush:'industrial',
+    awake:'editorial', 'palm-angels':'industrial', needles:'editorial', kaws:'recognition',
+    cpfm:'recognition', adidas:'athletic', nike:'athletic', beats:'technology',
+    givenchy:'maison', 'heron-preston':'industrial', vivet:'industrial', youngboy:'recognition'
+  };
+  const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function acquisitionRecord(br, items, no, date){
+    const kind = RECORD_KIND[br.k] || 'standard';
+    const classes = {lv:'lv-record',goyard:'goyard-record',hermes:'hermes-record',maison:'lv-record',margiela:'margiela-record',offwhite:'offwhite-record',chrome:'chrome-record',raf:'raf-record',editorial:'raf-record',recognition:'recognition-record',industrial:'industrial-record',athletic:'athletic-record',technology:'technology-record',standard:''};
+    const names = items.map(b => safeRecordText(b.name));
+    const objects = items.map(b => `<div class="mr-object"><div class="mr-object-name">${safeRecordText(b.name)}</div><div class="mr-object-meta">${b.size ? 'Size · '+safeRecordText(b.size)+'　' : ''}Quantity · 1${b.maker.includes('×') ? '<br>'+safeRecordText(b.maker) : ''}</div></div>`).join('');
+    const total = sumOf(items);
+    const issuer = {
+      lv:'Record established by Manifest',
+      goyard:'Émis par Manifest',
+      hermes:'Document établi par Manifest',
+      margiela:'MANIFEST / ARCHIVE',
+      offwhite:'"ISSUED BY" — MANIFEST',
+      chrome:'Filed and retained by Manifest',
+      raf:'Filed by Manifest',
+      recognition:'Recognised and recorded by Manifest',
+      industrial:'MANIFEST · OBJECT RECORD',
+      standard:'Issued by Manifest', editorial:'Selected and filed by Manifest', athletic:'Recorded by Manifest', technology:'Registered in the Manifest archive', maison:'Document établi par Manifest'
+    }[kind];
+    const heading = {
+      lv:'Maison acquisition record',
+      goyard:'ACQUISITION',
+      hermes:'Record of acquisition',
+      margiela:'Object / Entry',
+      offwhite:'OBJECT RECORD',
+      chrome:'COLLECTOR’S RECORD',
+      raf:'Object, acquired.',
+      recognition:'Object recognised',
+      industrial:'ACQUISITION FILE',
+      standard:'Acquisition record', editorial:'Field record', athletic:'Equipment acquisition record', technology:'Device acquisition record', maison:'Maison record'
+    }[kind];
+    const metadata = kind === 'lv' || kind === 'goyard' || kind === 'hermes' || kind === 'maison'
+      ? `<div class="mr-row"><span>Record reference</span><b>${no}</b></div><div class="mr-row"><span>Date recorded</span><b>${date}</b></div>`
+      : kind === 'raf'
+      ? `<div class="mr-row"><span>Manifest file</span><b>${no}</b></div><div class="mr-row"><span>Filed</span><b>${date}</b></div>`
+      : `<div class="mr-row"><span>MANIFEST REF.</span><b>${no}</b></div><div class="mr-row"><span>RECORDED</span><b>${date}</b></div>`;
+    const payment = `<div class="mr-payment"><strong>WALLET CHECKOUT · COMPLETED</strong>Method · ${safeRecordText(wallet)}<small>Manifest checkout demonstration. No funds were transferred; this is not a payment receipt.</small></div>`;
+    const issuerBlock = kind === 'offwhite'
+      ? `<div class="mr-issuer"><strong>"ISSUED BY"</strong>MANIFEST<br>Independent collector documentation</div>`
+      : `<div class="mr-issuer"><strong>${issuer}</strong><span class="mr-sub">Independent collector documentation · Not brand-issued</span></div>`;
+    return `<div class="rcpt-paper manifest-record ${classes[kind]}">
+      <div class="mr-kicker">MANIFEST　/　${kind === 'raf' ? 'FIELD NOTE' : 'COLLECTOR DOCUMENT'}</div>
+      <div class="mr-title">${heading}</div>
+      <div class="mr-sub">${safeRecordText(br.w)}${br.s ? '　·　'+safeRecordText(br.s) : ''}</div>
+      <div class="mr-rule"></div>
+      ${metadata}
+      <div class="mr-rule"></div>
+      ${objects}
+      <div class="mr-rule"></div>
+      <div class="mr-total"><span>${kind === 'raf' ? 'Acquisition value' : 'Recorded total'}</span><span>${total}</span></div>
+      ${payment}
+      ${issuerBlock}
+      <div class="mr-code">${no}　/　${names.length} OBJECT${names.length === 1 ? '' : 'S'}</div>
+    </div>`;
+  }
   function slipHTML(br, items, no, date){
+    if (!br.r) return acquisitionRecord(br, items, no, date);
     if (br.r) return br.r(items, no, date);   // houses with their own document (BAPE)
     const q = (s) => br.q ? '"' + s + '"' : s;
     const look = { paper:br.paper, ink:br.ink, mute:br.mute, rule:br.rule || br.mute, band:br.band, bh:br.bh };
@@ -1951,8 +2088,8 @@ function formatRecognizedValue(usdPrice, zar){
   psConfirm.addEventListener('click', () => {
     if (psConfirm.disabled) return;
     psConfirm.disabled = true;
-    psMsg.textContent = 'Authorising…';
-    setTimeout(() => { psMsg.textContent = '✓ Done'; }, 800);
+    psMsg.textContent = 'Completing checkout demonstration…';
+    setTimeout(() => { psMsg.classList.add('complete'); psMsg.innerHTML = '<span class="ps-check" aria-hidden="true">✓</span><span>Checkout step complete · no funds transferred</span>'; }, 800);
     setTimeout(() => {
       closeSheet();
       closeRecord();
