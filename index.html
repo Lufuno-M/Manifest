@@ -638,6 +638,13 @@
 .industrial-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;letter-spacing:-.04em;font-size:22px}
 .industrial-record .mr-kicker{background:#111;color:#fff;display:inline-block;padding:4px 6px}
 
+.athletic-record{background:#f5f5f2!important;color:#111!important;border-top:5px solid #111}
+.athletic-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:20px;text-transform:uppercase}
+.athletic-record .mr-object{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid #bbb}
+.technology-record{background:#eceef0!important;color:#15191d!important;font-family:'Archivo',sans-serif!important;border:1px solid #b9c0c7}
+.technology-record .mr-title{font-size:18px;font-weight:600}
+.technology-record .mr-payment{background:#fff;border-color:#c2c8ce}
+
 /* ---- BAPE: its own two documents. In-store ticket (sans, bold labels) and the online order page. ---- */
 .rcpt-paper.bape{ font-family:'Archivo',Arial,Helvetica,sans-serif; font-size:10.5px; line-height:14px; --paper:#fff; --ink:#111; --mute:#555; --rule:#111; }
 .bape .bp-logo{ display:block; height:46px; margin:0 auto 6px; object-fit:contain; }
@@ -1948,12 +1955,15 @@ function formatRecognizedValue(usdPrice, zar){
     'off-white':'offwhite', 'chrome-hearts':'chrome', 'raf-simons':'raf',
     sicko:'recognition', yeezy:'recognition', murakami:'recognition',
     'number-nine':'margiela', vetements:'industrial', balenciaga:'industrial',
-    palace:'industrial', revenge:'industrial', vlone:'industrial', ambush:'industrial'
+    palace:'industrial', revenge:'industrial', vlone:'industrial', ambush:'industrial',
+    awake:'editorial', 'palm-angels':'industrial', needles:'editorial', kaws:'recognition',
+    cpfm:'recognition', adidas:'athletic', nike:'athletic', beats:'technology',
+    givenchy:'maison', 'heron-preston':'industrial', vivet:'industrial', youngboy:'recognition'
   };
   const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   function acquisitionRecord(br, items, no, date){
     const kind = RECORD_KIND[br.k] || 'standard';
-    const classes = {lv:'lv-record',goyard:'goyard-record',hermes:'hermes-record',margiela:'margiela-record',offwhite:'offwhite-record',chrome:'chrome-record',raf:'raf-record',recognition:'recognition-record',industrial:'industrial-record',standard:''};
+    const classes = {lv:'lv-record',goyard:'goyard-record',hermes:'hermes-record',maison:'lv-record',margiela:'margiela-record',offwhite:'offwhite-record',chrome:'chrome-record',raf:'raf-record',editorial:'raf-record',recognition:'recognition-record',industrial:'industrial-record',athletic:'athletic-record',technology:'technology-record',standard:''};
     const names = items.map(b => safeRecordText(b.name));
     const objects = items.map(b => `<div class="mr-object"><div class="mr-object-name">${safeRecordText(b.name)}</div><div class="mr-object-meta">${b.size ? 'Size · '+safeRecordText(b.size)+'　' : ''}Quantity · 1${b.maker.includes('×') ? '<br>'+safeRecordText(b.maker) : ''}</div></div>`).join('');
     const total = sumOf(items);
@@ -1967,7 +1977,7 @@ function formatRecognizedValue(usdPrice, zar){
       raf:'Filed by Manifest',
       recognition:'Recognised and recorded by Manifest',
       industrial:'MANIFEST · OBJECT RECORD',
-      standard:'Issued by Manifest'
+      standard:'Issued by Manifest', editorial:'Selected and filed by Manifest', athletic:'Recorded by Manifest', technology:'Registered in the Manifest archive', maison:'Document établi par Manifest'
     }[kind];
     const heading = {
       lv:'Maison acquisition record',
@@ -1979,9 +1989,9 @@ function formatRecognizedValue(usdPrice, zar){
       raf:'Object, acquired.',
       recognition:'Object recognised',
       industrial:'ACQUISITION FILE',
-      standard:'Acquisition record'
+      standard:'Acquisition record', editorial:'Field record', athletic:'Equipment acquisition record', technology:'Device acquisition record', maison:'Maison record'
     }[kind];
-    const metadata = kind === 'lv' || kind === 'goyard' || kind === 'hermes'
+    const metadata = kind === 'lv' || kind === 'goyard' || kind === 'hermes' || kind === 'maison'
       ? `<div class="mr-row"><span>Record reference</span><b>${no}</b></div><div class="mr-row"><span>Date recorded</span><b>${date}</b></div>`
       : kind === 'raf'
       ? `<div class="mr-row"><span>Manifest file</span><b>${no}</b></div><div class="mr-row"><span>Filed</span><b>${date}</b></div>`
