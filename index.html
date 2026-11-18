@@ -1004,6 +1004,73 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 .house-youngboy{--receipt-muted:#777;--receipt-rule:#222;background:#f6f4ef!important;color:#171717!important}
 .house-youngboy .house-wordmark{font-size:13px;letter-spacing:.06em;font-weight:800}
 .house-plain{--receipt-muted:#777;--receipt-rule:#aaa;background:#fff!important;color:#171717!important}
+
+/* Manifest-issued purchase documents: format follows the house, not a thermal-roll default. */
+.rcpt-pile{gap:34px;padding:30px 22px 18vh}
+.rcpt-slip{width:min(760px,94vw);margin:0;clip-path:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.22))}
+.rcpt-slip:first-child{margin-top:0}
+.rcpt-slip.printing{animation:docArrive .8s cubic-bezier(.22,.61,.36,1) both}
+@keyframes docArrive{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.rcpt-paper.house-receipt{width:100%;padding:38px 44px 36px;min-height:0;border:0;box-shadow:none}
+.house-receipt .doc-issuer{font:500 9px 'JetBrains Mono',monospace;letter-spacing:.24em;margin-bottom:26px;color:var(--receipt-muted,#777)}
+.house-receipt .house-receipt-head{text-align:left;margin:0 0 18px}
+.house-receipt .house-wordmark{font-size:19px;letter-spacing:.17em}
+.house-receipt .doc-title{font:400 27px/1.15 'Fraunces',Georgia,serif;letter-spacing:-.02em;margin:8px 0}
+.house-receipt .doc-copy{font:13px/1.65 'Archivo',Arial,sans-serif;max-width:520px;margin:0 0 24px;color:var(--receipt-muted,#666)}
+.house-receipt .doc-subject{font:9px 'JetBrains Mono',monospace;letter-spacing:.08em;color:var(--receipt-muted,#777);margin-bottom:18px}
+.house-receipt .house-items-head{margin-top:24px}
+.house-receipt .doc-closing{font:12px/1.6 'Archivo',Arial,sans-serif;margin-top:24px;max-width:520px;color:var(--receipt-muted,#666)}
+.house-receipt .house-reference{margin-top:22px}
+.house-receipt.doc-email{max-width:720px;padding:54px 64px 50px;background:#fff!important;color:#24221f!important;border-top:5px solid #a98a5c}
+.doc-email .doc-issuer{font-size:10px;letter-spacing:.3em;color:#806b4e}
+.doc-email .house-wordmark{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:22px;letter-spacing:.22em}
+.house-receipt.doc-card{max-width:620px;min-height:330px;padding:44px 52px 42px;background:#f8f6f0!important;color:#25231f!important;border:1px solid rgba(120,105,82,.35)}
+.doc-card .doc-issuer{text-align:center;margin-bottom:30px}
+.doc-card .house-receipt-head{text-align:center}
+.doc-card .doc-title{text-align:center;font-size:25px}
+.doc-card .doc-copy{text-align:center;margin:0 auto 24px}
+.doc-card .house-summary{max-width:300px;margin-left:auto}
+.house-receipt.doc-wide{max-width:760px;min-height:290px;padding:34px 42px;background:#f4f3ef!important;color:#171717!important}
+.doc-wide .house-items{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
+.doc-wide .house-summary{max-width:320px;margin-left:auto}
+.house-receipt.doc-statement{max-width:660px;padding:38px 42px;background:#f0efeb!important;color:#171717!important}
+.doc-statement .doc-title{font:800 34px/.98 'Archivo',Arial,sans-serif;letter-spacing:-.06em;text-transform:uppercase;max-width:430px;margin:10px 0 14px}
+.doc-statement .house-wordmark{font-size:16px;letter-spacing:.2em}
+.doc-statement .house-items{border-top:2px solid currentColor;margin-top:16px}
+.doc-statement .thermal-item{border-bottom:1px solid rgba(0,0,0,.28)}
+.house-receipt.doc-ticket{max-width:460px;padding:30px 28px 32px}
+.doc-ticket .house-receipt-head{text-align:center}
+.house-cartier{background:#fbf8f2!important;color:#181714!important;border-top:3px solid #8c2528!important}
+.house-cartier .house-wordmark{font-family:'Fraunces',Georgia,serif;font-weight:400;letter-spacing:.28em}
+.house-lv{background:#f7f1e7!important;color:#27221a!important}
+.house-lv .house-wordmark{font-family:'Fraunces',Georgia,serif;font-weight:400;letter-spacing:.22em}
+.house-vetements{background:#f2f1ed!important;color:#111!important}
+.house-vetements .doc-title{font-size:42px;letter-spacing:-.07em}
+@media(max-width:600px){
+ .rcpt-pile{padding:18px 12px 15vh;gap:20px}
+ .rcpt-slip{width:96vw}
+ .rcpt-paper.house-receipt{padding:28px 23px}
+ .house-receipt.doc-email{padding:32px 25px}
+ .doc-wide .house-items{grid-template-columns:1fr}
+ .doc-statement .doc-title{font-size:30px}
+}
+@media print{
+ @page{size:auto;margin:12mm}
+ html,body{background:#fff!important}
+ body>*:not(#rcpt-stage){display:none!important}
+ #rcpt-stage{position:static!important;inset:auto!important;overflow:visible!important;background:#fff!important;opacity:1!important;pointer-events:auto!important}
+ #rcpt-stage .rcpt-slot,#rcpt-stage .rcpt-done{display:none!important}
+ #rcpt-stage .rcpt-pile{display:block!important;padding:0!important}
+ #rcpt-stage .rcpt-slip{display:block!important;width:auto!important;max-width:none!important;margin:0 auto!important;clip-path:none!important;filter:none!important;break-after:page;page-break-after:always}
+ #rcpt-stage .rcpt-slip:last-child{break-after:auto;page-break-after:auto}
+ #rcpt-stage .rcpt-paper{width:100%!important;max-width:none!important;box-shadow:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #rcpt-stage .doc-email{width:180mm!important;min-height:120mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-card{width:160mm!important;min-height:105mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-wide{width:190mm!important;min-height:105mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-statement{width:170mm!important;min-height:110mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-ticket{width:100mm!important;margin:0 auto!important}
+}
+
 </style>
 </head>
 <body>
@@ -1976,6 +2043,8 @@ function formatRecognizedValue(usdPrice, zar){
         band:'radial-gradient(circle at 20% 40%,#2f4a2b 0 7px,transparent 8px),radial-gradient(circle at 62% 70%,#1d2f1b 0 6px,transparent 7px),radial-gradient(circle at 88% 30%,#5d7234 0 7px,transparent 8px),#7f9150 0 0/52px 20px' }),
     B('lv', /louis vuitton/i, 'LOUIS VUITTON', 'Maison fondée en 1854', 'Merci', 'LV',
       { paper:'#f6efe1', bh:'14px', band:'repeating-linear-gradient(90deg,rgba(138,106,58,.55) 0 1px,transparent 1px 9px)', wcss:F(19,6) }),
+    B('cartier', /cartier/i, 'CARTIER', 'Paris', 'Thank you', 'CTR',
+      { paper:'#fbf8f2', wcss:F(23,7) }),
     B('supreme', /supreme/i, 'Supreme', '', 'Thank you', 'SUP',
       { r:supremeSlip, wcss:A(800,24,-.5,'font-style:italic;background:#da1f26;color:#fff;padding:6px 0;margin:0 auto 6px;width:70%;') }),
     B('off-white', /off-white/i, 'OFF-WHITE™', 'c/o Virgil Abloh™', '"Thank you"', 'OW',
@@ -2135,13 +2204,22 @@ function formatRecognizedValue(usdPrice, zar){
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
 
   const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const RECEIPT_STYLE = {lv:"lv",goyard:"goyard",hermes:"hermes",margiela:"margiela","off-white":"offwhite","chrome-hearts":"chrome","raf-simons":"raf",balenciaga:"balenciaga",vetements:"vetements","number-nine":"numbernine",palace:"palace",sicko:"sicko",awake:"awake","palm-angels":"palm",needles:"needles",kaws:"kaws",murakami:"murakami",cpfm:"cpfm",vlone:"vlone",yeezy:"yeezy",adidas:"adidas",nike:"nike",beats:"beats",givenchy:"givenchy","heron-preston":"heron",revenge:"revenge",vivet:"vivet",ambush:"ambush",youngboy:"youngboy"};
+  const RECEIPT_STYLE = {lv:"lv",cartier:"cartier",goyard:"goyard",hermes:"hermes",margiela:"margiela","off-white":"offwhite","chrome-hearts":"chrome","raf-simons":"raf",balenciaga:"balenciaga",vetements:"vetements","number-nine":"numbernine",palace:"palace",sicko:"sicko",awake:"awake","palm-angels":"palm",needles:"needles",kaws:"kaws",murakami:"murakami",cpfm:"cpfm",vlone:"vlone",yeezy:"yeezy",adidas:"adidas",nike:"nike",beats:"beats",givenchy:"givenchy","heron-preston":"heron",revenge:"revenge",vivet:"vivet",ambush:"ambush",youngboy:"youngboy"};
+  const RECEIPT_FORMAT = {lv:"email",cartier:"card",hermes:"card",goyard:"card","chrome-hearts":"wide",vetements:"statement","offwhite":"statement",balenciaga:"wide",raf:"wide",margiela:"card",numbernine:"card",palace:"statement",sicko:"statement",awake:"card",palm:"wide",needles:"card",kaws:"card",murakami:"card",cpfm:"wide",vlone:"statement",yeezy:"wide",adidas:"ticket",nike:"ticket",beats:"card",givenchy:"card",heron:"statement",revenge:"statement",vivet:"card",ambush:"wide",youngboy:"statement"};
   function brandReceipt(br, items, no, date){
     const style = RECEIPT_STYLE[br.k] || "plain";
+    const format = RECEIPT_FORMAT[style] || "ticket";
     const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
     const rows = items.map(b => '<div class="thermal-item"><div class="thermal-description"><b>' + safeRecordText(b.name) + '</b>' + (b.maker.includes("×") ? '<small>' + safeRecordText(b.maker) + '</small>' : '') + '<small>' + (b.size ? 'SIZE ' + safeRecordText(b.size) + ' · ' : '') + 'QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
-    const names = {lv:"LOUIS VUITTON",goyard:"GOYARD",hermes:"HERMÈS",margiela:"MAISON MARGIELA",offwhite:"OFF-WHITE",chrome:"CHROME HEARTS",raf:"RAF SIMONS",balenciaga:"BALENCIAGA",vetements:"VETEMENTS",numbernine:"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY",palm:"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY",heron:"HERON PRESTON",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN",plain:safeRecordText(br.w)}[style] || safeRecordText(br.w);
-    return '<div class="rcpt-paper house-receipt house-' + style + '"><header class="house-receipt-head"><div class="house-wordmark">' + names + '</div></header><div class="house-order"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="house-order"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="house-items-head"><span>ITEM</span><span>PRICE</span></div><div class="house-items">' + rows + '</div><div class="house-summary"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="house-grand"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="house-tender"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="house-barcode">' + code39(no) + '</div><div class="house-reference">' + safeRecordText(no) + '</div></div>';
+    const names = {lv:"LOUIS VUITTON",cartier:"CARTIER",goyard:"GOYARD",hermes:"HERMÈS",margiela:"MAISON MARGIELA",offwhite:"OFF-WHITE",chrome:"CHROME HEARTS",raf:"RAF SIMONS",balenciaga:"BALENCIAGA",vetements:"VETEMENTS",numbernine:"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY",palm:"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY",heron:"HERON PRESTON",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN",plain:safeRecordText(br.w)}[style] || safeRecordText(br.w);
+    const intro = format === "email"
+      ? '<div class="doc-subject">Your order from Manifest</div><div class="doc-title">Your order is confirmed</div><p class="doc-copy">Thank you for your recent purchase from Manifest. Your order details are below.</p>'
+      : format === "card"
+      ? '<div class="doc-title">Purchase record</div><p class="doc-copy">Selected and acquired through Manifest.</p>'
+      : format === "statement"
+      ? '<div class="doc-title">Order confirmed.</div><p class="doc-copy">A record of the objects selected through Manifest.</p>'
+      : '<div class="doc-title">Order details</div>';
+    return '<div class="rcpt-paper house-receipt house-' + style + ' doc-' + format + '"><div class="doc-issuer">MANIFEST</div><header class="house-receipt-head"><div class="house-wordmark">' + names + '</div></header>' + intro + '<div class="house-order"><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div class="house-order"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="house-items-head"><span>ITEM</span><span>PRICE</span></div><div class="house-items">' + rows + '</div><div class="house-summary"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="house-grand"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="house-tender"><span>PAID WITH</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">' + (format === "email" ? 'A shipping confirmation and tracking information will be sent separately.' : 'Thank you for choosing Manifest.') + '</div><div class="house-reference">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
     if (br.r) return br.r(items, no, date);
