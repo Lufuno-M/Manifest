@@ -2568,8 +2568,18 @@ function formatRecognizedValue(usdPrice, zar){
       const br = brandOf(b.maker) || { k:'plain', w:b.maker.toUpperCase(), s:'', f:'Thank you', p:'MF', wcss:A(800,16,3) };
       const key = br.k === 'plain' ? 'plain:' + b.maker : br.k;
       if (!groups.has(key)) groups.set(key, { br, items: [] });
-      // Retail/store copy is always 20% below the Manifest catalogue value.
-      const retailItem = { ...b, label: zarFormat(Math.round(zarNumber(b.label) * 0.8)) };
+      // Each item's store-side amount leaves Manifest an 8–13% profit.
+      // The catalogue's 60%-of-retail calculation is upstream and remains unchanged.
+      // A stable hash keeps the same item on the same rate across visits and receipts.
+      const itemKey = String(b.id || b.name || b.asset || '');
+      let itemHash = 2166136261;
+      for (let j = 0; j < itemKey.length; j++) {
+        itemHash = Math.imul(itemHash ^ itemKey.charCodeAt(j), 16777619);
+      }
+      const profitRate = 0.08 + ((itemHash >>> 0) % 6) / 100; // 8%, 9%, 10%, 11%, 12% or 13%
+      const manifestPrice = zarNumber(b.label);
+      const storeAmount = Math.round(manifestPrice * (1 - Math.min(profitRate, 0.15)));
+      const retailItem = { ...b, label: zarFormat(storeAmount) };
       groups.get(key).items.push(retailItem);
     });
     pileR.innerHTML = '';
