@@ -522,6 +522,10 @@
 .ps-row{ display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.08); font-size:14px; }
 .ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
 .ps-msg{ margin-top:10px; min-height:14px; text-align:center; font-size:11px; color:#6b6b73; }
+.ps-msg.complete{ display:flex; align-items:center; justify-content:center; gap:7px; color:#246B45; }
+.ps-msg .ps-check{ display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border:1px solid currentColor; border-radius:50%; font-size:11px; line-height:1; animation:ps-check-in .42s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ps-check-in{ 0%{ opacity:0; transform:scale(.35) rotate(-35deg); } 65%{ opacity:1; transform:scale(1.18) rotate(8deg); } 100%{ transform:scale(1) rotate(0); } }
+@media (prefers-reduced-motion:reduce){ .ps-msg .ps-check{ animation:none; } }
 
 /* ---- receipts: printed after payment (mock). One slip per house, each on its own paper. ---- */
 .rcpt-stage{
@@ -1595,10 +1599,10 @@ function formatRecognizedValue(usdPrice, zar){
 
   /* Record: the wallet is the primary action (fewest steps to done), Add to Bag is
      the quieter outline beneath it, and the bag link only appears once there is a bag. */
-  mountExpress(document.getElementById('record-actions'), 'Buy with', 'record-pay',
+  mountExpress(document.getElementById('record-actions'), 'Press the button on screen', 'record-pay',
     '<button type="button" class="btn-line" id="record-add">Add to Bag</button>',
     '<button type="button" id="record-viewbag" hidden>View bag</button>');
-  mountExpress(document.getElementById('bag-express'), 'Pay with', 'bag-pay');
+  mountExpress(document.getElementById('bag-express'), 'Press the button on screen', 'bag-pay');
   paintWallet();
 
   const addBtn = document.getElementById('record-add');
@@ -1760,7 +1764,7 @@ function formatRecognizedValue(usdPrice, zar){
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
     ).join('');
     document.getElementById('ps-total').textContent = sumOf(order);
-    psMsg.textContent = '';
+    psMsg.textContent = ''; psMsg.classList.remove('complete');
     sheetBack.classList.add('open');
     sheet.classList.add('open');
   }
@@ -2085,7 +2089,7 @@ function formatRecognizedValue(usdPrice, zar){
     if (psConfirm.disabled) return;
     psConfirm.disabled = true;
     psMsg.textContent = 'Completing checkout demonstration…';
-    setTimeout(() => { psMsg.textContent = '✓ Checkout step complete · no funds transferred'; }, 800);
+    setTimeout(() => { psMsg.classList.add('complete'); psMsg.innerHTML = '<span class="ps-check" aria-hidden="true">✓</span><span>Checkout step complete · no funds transferred</span>'; }, 800);
     setTimeout(() => {
       closeSheet();
       closeRecord();
