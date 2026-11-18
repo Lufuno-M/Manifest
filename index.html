@@ -2063,8 +2063,8 @@ function formatRecognizedValue(usdPrice, zar){
     return `<div class="rcpt-paper bape">
       ${logo}
       <div class="bp-word">*A BATHING APE*®</div>
-      <div class="bp-store">ONLINE ORDER</div>
-      <div class="bp-meta"><b>Order #:</b> ${no}<br><b>Channel:</b> Online<br>${COLLECTOR_NAME ? '<b>Collector:</b> ' + COLLECTOR_NAME + '<br>' : ''}${date} ${time}</div>
+      
+      <div class="bp-meta"><b>Order #:</b> ${no}<br>${COLLECTOR_NAME ? '' : ''}${date} ${time}</div>
       <div class="bp-g bp-h"><span>Item</span><span>Price</span><span>Qty</span><span>Total</span></div>
       ${rows}
       <div class="bp-line"></div>
@@ -2074,12 +2074,12 @@ function formatRecognizedValue(usdPrice, zar){
         <div class="t"><span>Total:</span><b>${zarFormat(total)}</b></div>
       </div>
       <div class="bp-tender">
-        <div class="th"><span>Selected wallet</span><span>${wallet}</span></div>
-        <div><span>Checkout step</span><span>Complete</span></div>
+        <div class="th"><span>Payment</span><span>${wallet}</span></div>
+        
       </div>
       <div class="bp-bc">${code39(no)}</div>
       <div class="bp-bcn">${no}</div>
-      <div class="bp-foot">Thank you for your order.</div>
+      
       <div class="rcpt-fine"><button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div>
     </div>
     ${orderPage(items, no, date, '<img src="assets/receipt-logo-bape.png" alt="" onerror="this.outerHTML=\'<b>A BATHING APE®</b>\'">')}`;
@@ -2101,9 +2101,9 @@ function formatRecognizedValue(usdPrice, zar){
         ${vat ? `<div><span>VAT</span><span>${zarFormat(vat)}</span></div>` : ''}
         <div class="t"><span>Total</span><span>${zarFormat(total)}</span></div>
       </div>
-      <div class="sp-from"><b>Payment method</b><br>${safeRecordText(wallet)}</div>
+      <div class="sp-from"><b>Payment</b><br>${safeRecordText(wallet)}</div>
       <div class="sp-bc">${code39(no)}</div>
-      <div class="sp-fine">Thank you.</div>
+      
     </div>`;
   }
   function rafSimonsSlip(items, no, date){
@@ -2116,8 +2116,8 @@ function formatRecognizedValue(usdPrice, zar){
       </div>`).join('');
     return `<div class="rcpt-paper raf-simons-slip">
       <div class="rs-brand">RAF SIMONS</div>
-      <div class="rs-season">AUTUMN / WINTER 2005</div>
-      <div class="rs-collection">HISTORY OF MY WORLD</div>
+      
+      
       <div class="rs-rule"></div>
       <div class="rs-meta"><span>ORDER</span><b>${no}</b></div>
       <div class="rs-meta"><span>DATE</span><b>${date}</b></div>
@@ -2129,7 +2129,7 @@ function formatRecognizedValue(usdPrice, zar){
       <div class="rs-tender"><span>PAYMENT</span><b>${safeRecordText(wallet)}</b></div>
       <div class="rs-barcode">${code39(no)}</div>
       <div class="rs-ref">${no}</div>
-      <div class="rs-foot">ALL SHADOWS AND DELIVERANCE</div>
+      
     </div>`;
   }
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
@@ -2141,18 +2141,7 @@ function formatRecognizedValue(usdPrice, zar){
     const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
     const rows = items.map(b => '<div class="thermal-item"><div class="thermal-description"><b>' + safeRecordText(b.name) + '</b>' + (b.maker.includes("×") ? '<small>' + safeRecordText(b.maker) + '</small>' : '') + '<small>' + (b.size ? 'SIZE ' + safeRecordText(b.size) + ' · ' : '') + 'QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
     const names = {lv:"LOUIS VUITTON",goyard:"GOYARD",hermes:"HERMÈS",margiela:"MAISON MARGIELA",offwhite:"OFF-WHITE",chrome:"CHROME HEARTS",raf:"RAF SIMONS",balenciaga:"BALENCIAGA",vetements:"VETEMENTS",numbernine:"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY",palm:"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY",heron:"HERON PRESTON",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN",plain:safeRecordText(br.w)}[style] || safeRecordText(br.w);
-    let sub = br.s ? '<div class="brand-receipt-sub">' + safeRecordText(br.s) + '</div>' : '';
-    if(style==="raf") sub = '<div class="brand-receipt-season">AUTUMN / WINTER 2005</div><div class="brand-receipt-collection">HISTORY OF MY WORLD</div>';
-    if(style==="lv") sub = '<div class="brand-receipt-sub">MAISON FONDÉE EN 1854</div>';
-    if(style==="hermes") sub = '<div class="brand-receipt-sub">24 FAUBOURG SAINT-HONORÉ · PARIS</div>';
-    if(style==="goyard") sub = '<div class="brand-receipt-sub">PARIS</div>';
-    if(style==="margiela") sub = '<div class="brand-receipt-sub">0 0 0 0</div>';
-    if(style==="offwhite") sub = '<div class="brand-receipt-sub">c/o VIRGIL ABLOH™</div>';
-    if(style==="chrome") sub = '<div class="brand-receipt-sub">HOLLYWOOD · LOS ANGELES</div>';
-    if(style==="adidas") sub = '<div class="brand-receipt-sub">IMPOSSIBLE IS NOTHING</div>';
-    if(style==="nike") sub = '<div class="brand-receipt-sub">JUST DO IT.</div>';
-    const head = style==="raf" ? "ITEM / DESCRIPTION" : "DESCRIPTION";
-    return '<div class="rcpt-paper house-receipt house-' + style + '"><header class="house-receipt-head"><div class="house-wordmark">' + names + '</div>' + sub + '</header><div class="house-order"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="house-order"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="house-items-head"><span>' + head + '</span><span>AMOUNT</span></div><div class="house-items">' + rows + '</div><div class="house-summary"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="house-grand"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="house-tender"><span>PAYMENT METHOD</span><b>' + safeRecordText(wallet) + '</b></div><div class="house-barcode">' + code39(no) + '</div><div class="house-reference">' + safeRecordText(no) + '</div><footer class="house-receipt-foot">' + safeRecordText(br.f || "Thank you") + '</footer></div>';
+    return '<div class="rcpt-paper house-receipt house-' + style + '"><header class="house-receipt-head"><div class="house-wordmark">' + names + '</div></header><div class="house-order"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="house-order"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="house-items-head"><span>ITEM</span><span>PRICE</span></div><div class="house-items">' + rows + '</div><div class="house-summary"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="house-grand"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="house-tender"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="house-barcode">' + code39(no) + '</div><div class="house-reference">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
     if (br.r) return br.r(items, no, date);
@@ -2160,8 +2149,8 @@ function formatRecognizedValue(usdPrice, zar){
   }
   function manifestReceipt(items, no, date){
     const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
-    const rows = items.map(b => '<div class="mr-object"><div class="mr-object-name">' + safeRecordText(b.name) + '</div><div class="mr-object-meta">' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</div><div class="mr-row"><span>MANIFEST VALUE</span><b>' + safeRecordText(b.label) + '</b></div></div>').join('');
-    return '<div class="rcpt-paper manifest-record"><div class="mr-kicker">MANIFEST / ACQUISITION RECORD</div><div class="mr-title">The record of acquisition.</div><div class="mr-sub">A record of the objects collected.</div><div class="mr-rule"></div><div class="mr-row"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="mr-row"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="mr-rule"></div>' + rows + '<div class="mr-rule"></div><div class="mr-total"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div><div class="mr-payment"><strong>PAYMENT</strong>' + safeRecordText(wallet) + '<small>Manifest collector record</small></div><div class="mr-code">' + safeRecordText(no) + '</div><div class="mr-issuer"><strong>MANIFEST</strong>THE ARCHIVE OF ATTENTION</div></div>';
+    const rows = items.map(b => '<div class="mr-object"><div class="mr-object-name">' + safeRecordText(b.name) + '</div><div class="mr-object-meta">' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</div><div class="mr-row"><span>PRICE</span><b>' + safeRecordText(b.label) + '</b></div></div>').join('');
+    return '<div class="rcpt-paper manifest-record"><div class="mr-kicker">MANIFEST</div><div class="mr-rule"></div><div class="mr-row"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="mr-row"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="mr-rule"></div>' + rows + '<div class="mr-rule"></div><div class="mr-total"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div><div class="mr-payment"><strong>PAYMENT</strong>' + safeRecordText(wallet) + '</div><div class="mr-code">' + safeRecordText(no) + '</div></div>';
   }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
