@@ -521,12 +521,17 @@
 .ps-head button{ font-size:14px; color:#1a73e8; font-weight:400; }
 .ps-row{ display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.08); font-size:14px; }
 .ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
-.ps-msg{ margin-top:10px; min-height:14px; text-align:center; font-size:11px; color:#6b6b73; }
-.ps-msg.complete{ display:flex; align-items:center; justify-content:center; gap:7px; color:#246B45; }
-.ps-msg .ps-check{ display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px; border:1px solid currentColor; border-radius:50%; font-size:11px; line-height:1; animation:ps-check-in .42s cubic-bezier(.2,.8,.2,1) both; }
-@keyframes ps-check-in{ 0%{ opacity:0; transform:scale(.35) rotate(-35deg); } 65%{ opacity:1; transform:scale(1.18) rotate(8deg); } 100%{ transform:scale(1) rotate(0); } }
-@media (prefers-reduced-motion:reduce){ .ps-msg .ps-check{ animation:none; } }
-
+.ps-msg{height:0;overflow:hidden;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;margin:0;transition:height .25s,opacity .25s}
+.ps-msg.is-processing,.ps-msg.complete{height:150px;opacity:1;margin:8px 0 2px;color:#111;font-size:12px}
+.ps-orbit{width:66px;height:66px;border:2px solid #d6d6dc;border-top-color:#151515;border-radius:50%;animation:ps-orbit .8s linear infinite;position:relative}
+.ps-orbit:after{content:'';position:absolute;inset:10px;border:1px solid #c5c5cc;border-radius:50%}
+.ps-success-mark{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:#111;color:#fff;font:400 36px/1 'Archivo',sans-serif;animation:ps-success .55s cubic-bezier(.2,.8,.2,1) both}
+.ps-status{font:500 12px 'Archivo',sans-serif;letter-spacing:.02em}
+.pay-sheet[data-wallet="google"] .ps-orbit{border-top-color:#4285f4;border-right-color:#34a853}.pay-sheet[data-wallet="samsung"] .ps-orbit{border-top-color:#1428a0;border-right-color:#1428a0}
+.pay-sheet[data-wallet="google"] .ps-success-mark{background:#4285f4}.pay-sheet[data-wallet="samsung"] .ps-success-mark{background:#1428a0}
+.pay-sheet.processing #ps-confirm,.pay-sheet.confirmed #ps-confirm{opacity:.35;pointer-events:none}
+@keyframes ps-orbit{to{transform:rotate(360deg)}}@keyframes ps-success{0%{opacity:0;transform:scale(.35)}70%{opacity:1;transform:scale(1.12)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.ps-orbit,.ps-success-mark{animation:none}}
 /* ---- receipts: printed after payment (mock). One slip per house, each on its own paper. ---- */
 .rcpt-stage{
   position:fixed; inset:0; z-index:500; overflow-y:auto; overflow-x:hidden;
@@ -1042,8 +1047,8 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
   <div class="ps-head"><span id="ps-wallet"></span><button type="button" id="ps-cancel">Cancel</button></div>
   <div id="ps-rows"></div>
   <div class="ps-total"><span>Total</span><span id="ps-total"></span></div>
+  <div class="ps-msg" id="ps-msg" aria-live="polite"></div>
   <button class="btn-black" id="ps-confirm"></button>
-  <div class="ps-msg" id="ps-msg"></div>
 </div>
 
 <div class="rcpt-stage" id="rcpt-stage" role="dialog" aria-modal="true" aria-label="Receipts">
@@ -1790,12 +1795,12 @@ function formatRecognizedValue(usdPrice, zar){
 
   function openSheet(){
     document.getElementById('ps-wallet').innerHTML = MARKS[wallet];
-    psConfirm.textContent = wallet === 'Apple Pay' ? 'Continue demo checkout' : 'Complete checkout demo';
+    psConfirm.textContent = 'Continue';
     document.getElementById('ps-rows').innerHTML = order.map(b =>
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
     ).join('');
     document.getElementById('ps-total').textContent = sumOf(order);
-    psMsg.textContent = ''; psMsg.classList.remove('complete');
+    psMsg.className = 'ps-msg'; psMsg.innerHTML = ''; sheet.classList.remove('confirmed','processing'); sheet.dataset.wallet = wallet === 'Google Pay' ? 'google' : wallet === 'Samsung Pay' ? 'samsung' : 'apple';
     sheetBack.classList.add('open');
     sheet.classList.add('open');
   }
@@ -1938,7 +1943,7 @@ function formatRecognizedValue(usdPrice, zar){
     return `<div class="rcpt-paper bape">
       ${logo}
       <div class="bp-word">*A BATHING APE*®</div>
-      <div class="bp-store">Issued by <b>MANIFEST</b><br>Independent collector documentation · Not brand-issued</div>
+      <div class="bp-store">ONLINE ORDER</div>
       <div class="bp-meta"><b>Order #:</b> ${no}<br><b>Channel:</b> Online<br>${COLLECTOR_NAME ? '<b>Collector:</b> ' + COLLECTOR_NAME + '<br>' : ''}${date} ${time}</div>
       <div class="bp-g bp-h"><span>Item</span><span>Price</span><span>Qty</span><span>Total</span></div>
       ${rows}
@@ -1954,7 +1959,7 @@ function formatRecognizedValue(usdPrice, zar){
       </div>
       <div class="bp-bc">${code39(no)}</div>
       <div class="bp-bcn">${no}</div>
-      <div class="bp-foot">Checkout demonstration completed.<br><small>No funds transferred · Not a payment receipt.</small></div>
+      <div class="bp-foot">Thank you for your order.</div>
       <div class="rcpt-fine"><button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div>
     </div>
     ${orderPage(items, no, date, '<img src="assets/receipt-logo-bape.png" alt="" onerror="this.outerHTML=\'<b>A BATHING APE®</b>\'">')}`;
@@ -1976,9 +1981,9 @@ function formatRecognizedValue(usdPrice, zar){
         ${vat ? `<div><span>VAT</span><span>${zarFormat(vat)}</span></div>` : ''}
         <div class="t"><span>Total</span><span>${zarFormat(total)}</span></div>
       </div>
-      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Independent collector record · Not brand-issued<br><b>Selected wallet</b> ${wallet}<br><b>Checkout</b> Demonstration completed<br><small>No funds transferred · Not a payment receipt.</small></div>
+      <div class="sp-from"><b>Payment method</b><br>${safeRecordText(wallet)}</div>
       <div class="sp-bc">${code39(no)}</div>
-      <div class="sp-fine">Retained in the Manifest archive.</div>
+      <div class="sp-fine">Thank you.</div>
     </div>`;
   }
   function rafSimonsSlip(items, no, date){
@@ -2011,74 +2016,29 @@ function formatRecognizedValue(usdPrice, zar){
 
   // Each acquisition record has its own document grammar. These are Manifest-authored
   // records inspired by each house's visual language, never documents issued by the houses.
-  const RECORD_KIND = {
-    lv:'lv', goyard:'goyard', hermes:'hermes', margiela:'margiela',
-    'off-white':'offwhite', 'chrome-hearts':'chrome', 'raf-simons':'raf',
-    sicko:'recognition', yeezy:'recognition', murakami:'recognition',
-    'number-nine':'margiela', vetements:'industrial', balenciaga:'industrial',
-    palace:'industrial', revenge:'industrial', vlone:'industrial', ambush:'industrial',
-    awake:'editorial', 'palm-angels':'industrial', needles:'editorial', kaws:'recognition',
-    cpfm:'recognition', adidas:'athletic', nike:'athletic', beats:'technology',
-    givenchy:'maison', 'heron-preston':'industrial', vivet:'industrial', youngboy:'recognition'
-  };
   const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  function acquisitionRecord(br, items, no, date){
-    const kind = RECORD_KIND[br.k] || 'standard';
-    const classes = {lv:'lv-record',goyard:'goyard-record',hermes:'hermes-record',maison:'lv-record',margiela:'margiela-record',offwhite:'offwhite-record',chrome:'chrome-record',raf:'raf-record',editorial:'raf-record',recognition:'recognition-record',industrial:'industrial-record',athletic:'athletic-record',technology:'technology-record',standard:''};
-    const names = items.map(b => safeRecordText(b.name));
-    const objects = items.map(b => `<div class="mr-object"><div class="mr-object-name">${safeRecordText(b.name)}</div><div class="mr-object-meta">${b.size ? 'Size · '+safeRecordText(b.size)+'　' : ''}Quantity · 1${b.maker.includes('×') ? '<br>'+safeRecordText(b.maker) : ''}</div></div>`).join('');
-    const total = sumOf(items);
-    const issuer = {
-      lv:'Record established by Manifest',
-      goyard:'Émis par Manifest',
-      hermes:'Document établi par Manifest',
-      margiela:'MANIFEST / ARCHIVE',
-      offwhite:'"ISSUED BY" — MANIFEST',
-      chrome:'Filed and retained by Manifest',
-      raf:'Filed by Manifest',
-      recognition:'Recognised and recorded by Manifest',
-      industrial:'MANIFEST · OBJECT RECORD',
-      standard:'Issued by Manifest', editorial:'Selected and filed by Manifest', athletic:'Recorded by Manifest', technology:'Registered in the Manifest archive', maison:'Document établi par Manifest'
-    }[kind];
-    const heading = {
-      lv:'Maison acquisition record',
-      goyard:'ACQUISITION',
-      hermes:'Record of acquisition',
-      margiela:'Object / Entry',
-      offwhite:'OBJECT RECORD',
-      chrome:'COLLECTOR’S RECORD',
-      raf:'Object, acquired.',
-      recognition:'Object recognised',
-      industrial:'ACQUISITION FILE',
-      standard:'Acquisition record', editorial:'Field record', athletic:'Equipment acquisition record', technology:'Device acquisition record', maison:'Maison record'
-    }[kind];
-    const metadata = kind === 'lv' || kind === 'goyard' || kind === 'hermes' || kind === 'maison'
-      ? `<div class="mr-row"><span>Record reference</span><b>${no}</b></div><div class="mr-row"><span>Date recorded</span><b>${date}</b></div>`
-      : kind === 'raf'
-      ? `<div class="mr-row"><span>Manifest file</span><b>${no}</b></div><div class="mr-row"><span>Filed</span><b>${date}</b></div>`
-      : `<div class="mr-row"><span>MANIFEST REF.</span><b>${no}</b></div><div class="mr-row"><span>RECORDED</span><b>${date}</b></div>`;
-    const payment = `<div class="mr-payment"><strong>WALLET CHECKOUT · COMPLETED</strong>Method · ${safeRecordText(wallet)}<small>Manifest checkout demonstration. No funds were transferred; this is not a payment receipt.</small></div>`;
-    const issuerBlock = kind === 'offwhite'
-      ? `<div class="mr-issuer"><strong>"ISSUED BY"</strong>MANIFEST<br>Independent collector documentation</div>`
-      : `<div class="mr-issuer"><strong>${issuer}</strong><span class="mr-sub">Independent collector documentation · Not brand-issued</span></div>`;
-    return `<div class="rcpt-paper manifest-record ${classes[kind]}">
-      <div class="mr-kicker">MANIFEST　/　${kind === 'raf' ? 'FIELD NOTE' : 'COLLECTOR DOCUMENT'}</div>
-      <div class="mr-title">${heading}</div>
-      <div class="mr-sub">${safeRecordText(br.w)}${br.s ? '　·　'+safeRecordText(br.s) : ''}</div>
-      <div class="mr-rule"></div>
-      ${metadata}
-      <div class="mr-rule"></div>
-      ${objects}
-      <div class="mr-rule"></div>
-      <div class="mr-total"><span>${kind === 'raf' ? 'Acquisition value' : 'Recorded total'}</span><span>${total}</span></div>
-      ${payment}
-      ${issuerBlock}
-      <div class="mr-code">${no}　/　${names.length} OBJECT${names.length === 1 ? '' : 'S'}</div>
-    </div>`;
+  const RECEIPT_STYLE = {lv:"lv",goyard:"goyard",hermes:"hermes",margiela:"margiela","off-white":"offwhite","chrome-hearts":"chrome","raf-simons":"raf",balenciaga:"balenciaga",vetements:"vetements","number-nine":"numbernine",palace:"palace",sicko:"sicko",awake:"awake","palm-angels":"palm",needles:"needles",kaws:"kaws",murakami:"murakami",cpfm:"cpfm",vlone:"vlone",yeezy:"yeezy",adidas:"adidas",nike:"nike",beats:"beats",givenchy:"givenchy","heron-preston":"heron",revenge:"revenge",vivet:"vivet",ambush:"ambush",youngboy:"youngboy"};
+  function brandReceipt(br, items, no, date){
+    const style = RECEIPT_STYLE[br.k] || "plain";
+    const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
+    const rows = items.map(b => '<div class="thermal-item"><div class="thermal-description"><b>' + safeRecordText(b.name) + '</b>' + (b.maker.includes("×") ? '<small>' + safeRecordText(b.maker) + '</small>' : '') + '<small>' + (b.size ? 'SIZE ' + safeRecordText(b.size) + ' · ' : '') + 'QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
+    const names = {lv:"LOUIS VUITTON",goyard:"GOYARD",hermes:"HERMÈS",margiela:"MAISON MARGIELA",offwhite:"OFF-WHITE",chrome:"CHROME HEARTS",raf:"RAF SIMONS",balenciaga:"BALENCIAGA",vetements:"VETEMENTS",numbernine:"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY",palm:"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY",heron:"HERON PRESTON",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN",plain:safeRecordText(br.w)}[style] || safeRecordText(br.w);
+    let sub = br.s ? '<div class="brand-receipt-sub">' + safeRecordText(br.s) + '</div>' : '';
+    if(style==="raf") sub = '<div class="brand-receipt-season">AUTUMN / WINTER 2005</div><div class="brand-receipt-collection">HISTORY OF MY WORLD</div>';
+    if(style==="lv") sub = '<div class="brand-receipt-sub">MAISON FONDÉE EN 1854</div>';
+    if(style==="hermes") sub = '<div class="brand-receipt-sub">24 FAUBOURG SAINT-HONORÉ · PARIS</div>';
+    if(style==="goyard") sub = '<div class="brand-receipt-sub">PARIS</div>';
+    if(style==="margiela") sub = '<div class="brand-receipt-sub">0 0 0 0</div>';
+    if(style==="offwhite") sub = '<div class="brand-receipt-sub">c/o VIRGIL ABLOH™</div>';
+    if(style==="chrome") sub = '<div class="brand-receipt-sub">HOLLYWOOD · LOS ANGELES</div>';
+    if(style==="adidas") sub = '<div class="brand-receipt-sub">IMPOSSIBLE IS NOTHING</div>';
+    if(style==="nike") sub = '<div class="brand-receipt-sub">JUST DO IT.</div>';
+    const head = style==="raf" ? "ITEM / DESCRIPTION" : "DESCRIPTION";
+    return '<div class="rcpt-paper house-receipt house-' + style + '"><header class="house-receipt-head"><div class="house-wordmark">' + names + '</div>' + sub + '</header><div class="house-order"><span>ORDER</span><b>' + safeRecordText(no) + '</b></div><div class="house-order"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="house-items-head"><span>' + head + '</span><span>AMOUNT</span></div><div class="house-items">' + rows + '</div><div class="house-summary"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="house-grand"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="house-tender"><span>PAYMENT METHOD</span><b>' + safeRecordText(wallet) + '</b></div><div class="house-barcode">' + code39(no) + '</div><div class="house-reference">' + safeRecordText(no) + '</div><footer class="house-receipt-foot">' + safeRecordText(br.f || "Thank you") + '</footer></div>';
   }
   function slipHTML(br, items, no, date){
-    if (!br.r) return acquisitionRecord(br, items, no, date);
-    if (br.r) return br.r(items, no, date);   // houses with their own document (BAPE)
+    if (br.r) return br.r(items, no, date);
+    return brandReceipt(br, items, no, date);   // houses with their own document (BAPE)
     const q = (s) => br.q ? '"' + s + '"' : s;
     const look = { paper:br.paper, ink:br.ink, mute:br.mute, rule:br.rule || br.mute, band:br.band, bh:br.bh };
     const vars = Object.entries(look).filter(([, v]) => v).map(([k, v]) => '--' + k + ':' + v).join(';');
@@ -2145,9 +2105,10 @@ function formatRecognizedValue(usdPrice, zar){
   psConfirm.addEventListener('click', () => {
     if (psConfirm.disabled) return;
     psConfirm.disabled = true;
-    psMsg.textContent = 'Completing checkout demonstration…';
-    setTimeout(() => { psMsg.classList.add('complete'); psMsg.innerHTML = '<span class="ps-check" aria-hidden="true">✓</span><span>Checkout step complete · no funds transferred</span>'; }, 800);
+    psMsg.className = 'ps-msg is-processing'; psMsg.innerHTML = '<span class="ps-orbit" aria-hidden="true"></span><span class="ps-status">Confirming</span>'; sheet.classList.add('processing');
+    setTimeout(() => { psMsg.className = 'ps-msg complete'; psMsg.innerHTML = '<span class="ps-success-mark" aria-hidden="true">✓</span><span class="ps-status">Complete</span>'; sheet.classList.remove('processing'); sheet.classList.add('confirmed'); }, 800);
     setTimeout(() => {
+      sheet.classList.remove('confirmed','processing');
       closeSheet();
       closeRecord();
       psConfirm.disabled = false;
