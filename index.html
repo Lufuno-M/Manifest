@@ -524,13 +524,13 @@
 .ps-msg{height:0;overflow:hidden;opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;margin:0;transition:height .25s,opacity .25s}
 .ps-msg.is-processing,.ps-msg.complete{height:150px;opacity:1;margin:8px 0 2px;color:#111;font-size:12px}
 .ps-orbit{width:66px;height:66px;border:2px solid #d6d6dc;border-top-color:#151515;border-radius:50%;animation:ps-orbit .8s linear infinite;position:relative}
-.ps-orbit:after{content:'';position:absolute;inset:10px;border:1px solid #c5c5cc;border-radius:50%}
+.ps-orbit:after{content:'Pay';position:absolute;inset:10px;display:grid;place-items:center;border:1px solid #c5c5cc;border-radius:50%;font:700 13px 'Archivo',sans-serif;animation:ps-orbit-label .8s linear infinite}
 .ps-success-mark{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:#111;color:#fff;font:400 36px/1 'Archivo',sans-serif;animation:ps-success .55s cubic-bezier(.2,.8,.2,1) both}
 .ps-status{font:500 12px 'Archivo',sans-serif;letter-spacing:.02em}
-.pay-sheet[data-wallet="google"] .ps-orbit{border-top-color:#4285f4;border-right-color:#34a853}.pay-sheet[data-wallet="samsung"] .ps-orbit{border-top-color:#1428a0;border-right-color:#1428a0}
+.pay-sheet[data-wallet="google"] .ps-orbit{border-top-color:#4285f4;border-right-color:#34a853}.pay-sheet[data-wallet="google"] .ps-orbit:after{content:'G';color:#4285f4;font-size:21px}.pay-sheet[data-wallet="samsung"] .ps-orbit{border-top-color:#1428a0;border-right-color:#1428a0}.pay-sheet[data-wallet="samsung"] .ps-orbit:after{content:'S';color:#1428a0;font-size:21px}
 .pay-sheet[data-wallet="google"] .ps-success-mark{background:#4285f4}.pay-sheet[data-wallet="samsung"] .ps-success-mark{background:#1428a0}
 .pay-sheet.processing #ps-confirm,.pay-sheet.confirmed #ps-confirm{opacity:.35;pointer-events:none}
-@keyframes ps-orbit{to{transform:rotate(360deg)}}@keyframes ps-success{0%{opacity:0;transform:scale(.35)}70%{opacity:1;transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes ps-orbit{to{transform:rotate(360deg)}}@keyframes ps-orbit-label{to{transform:rotate(-360deg)}}@keyframes ps-success{0%{opacity:0;transform:scale(.35)}70%{opacity:1;transform:scale(1.12)}100%{transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.ps-orbit,.ps-success-mark{animation:none}}
 /* ---- receipts: printed after payment (mock). One slip per house, each on its own paper. ---- */
 .rcpt-stage{
@@ -1820,8 +1820,8 @@ function formatRecognizedValue(usdPrice, zar){
     openSheet();
   });
 
-  // ---- Acquisition records: after the checkout demonstration, one Manifest record per house prints out of the slot,
-  // each on that house's own paper. Items from the same house share a slip, even
+  // ---- Brand-specific receipts print after checkout, one slip per house.
+  // Each house has its own receipt grammar. Items from the same house share a slip, even
   // across collabs ("Nike × Supreme" prints on Supreme's slip, with its credit line).
   const stageR = document.getElementById('rcpt-stage');
   const pileR = document.getElementById('rcpt-pile');
@@ -1890,9 +1890,7 @@ function formatRecognizedValue(usdPrice, zar){
     B('ambush', /ambush/i, 'AMBUSH', 'Tokyo', 'Thank you', 'AMB', { wcss:A(800,19,5) }),
     B('youngboy', /youngboy/i, 'YOUNGBOY NEVER BROKE AGAIN', '', 'Thank you', 'NBA', { wcss:A(800,11,1) })
   ];
-  // ---- BAPE: its own two documents. The in-store ticket (prints) and the online order page
-  // (tap "Order page" on the slip; tap "Back to slip" to return). Manifest is the issuer on both:
-  // house look and structure, Manifest's facts (order ref, items, ZAR, wallet).
+  // ---- BAPE: its in-store ticket and linked order detail.
   const C39 = { '0':'nnnwwnwnn','1':'wnnwnnnnw','2':'nnwwnnnnw','3':'wnwwnnnnn','4':'nnnwwnnnw','5':'wnnwwnnnn','6':'nnwwwnnnn','7':'nnnwnnwnw','8':'wnnwnnwnn','9':'nnwwnnwnn',
     A:'wnnnnwnnw',B:'nnwnnwnnw',C:'wnwnnwnnn',D:'nnnnwwnnw',E:'wnnnwwnnn',F:'nnwnwwnnn',G:'nnnnnwwnw',H:'wnnnnwwnn',I:'nnwnnwwnn',J:'nnnnwwwnn',K:'wnnnnnnww',L:'nnwnnnnww',M:'wnwnnnnwn',
     N:'nnnnwnnww',O:'wnnnwnnwn',P:'nnwnwnnwn',Q:'nnnnnnwww',R:'wnnnnnwwn',S:'nnwnnnwwn',T:'nnnnwnwwn',U:'wwnnnnnnw',V:'nwwnnnnnw',W:'wwwnnnnnn',X:'nwnnwnnnw',Y:'wwnnwnnnn',Z:'nwwnwnnnn',
@@ -1920,14 +1918,12 @@ function formatRecognizedValue(usdPrice, zar){
   function orderPage(items, no, date, head){
     const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
     const lines = items.map(b =>
-      `<div class="bo-row"><img src="${b.asset}" alt="" onerror="this.style.visibility='hidden'"><div><div class="nm">${b.name}</div><div class="mt">${b.maker}</div>${b.size ? `<div class="mt">Size: ${b.size}</div>` : ''}<div class="mt">SKU: ${bpRef(b)}</div></div><span>1</span><b>${b.label}</b></div>`).join('');
+      `<div class="bo-row"><img src="${b.asset}" alt="" onerror="this.style.visibility='hidden'"><div><div class="nm">${safeRecordText(b.name)}</div><div class="mt">${safeRecordText(b.maker)}</div>${b.size ? `<div class="mt">Size: ${safeRecordText(b.size)}</div>` : ''}<div class="mt">SKU: ${bpRef(b)}</div></div><span>1</span><b>${safeRecordText(b.label)}</b></div>`).join('');
     return `<div class="doc-order">
       <div class="bo-top"><span class="bo-burger"><i></i><i></i><i></i></span>${head}<span class="bo-cart">${BP_CART}${items.length}</span></div>
       <button type="button" class="bp-flip bo-back" data-bp-flip>‹ Back to slip</button>
-      <div class="bo-h">Order #${no}</div>
-      <div class="bo-cols"><b>Product</b><b>Qty</b><b>Total</b></div>
-      ${lines}
-      <div class="bo-fulfil">${BP_TRUCK}<div><b>Checkout demonstration ${date}:</b><br>Issued by Manifest<br>#${no}<br><small>No funds transferred.</small></div></div>
+      <div class="bo-h">Order #${no}</div><div class="bo-cols"><b>Product</b><b>Qty</b><b>Total</b></div>${lines}
+      <div class="bo-fulfil">${BP_TRUCK}<div><b>Order placed ${date}</b><br>Reference #${no}</div></div>
       <div class="bo-total"><span>Total</span><span>${zarFormat(total)}</span></div>
     </div>`;
   }
@@ -2014,8 +2010,6 @@ function formatRecognizedValue(usdPrice, zar){
   }
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
 
-  // Each acquisition record has its own document grammar. These are Manifest-authored
-  // records inspired by each house's visual language, never documents issued by the houses.
   const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const RECEIPT_STYLE = {lv:"lv",goyard:"goyard",hermes:"hermes",margiela:"margiela","off-white":"offwhite","chrome-hearts":"chrome","raf-simons":"raf",balenciaga:"balenciaga",vetements:"vetements","number-nine":"numbernine",palace:"palace",sicko:"sicko",awake:"awake","palm-angels":"palm",needles:"needles",kaws:"kaws",murakami:"murakami",cpfm:"cpfm",vlone:"vlone",yeezy:"yeezy",adidas:"adidas",nike:"nike",beats:"beats",givenchy:"givenchy","heron-preston":"heron",revenge:"revenge",vivet:"vivet",ambush:"ambush",youngboy:"youngboy"};
   function brandReceipt(br, items, no, date){
@@ -2038,30 +2032,7 @@ function formatRecognizedValue(usdPrice, zar){
   }
   function slipHTML(br, items, no, date){
     if (br.r) return br.r(items, no, date);
-    return brandReceipt(br, items, no, date);   // houses with their own document (BAPE)
-    const q = (s) => br.q ? '"' + s + '"' : s;
-    const look = { paper:br.paper, ink:br.ink, mute:br.mute, rule:br.rule || br.mute, band:br.band, bh:br.bh };
-    const vars = Object.entries(look).filter(([, v]) => v).map(([k, v]) => '--' + k + ':' + v).join(';');
-    const lines = items.map(b =>
-      `<div class="rcpt-item">${b.name}</div>` +
-      (b.maker.includes('×') ? `<div class="rcpt-via">${b.maker}</div>` : '') +
-      `<div class="rcpt-row"><span>${q((b.size ? 'Size ' + b.size + ' · ' : '') + 'Qty 1')}</span><b>${b.label}</b></div>`).join('');
-    return `<div class="rcpt-paper" style="${vars}">
-      <div class="band"></div>
-      ${br.k !== 'plain' ? `<img class="brand-logo" src="assets/receipt-logo-${br.k}.png" alt="" onerror="this.remove()">` : ''}
-      <div class="brand-word" style="${br.wcss}">${br.w}</div>
-      <div class="brand-sub">${br.s || '&nbsp;'}</div>
-      <div class="rcpt-row"><span>Slip No.</span><b>${no}</b></div>
-      <div class="rcpt-row"><span>Date</span><b>${date}</b></div>
-      <div class="rcpt-rule"></div>
-      ${lines}
-      <div class="rcpt-rule"></div>
-      <div class="rcpt-row rcpt-total"><span>Total</span><b>${sumOf(items)}</b></div>
-      <div class="rcpt-issued">${q(br.f === 'Merci' ? 'Émis par' : 'Issued by')} <b>Manifest</b><br>Collector's archive · Online</div>
-      <div class="bc"></div>
-      <div class="rcpt-note">${br.f}</div>
-      <div class="rcpt-fine">Keep this slip · <button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div></div>` +
-      orderPage(items, no, date, `<span style="${/background/.test(br.wcss || '') ? br.wcss : (br.wcss || '').replace(/color:[^;]+;?/g, '') + ';color:#111'};text-align:center">${br.w}</span>`);
+    return brandReceipt(br, items, no, date);
   }
   function closeReceipts(){
     rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
