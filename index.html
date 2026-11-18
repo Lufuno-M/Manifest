@@ -1599,10 +1599,10 @@ function formatRecognizedValue(usdPrice, zar){
 
   /* Record: the wallet is the primary action (fewest steps to done), Add to Bag is
      the quieter outline beneath it, and the bag link only appears once there is a bag. */
-  mountExpress(document.getElementById('record-actions'), 'Press the button on screen', 'record-pay',
+  mountExpress(document.getElementById('record-actions'), 'Continue with', 'record-pay',
     '<button type="button" class="btn-line" id="record-add">Add to Bag</button>',
     '<button type="button" id="record-viewbag" hidden>View bag</button>');
-  mountExpress(document.getElementById('bag-express'), 'Press the button on screen', 'bag-pay');
+  mountExpress(document.getElementById('bag-express'), 'Continue with', 'bag-pay');
   paintWallet();
 
   const addBtn = document.getElementById('record-add');
