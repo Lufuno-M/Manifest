@@ -564,6 +564,8 @@
 .rcpt-total{ font-weight:700; font-size:13px; border-top:1px solid var(--ink); padding-top:6px; margin-top:6px; }
 .rcpt-total span{ color:var(--ink); }
 .rcpt-paper .bc{ height:34px; margin-top:14px; background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 4px,var(--ink) 4px 5px,transparent 5px 8px,var(--ink) 8px 11px,transparent 11px 12px); }
+.rcpt-issued{ margin-top:12px; text-align:center; font-size:9px; line-height:14px; letter-spacing:1.2px; text-transform:uppercase; color:var(--mute); }
+.rcpt-issued b{ font-weight:700; color:var(--ink); letter-spacing:1.6px; }
 .rcpt-note{ margin-top:12px; text-align:center; font-size:10px; line-height:15px; opacity:.8; }
 .rcpt-fine{ margin-top:10px; text-align:center; font-size:8px; letter-spacing:1.6px; text-transform:uppercase; color:var(--mute); }
 .rcpt-done{
@@ -622,6 +624,7 @@
 /* ---- Supreme: the parcel invoice (Courier, box logo, Order Detail with thumbnail) ---- */
 .rcpt-paper.supreme{ font-family:'Courier New',Courier,monospace; font-size:10.5px; line-height:14px; --paper:#fff; --ink:#111; --mute:#444; }
 .supreme .sp-box{ display:inline-block; background:#da1f26; color:#fff; font:italic 800 22px/1 'Archivo',Arial,sans-serif; letter-spacing:-.6px; padding:6px 10px 7px; }
+.supreme .sp-logo{ display:block; height:34px; width:auto; max-width:100%; }
 .supreme .sp-ord{ margin:14px 0 2px; font-weight:700; font-size:11.5px; }
 .supreme .sp-date{ margin-bottom:12px; }
 .supreme .sp-hd{ font-weight:700; margin-bottom:8px; }
@@ -1801,6 +1804,7 @@ function formatRecognizedValue(usdPrice, zar){
     }
     return `<svg viewBox="0 0 ${x} 40" preserveAspectRatio="none" aria-hidden="true" fill="#111">${bars}</svg>`;
   }
+  const COLLECTOR_NAME = '';   // leave empty: Manifest doesn't know who is paying. Set a name here only if the slip should carry one.
   const BP_VAT = 0.15;   // SA VAT, shown as included in the price. Set to 0 to drop the VAT line.
   const BP_TRUCK = '<svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#111" stroke-width="1.4" aria-hidden="true"><rect x="1" y="3" width="15" height="11"/><path d="M16 6h5l4 4v4h-9z"/><circle cx="6" cy="16" r="2" fill="#fff"/><circle cx="20" cy="16" r="2" fill="#fff"/></svg>';
   const BP_CART = '<svg width="24" height="22" viewBox="0 0 24 22" fill="none" stroke="#111" stroke-width="1.4" aria-hidden="true"><path d="M1 2h4l3 11h11l3-8H6"/><circle cx="9" cy="18" r="1.6"/><circle cx="18" cy="18" r="1.6"/></svg>';
@@ -1817,7 +1821,7 @@ function formatRecognizedValue(usdPrice, zar){
       <div class="bo-h">Order #${no}</div>
       <div class="bo-cols"><b>Product</b><b>Qty</b><b>Total</b></div>
       ${lines}
-      <div class="bo-fulfil">${BP_TRUCK}<div><b>Confirmed ${date}:</b><br>Manifest<br>#${no}</div></div>
+      <div class="bo-fulfil">${BP_TRUCK}<div><b>Confirmed ${date}:</b><br>Issued by Manifest<br>#${no}</div></div>
       <div class="bo-total"><span>Total</span><span>${zarFormat(total)}</span></div>
     </div>`;
   }
@@ -1833,8 +1837,8 @@ function formatRecognizedValue(usdPrice, zar){
     return `<div class="rcpt-paper bape">
       ${logo}
       <div class="bp-word">*A BATHING APE*®</div>
-      <div class="bp-store"><b>MANIFEST</b><br>Collector's archive · Online</div>
-      <div class="bp-meta"><b>Order #:</b> ${no}<br><b>Channel:</b> Online<br><b>Collector:</b> Lufuno M.<br>${date} ${time}</div>
+      <div class="bp-store">Issued by <b>MANIFEST</b><br>Collector's archive · Online</div>
+      <div class="bp-meta"><b>Order #:</b> ${no}<br><b>Channel:</b> Online<br>${COLLECTOR_NAME ? '<b>Collector:</b> ' + COLLECTOR_NAME + '<br>' : ''}${date} ${time}</div>
       <div class="bp-g bp-h"><span>Item</span><span>Price</span><span>Qty</span><span>Total</span></div>
       ${rows}
       <div class="bp-line"></div>
@@ -1847,7 +1851,6 @@ function formatRecognizedValue(usdPrice, zar){
         <div class="th"><span>Tender</span><span>Amount</span></div>
         <div><span>${wallet}</span><span>${zarFormat(total)}</span></div>
         <div class="th"><span>Net Payment:</span><span>${zarFormat(total)}</span></div>
-        <div class="th"><span>Change:</span><span>${zarFormat(0)}</span></div>
       </div>
       <div class="bp-bc">${code39(no)}</div>
       <div class="bp-bcn">${no}</div>
@@ -1862,7 +1865,7 @@ function formatRecognizedValue(usdPrice, zar){
     const rows = items.map(b =>
       `<div class="sp-it"><img src="${b.asset}" alt="" onerror="this.style.visibility='hidden'"><div>${b.name}${b.maker.includes('×') ? '<br>' + b.maker : ''}${b.size ? '<br>Size: ' + b.size : ''}</div><span>${b.label}</span></div>`).join('');
     return `<div class="rcpt-paper supreme">
-      <span class="sp-box">Supreme</span>
+      <img class="sp-logo" src="assets/receipt-logos/supreme.png" alt="Supreme" onerror="this.outerHTML='<span class=&quot;sp-box&quot;>Supreme</span>'">
       <div class="sp-ord">Order #${no}</div>
       <div class="sp-date">${date}</div>
       <div class="sp-hd">Order Detail</div>
@@ -1900,6 +1903,7 @@ function formatRecognizedValue(usdPrice, zar){
       ${lines}
       <div class="rcpt-rule"></div>
       <div class="rcpt-row rcpt-total"><span>Total</span><b>${sumOf(items)}</b></div>
+      <div class="rcpt-issued">${q(br.f === 'Merci' ? 'Émis par' : 'Issued by')} <b>Manifest</b><br>Collector's archive · Online</div>
       <div class="bc"></div>
       <div class="rcpt-note">${br.f}</div>
       <div class="rcpt-fine">Keep this slip · <button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div></div>` +
