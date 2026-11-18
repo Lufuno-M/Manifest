@@ -1748,7 +1748,7 @@ function formatRecognizedValue(usdPrice, zar){
 
   function openSheet(){
     document.getElementById('ps-wallet').innerHTML = MARKS[wallet];
-    psConfirm.textContent = wallet === 'Apple Pay' ? 'Pay with Side Button' : 'Confirm';
+    psConfirm.textContent = wallet === 'Apple Pay' ? 'Continue demo checkout' : 'Complete checkout demo';
     document.getElementById('ps-rows').innerHTML = order.map(b =>
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
     ).join('');
@@ -1881,13 +1881,13 @@ function formatRecognizedValue(usdPrice, zar){
       <div class="bo-h">Order #${no}</div>
       <div class="bo-cols"><b>Product</b><b>Qty</b><b>Total</b></div>
       ${lines}
-      <div class="bo-fulfil">${BP_TRUCK}<div><b>Confirmed ${date}:</b><br>Issued by Manifest<br>#${no}</div></div>
+      <div class="bo-fulfil">${BP_TRUCK}<div><b>Checkout demonstration ${date}:</b><br>Issued by Manifest<br>#${no}<br><small>No funds transferred.</small></div></div>
       <div class="bo-total"><span>Total</span><span>${zarFormat(total)}</span></div>
     </div>`;
   }
   function bapeSlip(items, no, date){
     const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
-    const vat = Math.round(total * BP_VAT / (1 + BP_VAT));
+    const vat = 0;
     const time = new Date().toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
     const ref = bpRef;
     const nm = (b) => (b.name + (b.size ? ' ' + b.size : '')).toUpperCase();
@@ -1908,13 +1908,12 @@ function formatRecognizedValue(usdPrice, zar){
         <div class="t"><span>Total:</span><b>${zarFormat(total)}</b></div>
       </div>
       <div class="bp-tender">
-        <div class="th"><span>Tender</span><span>Amount</span></div>
-        <div><span>${wallet}</span><span>${zarFormat(total)}</span></div>
-        <div class="th"><span>Net Payment:</span><span>${zarFormat(total)}</span></div>
+        <div class="th"><span>Selected wallet</span><span>${wallet}</span></div>
+        <div><span>Checkout step</span><span>Complete</span></div>
       </div>
       <div class="bp-bc">${code39(no)}</div>
       <div class="bp-bcn">${no}</div>
-      <div class="bp-foot">Thank you for shopping at Manifest.</div>
+      <div class="bp-foot">Checkout demonstration completed.<br><small>No funds transferred · Not a payment receipt.</small></div>
       <div class="rcpt-fine"><button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div>
     </div>
     ${orderPage(items, no, date, '<img src="assets/receipt-logo-bape.png" alt="" onerror="this.outerHTML=\'<b>A BATHING APE®</b>\'">')}`;
@@ -1936,7 +1935,7 @@ function formatRecognizedValue(usdPrice, zar){
         ${vat ? `<div><span>VAT</span><span>${zarFormat(vat)}</span></div>` : ''}
         <div class="t"><span>Total</span><span>${zarFormat(total)}</span></div>
       </div>
-      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Collector's archive · Online<br><b>Paid with</b> ${wallet}</div>
+      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Independent collector record<br><b>Selected wallet</b> ${wallet}<br><b>Checkout</b> Demonstration completed<br><small>No funds transferred · Not a payment receipt.</small></div>
       <div class="sp-bc">${code39(no)}</div>
       <div class="sp-fine">Thank you for your order.</div>
     </div>`;
