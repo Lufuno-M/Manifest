@@ -1903,7 +1903,7 @@ function formatRecognizedValue(usdPrice, zar){
     return `<div class="rcpt-paper bape">
       ${logo}
       <div class="bp-word">*A BATHING APE*®</div>
-      <div class="bp-store">Issued by <b>MANIFEST</b><br>Collector's archive · Online</div>
+      <div class="bp-store">Issued by <b>MANIFEST</b><br>Independent collector documentation · Not brand-issued</div>
       <div class="bp-meta"><b>Order #:</b> ${no}<br><b>Channel:</b> Online<br>${COLLECTOR_NAME ? '<b>Collector:</b> ' + COLLECTOR_NAME + '<br>' : ''}${date} ${time}</div>
       <div class="bp-g bp-h"><span>Item</span><span>Price</span><span>Qty</span><span>Total</span></div>
       ${rows}
@@ -1941,9 +1941,9 @@ function formatRecognizedValue(usdPrice, zar){
         ${vat ? `<div><span>VAT</span><span>${zarFormat(vat)}</span></div>` : ''}
         <div class="t"><span>Total</span><span>${zarFormat(total)}</span></div>
       </div>
-      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Independent collector record<br><b>Selected wallet</b> ${wallet}<br><b>Checkout</b> Demonstration completed<br><small>No funds transferred · Not a payment receipt.</small></div>
+      <div class="sp-from"><b>Issued by</b><br>Manifest<br>Independent collector record · Not brand-issued<br><b>Selected wallet</b> ${wallet}<br><b>Checkout</b> Demonstration completed<br><small>No funds transferred · Not a payment receipt.</small></div>
       <div class="sp-bc">${code39(no)}</div>
-      <div class="sp-fine">Thank you for your order.</div>
+      <div class="sp-fine">Retained in the Manifest archive.</div>
     </div>`;
   }
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
