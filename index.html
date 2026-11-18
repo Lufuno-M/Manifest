@@ -1005,6 +1005,28 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 .house-youngboy .house-wordmark{font-size:13px;letter-spacing:.06em;font-weight:800}
 .house-plain{--receipt-muted:#777;--receipt-rule:#aaa;background:#fff!important;color:#171717!important}
 
+/* One combined purchase document */
+.rcpt-paper.combined-purchase{width:100%;padding:42px 46px 38px;background:#fff;color:#171717;font:10px/1.55 'JetBrains Mono',monospace;letter-spacing:0}
+.combined-purchase .cp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:2px solid #171717;padding-bottom:18px}
+.combined-purchase .cp-title{font:400 32px/1.08 'Fraunces',Georgia,serif;letter-spacing:-.025em}
+.combined-purchase .cp-kicker{font:500 8px 'JetBrains Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:#777;margin-bottom:9px}
+.combined-purchase .cp-meta{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;padding:20px 0}
+.combined-purchase .cp-meta span,.combined-purchase .cp-head{display:block;font-size:8px;letter-spacing:.12em;color:#777}
+.combined-purchase .cp-meta b{display:block;margin-top:4px;font-weight:500}
+.combined-purchase .cp-head{display:grid;grid-template-columns:1fr auto;gap:14px;border-top:1px solid #aaa;border-bottom:1px solid #aaa;padding:9px 0}
+.combined-purchase .cp-items{padding:4px 0}
+.combined-purchase .cp-item{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #e4e2de}
+.combined-purchase .cp-item img{width:58px;height:58px;object-fit:contain}
+.combined-purchase .cp-item b{display:block;font:500 12px/1.4 'Archivo',Arial,sans-serif}
+.combined-purchase .cp-item small{display:block;margin-top:4px;font-size:8px;line-height:1.5;color:#777}
+.combined-purchase .cp-item strong{font-size:10px;font-weight:500;white-space:nowrap}
+.combined-purchase .cp-total{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid #171717;margin-top:18px;padding-top:14px}
+.combined-purchase .cp-total span{font-size:8px;letter-spacing:.15em}
+.combined-purchase .cp-total b{font:400 23px 'Fraunces',Georgia,serif}
+.combined-purchase .cp-payment{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #ddd;margin-top:16px;padding-top:12px}
+.combined-purchase .cp-foot{display:flex;justify-content:space-between;gap:12px;margin-top:28px;padding-top:12px;border-top:1px solid #ddd;font-size:8px;color:#777}
+@media(max-width:560px){.rcpt-paper.combined-purchase{padding:28px 22px}.combined-purchase .cp-title{font-size:27px}.combined-purchase .cp-item{grid-template-columns:44px minmax(0,1fr) auto;gap:10px}.combined-purchase .cp-item img{width:44px;height:44px}}
+
 /* Manifest-issued purchase documents: format follows the house, not a thermal-roll default. */
 .rcpt-pile{gap:34px;padding:30px 22px 18vh}
 .rcpt-slip{width:min(760px,94vw);margin:0;clip-path:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.22))}
@@ -2582,60 +2604,58 @@ function formatRecognizedValue(usdPrice, zar){
     document.body.style.overflow = '';
     if (orderFromBag){ BAG.length = 0; paintBag(); }
   }
+  function combinedPurchaseDocument(items, no, date){
+    const total = items.reduce((sum, item) => sum + zarNumber(item.label), 0);
+    const rows = items.map(item =>
+      '<div class="cp-item">' +
+        '<img src="' + safeRecordText(item.asset || '') + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+        '<div><b>' + safeRecordText(item.name) + '</b><small>' +
+          safeRecordText(item.maker) + (item.size ? ' · SIZE ' + safeRecordText(item.size) : '') + ' · QTY 1' +
+        '</small></div><strong>' + safeRecordText(item.label) + '</strong>' +
+      '</div>'
+    ).join('');
+    return '<div class="rcpt-paper combined-purchase">' +
+      '<div class="cp-top"><div><div class="cp-kicker">Purchase record</div><div class="cp-title">Purchase document</div></div></div>' +
+      '<div class="cp-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div>' +
+      '<div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div>' +
+      '<div class="cp-head"><span>ITEM / BRAND</span><span>AMOUNT</span></div>' +
+      '<div class="cp-items">' + rows + '</div>' +
+      '<div class="cp-total"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div>' +
+      '<div class="cp-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div>' +
+      '<div class="cp-foot"><span>Purchase details</span><span>' + safeRecordText(no) + '</span></div>' +
+      '</div>';
+  }
+  function closeReceipts(){
+    rcptRun++; rcptTimers.forEach(clearTimeout); rcptTimers = [];
+    if (!stageR.classList.contains('open')) return;
+    stageR.classList.remove('open');
+    document.body.style.overflow = '';
+    if (orderFromBag){ BAG.length = 0; paintBag(); }
+  }
   function runReceipts(){
     const run = ++rcptRun;
-    receiptCustomer = (document.getElementById('receipt-customer-name').value || '').trim();
     const date = new Date().toLocaleDateString('en-ZA');
-    const base = String(Date.now()).slice(-6);
-    const groups = new Map();
-    order.forEach(b => {
-      const br = brandOf(b.maker) || { k:'plain', w:b.maker.toUpperCase(), s:'', f:'Thank you', p:'MF', wcss:A(800,16,3) };
-      const key = br.k === 'plain' ? 'plain:' + b.maker : br.k;
-      if (!groups.has(key)) groups.set(key, { br, items: [] });
-      // Each item's store-side amount leaves Manifest an 8–13% profit.
-      // The catalogue's 60%-of-retail calculation is upstream and remains unchanged.
-      // A stable hash keeps the same item on the same rate across visits and receipts.
-      const itemKey = String(b.id || b.name || b.asset || '');
-      let itemHash = 2166136261;
-      for (let j = 0; j < itemKey.length; j++) {
-        itemHash = Math.imul(itemHash ^ itemKey.charCodeAt(j), 16777619);
-      }
-      const profitRate = 0.08 + ((itemHash >>> 0) % 6) / 100; // 8%, 9%, 10%, 11%, 12% or 13%
-      const manifestPrice = zarNumber(b.label);
-      const storeAmount = Math.round(manifestPrice * (1 - Math.min(profitRate, 0.15)));
-      const retailItem = { ...b, label: zarFormat(storeAmount) };
-      groups.get(key).items.push(retailItem);
+    const ref = 'PO-' + String(Date.now()).slice(-6);
+    const documentItems = order.map(item => {
+      const currentAmount = zarNumber(item.label);
+      const finalAmount = Math.round(currentAmount * 0.70);
+      return { ...item, label: zarFormat(finalAmount) };
     });
     pileR.innerHTML = '';
-    const slips = [];
-    const addSlip = (html, type, ref) => {
-      const el = document.createElement('div');
-      el.className = 'rcpt-slip';
-      el.dataset.receiptType = type;
-      el.style.zIndex = String(slips.length + 1);
-      el.innerHTML = html;
-      if (el.querySelector('.rcpt-paper.supreme')) el.classList.add('supreme-slip');
-      if (el.querySelector('.rcpt-paper.bape')) el.classList.add('bape-slip');
-      if (el.querySelector('.rcpt-paper.raf-simons-slip')) el.classList.add('raf-slip');
-      pileR.appendChild(el);
-      slips.push(el);
-    };
-    // One consolidated Manifest record first, followed by one retail receipt per house.
-    addSlip(manifestReceipt(order, 'MF-' + base, date), 'manifest', 'MF-' + base);
-    [...groups.values()].forEach((g, i) => {
-      const ref = g.br.p + '-' + base + (groups.size > 1 ? '-' + String.fromCharCode(65 + i) : '');
-      addSlip(slipHTML(g.br, g.items, ref, date), 'retail', ref);
-    });
+    const el = document.createElement('div');
+    el.className = 'rcpt-slip';
+    el.dataset.receiptType = 'purchase';
+    el.style.zIndex = '1';
+    el.innerHTML = combinedPurchaseDocument(documentItems, ref, date);
+    pileR.appendChild(el);
     stageR.scrollTop = 0;
     document.body.style.overflow = 'hidden';
     stageR.classList.add('open');
-    slips.forEach((el, n) => {
-      rcptTimers.push(setTimeout(() => {
-        if (run !== rcptRun) return;
-        el.classList.add('printing');
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 350 + n * 650));
-    });
+    rcptTimers.push(setTimeout(() => {
+      if (run !== rcptRun) return;
+      el.classList.add('printing');
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 350));
   }
   psConfirm.addEventListener('click', () => {
     if (psConfirm.disabled) return;
