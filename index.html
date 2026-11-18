@@ -1077,6 +1077,154 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 .receipt-name-input:focus{border-color:#777}
 @media print{.receipt-name-label,.receipt-name-input{display:none!important}}
 
+
+/* Brand-by-brand Manifest purchase documents */
+.rcpt-pile{gap:38px;padding:32px 24px 18vh}
+.rcpt-slip{width:min(780px,94vw);margin:0;clip-path:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.2))}
+.rcpt-paper.house-receipt{position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;width:100%;min-height:0;padding:42px 48px 38px;background:var(--doc-bg)!important;color:var(--doc-ink)!important;border:1px solid var(--doc-line)!important;font-family:var(--doc-font);font-weight:400}
+.house-receipt .doc-motif{height:18px;margin:-42px -48px 30px;background:var(--doc-motif);position:relative;z-index:0}
+.house-receipt .doc-issuer{font:600 9px 'JetBrains Mono',monospace;letter-spacing:.2em;color:var(--doc-muted);margin:0 0 22px}
+.house-receipt .doc-issuer span{opacity:.75}
+.house-receipt .doc-brand-head{margin:0 0 22px}
+.house-receipt .doc-brand{font-family:var(--doc-font);font-weight:var(--doc-weight);font-size:clamp(19px,3vw,27px);line-height:1.05;letter-spacing:var(--doc-track);overflow-wrap:anywhere}
+.house-receipt .doc-brand-caption{font:8px 'JetBrains Mono',monospace;letter-spacing:.15em;color:var(--doc-muted);margin-top:8px}
+.house-receipt .doc-title{font:400 26px/1.12 var(--doc-font);letter-spacing:-.025em;margin:22px 0 8px;color:var(--doc-ink)}
+.house-receipt .doc-copy{font:13px/1.65 'Archivo',Arial,sans-serif;max-width:540px;margin:0 0 22px;color:var(--doc-muted)}
+.house-receipt .doc-subject{font:9px 'JetBrains Mono',monospace;letter-spacing:.12em;color:var(--doc-muted);margin:0 0 14px}
+.house-receipt .doc-meta{display:flex;justify-content:space-between;gap:22px;padding:16px 0;border-top:1px solid var(--doc-line);border-bottom:1px solid var(--doc-line)}
+.house-receipt .doc-meta div{display:grid;gap:6px;min-width:0}
+.house-receipt .doc-meta span,.house-receipt .doc-items-head,.house-receipt .doc-totals span,.house-receipt .doc-payment span{font:8px 'JetBrains Mono',monospace;letter-spacing:.12em;color:var(--doc-muted)}
+.house-receipt .doc-meta b{font:600 11px 'JetBrains Mono',monospace;overflow-wrap:anywhere}
+.house-receipt .doc-items-head{display:flex;justify-content:space-between;gap:20px;padding:18px 0 8px}
+.house-receipt .doc-items{border-top:1px solid var(--doc-line)}
+.house-receipt .doc-item{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;padding:15px 0;border-bottom:1px solid var(--doc-line)}
+.house-receipt .doc-item-main{min-width:0;display:grid;gap:6px}
+.house-receipt .doc-item-main b{font:600 13px/1.4 'Archivo',Arial,sans-serif;overflow-wrap:anywhere}
+.house-receipt .doc-item-main small{font:9px/1.5 'JetBrains Mono',monospace;color:var(--doc-muted)}
+.house-receipt .doc-item>strong{font:600 11px 'JetBrains Mono',monospace;white-space:nowrap}
+.house-receipt .doc-totals{width:min(300px,100%);margin:20px 0 0 auto;display:grid;gap:10px}
+.house-receipt .doc-totals>div{display:flex;justify-content:space-between;gap:15px}
+.house-receipt .doc-totals b{font:600 11px 'JetBrains Mono',monospace}
+.house-receipt .doc-totals .doc-total{padding-top:12px;border-top:1px solid var(--doc-ink)}
+.house-receipt .doc-total span{color:var(--doc-ink);font-weight:700}
+.house-receipt .doc-total b{font-size:14px}
+.house-receipt .doc-payment{display:flex;justify-content:space-between;gap:15px;padding:15px 0;border-top:1px solid var(--doc-line);margin-top:18px}
+.house-receipt .doc-payment b{font:10px 'JetBrains Mono',monospace}
+.house-receipt .doc-closing{font:11px/1.6 'Archivo',Arial,sans-serif;color:var(--doc-muted);margin-top:22px}
+.house-receipt .doc-ref{font:8px 'JetBrains Mono',monospace;letter-spacing:.12em;color:var(--doc-muted);margin-top:18px}
+.house-receipt.doc-email{max-width:720px;padding:52px 62px 48px;background:#fff!important;color:#28231c!important;border:1px solid #ddd4c6!important}
+.doc-email .doc-motif{height:3px;margin:-52px -62px 38px}
+.doc-email .doc-brand{font-family:Georgia,serif;font-size:24px;letter-spacing:.25em;font-weight:400}
+.doc-email .doc-title{font:400 30px/1.15 Georgia,serif;margin-top:26px}
+.doc-email .doc-meta{margin-top:25px}
+.house-receipt.doc-card{max-width:640px;min-height:350px;padding:44px 52px 40px;border-radius:1px}
+.doc-card .doc-motif{height:8px;margin:-44px -52px 34px}
+.doc-card .doc-brand-head{text-align:center;margin-bottom:25px}
+.doc-card .doc-brand{font-size:21px}
+.doc-card .doc-brand-caption{text-align:center}
+.doc-card .doc-title{text-align:center;font-size:24px}
+.doc-card .doc-copy{text-align:center;margin:0 auto 22px}
+.doc-card .doc-meta{margin-top:24px}
+.house-receipt.doc-wide{max-width:780px;min-height:300px;padding:34px 42px 34px}
+.doc-wide .doc-motif{height:12px;margin:-34px -42px 25px}
+.doc-wide .doc-brand-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.doc-wide .doc-brand{font-size:23px}
+.doc-wide .doc-brand-caption{text-align:right}
+.doc-wide .doc-title{font-size:22px;margin-top:8px}
+.doc-wide .doc-copy{margin-bottom:17px}
+.doc-wide .doc-items{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}
+.doc-wide .doc-meta{max-width:440px}
+.house-receipt.doc-statement{max-width:700px;padding:38px 44px 38px}
+.doc-statement .doc-motif{height:24px;margin:-38px -44px 28px}
+.doc-statement .doc-brand{font-size:17px}
+.doc-statement .doc-title{font:900 clamp(34px,6vw,54px)/.94 var(--doc-font);letter-spacing:-.065em;text-transform:uppercase;max-width:520px;margin:18px 0}
+.doc-statement .doc-copy{max-width:420px}
+.doc-statement .doc-items{border-top:2px solid var(--doc-ink)}
+.doc-statement .doc-item{border-bottom:1px solid var(--doc-ink)}
+.doc-statement .doc-totals{padding-top:10px}
+.house-receipt.doc-editorial{max-width:650px;padding:50px 54px 46px}
+.doc-editorial .doc-motif{height:5px;margin:-50px -54px 34px}
+.doc-editorial .doc-brand{font-size:20px}
+.doc-editorial .doc-title{font:italic 30px/1.12 Georgia,serif}
+.doc-editorial .doc-copy{font-family:Georgia,serif;font-size:14px}
+.house-receipt.doc-colour{max-width:720px;padding:0 44px 40px;border:0!important}
+.doc-colour .doc-motif{height:78px;margin:0 -44px 28px}
+.doc-colour .doc-issuer{margin-bottom:20px}
+.doc-colour .doc-brand-head{display:inline-block;background:var(--doc-accent);color:var(--doc-hero-ink);padding:13px 18px;margin-bottom:18px;max-width:100%}
+.doc-colour .doc-brand{font-size:clamp(20px,4vw,31px);color:var(--doc-hero-ink)}
+.doc-colour .doc-brand-caption{color:var(--doc-hero-ink);opacity:.8}
+.doc-colour .doc-title{font:900 clamp(30px,5vw,44px)/.98 var(--doc-font);letter-spacing:-.055em}
+.doc-colour .doc-items{border-top:2px solid var(--doc-ink)}
+.doc-colour .doc-item{border-bottom:1px solid var(--doc-ink)}
+.house-receipt.doc-ticket{max-width:470px;padding:28px 30px 30px;border-style:dashed!important}
+.doc-ticket .doc-motif{height:9px;margin:-28px -30px 23px}
+.doc-ticket .doc-brand-head{text-align:center}
+.doc-ticket .doc-brand{font-size:19px}
+.doc-ticket .doc-brand-caption{text-align:center}
+.doc-ticket .doc-title{font-size:21px;margin-top:10px}
+.doc-ticket .doc-meta{display:grid;grid-template-columns:1fr 1fr}
+.doc-ticket .doc-item{padding:11px 0}
+.doc-ticket .doc-item-main b{font-size:12px}
+.house-bape .doc-brand-head{transform:rotate(-1deg);display:inline-block;background:#344b2c;padding:12px 16px;color:#fff}
+.house-bape .doc-brand,.house-bape .doc-brand-caption{color:#fff}
+.house-bape .doc-brand-caption{opacity:.8}
+.house-supreme .doc-brand-head{display:inline-block;background:#d9232e;padding:12px 18px;color:#fff}
+.house-supreme .doc-brand,.house-supreme .doc-brand-caption{color:#fff}
+.house-yeezy .doc-brand{font-weight:300;letter-spacing:.38em}
+.house-balenciaga .doc-brand{font-size:clamp(24px,4vw,34px);letter-spacing:.24em}
+.house-ambush .doc-brand-head{border-left:8px solid var(--doc-accent);padding-left:16px}
+.house-awake .doc-brand-head{display:inline-block;padding:10px 14px;background:var(--doc-motif);color:#171717}
+.house-awake .doc-brand{color:#171717}
+.house-vetements .doc-brand{font-size:clamp(26px,5vw,42px);letter-spacing:-.07em}
+.house-chrome-hearts .doc-brand{font-family:Georgia,serif;letter-spacing:.2em}
+.house-murakami .doc-brand-head{display:inline-block;padding:12px 16px;background:var(--doc-motif)}
+.house-murakami .doc-brand,.house-murakami .doc-brand-caption{color:#242124}
+.house-nike .doc-brand{font-style:italic;font-size:32px}
+.house-palace .doc-brand{font-style:italic;font-size:29px}
+.house-cpfm .doc-brand{font-size:16px;line-height:1.1;max-width:280px}
+.house-revenge .doc-brand-head{display:inline-block;padding:12px 18px;background:var(--doc-accent);color:var(--doc-hero-ink)}
+.house-revenge .doc-brand{color:var(--doc-hero-ink)}
+@media(max-width:600px){
+ .rcpt-pile{padding:18px 12px 15vh;gap:22px}
+ .rcpt-slip{width:96vw}
+ .rcpt-paper.house-receipt{padding:28px 23px}
+ .house-receipt .doc-motif{margin:-28px -23px 23px}
+ .house-receipt.doc-email{padding:32px 25px}
+ .doc-email .doc-motif{margin:-32px -25px 26px}
+ .house-receipt.doc-card{padding:32px 25px}
+ .doc-card .doc-motif{margin:-32px -25px 25px}
+ .house-receipt.doc-wide{padding:28px 23px}
+ .doc-wide .doc-motif{margin:-28px -23px 22px}
+ .house-receipt.doc-statement{padding:28px 23px}
+ .doc-statement .doc-motif{margin:-28px -23px 22px}
+ .house-receipt.doc-editorial{padding:32px 25px}
+ .doc-editorial .doc-motif{margin:-32px -25px 25px}
+ .house-receipt.doc-colour{padding:0 23px 28px}
+ .doc-colour .doc-motif{margin:0 -23px 22px}
+ .house-receipt.doc-ticket{padding:24px 20px}
+ .doc-ticket .doc-motif{margin:-24px -20px 20px}
+ .doc-wide .doc-items{grid-template-columns:1fr}
+ .house-receipt .doc-meta{gap:12px}
+}
+@media print{
+ @page{size:auto;margin:12mm}
+ html,body{background:#fff!important}
+ body>*:not(#rcpt-stage){display:none!important}
+ #rcpt-stage{position:static!important;inset:auto!important;overflow:visible!important;background:#fff!important;opacity:1!important;pointer-events:auto!important}
+ #rcpt-stage .rcpt-slot,#rcpt-stage .rcpt-done{display:none!important}
+ #rcpt-stage .rcpt-pile{display:block!important;padding:0!important}
+ #rcpt-stage .rcpt-slip{display:block!important;width:auto!important;max-width:none!important;margin:0 auto!important;clip-path:none!important;filter:none!important;break-after:page;page-break-after:always}
+ #rcpt-stage .rcpt-slip:last-child{break-after:auto;page-break-after:auto}
+ #rcpt-stage .rcpt-paper{width:100%!important;max-width:none!important;box-shadow:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;break-inside:avoid}
+ #rcpt-stage .doc-email{width:180mm!important;min-height:120mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-card{width:160mm!important;min-height:105mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-wide{width:190mm!important;min-height:105mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-statement{width:170mm!important;min-height:110mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-editorial{width:160mm!important;min-height:110mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-colour{width:175mm!important;min-height:120mm!important;margin:0 auto!important}
+ #rcpt-stage .doc-ticket{width:100mm!important;margin:0 auto!important}
+}
+
 </style>
 </head>
 <body>
@@ -2213,25 +2361,60 @@ function formatRecognizedValue(usdPrice, zar){
 
   const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   let receiptCustomer = '';
-  const RECEIPT_STYLE = {lv:"lv",cartier:"cartier",goyard:"goyard",hermes:"hermes",margiela:"margiela","off-white":"offwhite","chrome-hearts":"chrome","raf-simons":"raf",balenciaga:"balenciaga",vetements:"vetements","number-nine":"numbernine",palace:"palace",sicko:"sicko",awake:"awake","palm-angels":"palm",needles:"needles",kaws:"kaws",murakami:"murakami",cpfm:"cpfm",vlone:"vlone",yeezy:"yeezy",adidas:"adidas",nike:"nike",beats:"beats",givenchy:"givenchy","heron-preston":"heron",revenge:"revenge",vivet:"vivet",ambush:"ambush",youngboy:"youngboy"};
-  const RECEIPT_FORMAT = {lv:"email",cartier:"card",hermes:"card",goyard:"card","chrome-hearts":"wide",vetements:"statement","offwhite":"statement",balenciaga:"wide",raf:"wide",margiela:"card",numbernine:"card",palace:"statement",sicko:"statement",awake:"card",palm:"wide",needles:"card",kaws:"card",murakami:"card",cpfm:"wide",vlone:"statement",yeezy:"wide",adidas:"ticket",nike:"ticket",beats:"card",givenchy:"card",heron:"statement",revenge:"statement",vivet:"card",ambush:"wide",youngboy:"statement"};
+  let receiptCustomer = '';
+  const RECEIPT_DESIGN = {
+    bape:{format:"colour",bg:"#e8eadb",ink:"#182317",accent:"#526b35",muted:"#52604a",line:"#9aa582",font:"Arial Black,Arial,sans-serif",weight:900,track:".06em",heroInk:"#fff",motif:"radial-gradient(ellipse at 16% 38%,#243b24 0 12%,transparent 13%),radial-gradient(ellipse at 68% 70%,#78884b 0 15%,transparent 16%),radial-gradient(ellipse at 88% 18%,#344d2c 0 10%,transparent 11%),linear-gradient(115deg,#a6ad78,#526b35)"},
+    lv:{format:"email",bg:"#f7f1e7",ink:"#28231c",accent:"#94764d",muted:"#766b5c",line:"#d8c9ae",font:"Georgia,'Times New Roman',serif",weight:400,track:".24em",heroInk:"#fff",motif:"linear-gradient(90deg,#9b8058,#d9c7a5,#9b8058)"},
+    cartier:{format:"card",bg:"#fbf8f2",ink:"#211c1a",accent:"#8e252b",muted:"#766a63",line:"#d8c9bd",font:"Georgia,'Times New Roman',serif",weight:400,track:".3em",heroInk:"#fff",motif:"linear-gradient(90deg,#7d1d26,#b34b4d,#7d1d26)"},
+    supreme:{format:"colour",bg:"#fff",ink:"#171717",accent:"#d9232e",muted:"#696969",line:"#171717",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.06em",heroInk:"#fff",motif:"linear-gradient(110deg,#c8102e,#ef3340)"},
+    "off-white":{format:"statement",bg:"#f6f5ef",ink:"#171717",accent:"#171717",muted:"#626262",line:"#171717",font:"Arial,sans-serif",weight:600,track:".12em",heroInk:"#fff",motif:"repeating-linear-gradient(135deg,#161616 0 8px,#f6f5ef 8px 16px)"},
+    "chrome-hearts":{format:"wide",bg:"#111",ink:"#e7e4dd",accent:"#c9c5bb",muted:"#aaa69d",line:"#56534d",font:"Georgia,'Times New Roman',serif",weight:700,track:".16em",heroInk:"#111",motif:"linear-gradient(90deg,#77736a,#dedbd2,#77736a)"},
+    goyard:{format:"card",bg:"#f4eddd",ink:"#263b2e",accent:"#9b6d2e",muted:"#776c57",line:"#c9b78f",font:"Georgia,'Times New Roman',serif",weight:500,track:".22em",heroInk:"#fff",motif:"repeating-linear-gradient(135deg,#264b39 0 4px,#c4a05d 4px 7px,#f4eddd 7px 11px)"},
+    hermes:{format:"card",bg:"#fff8ed",ink:"#332319",accent:"#e66b22",muted:"#806b59",line:"#e5c7a9",font:"Georgia,'Times New Roman',serif",weight:600,track:".12em",heroInk:"#fff",motif:"linear-gradient(90deg,#d75c1d,#f18a39)"},
+    balenciaga:{format:"wide",bg:"#f3f3f1",ink:"#090909",accent:"#090909",muted:"#666",line:"#171717",font:"Arial,sans-serif",weight:900,track:".18em",heroInk:"#fff",motif:"linear-gradient(90deg,#111 0 42%,#e5e5e2 42% 100%)"},
+    margiela:{format:"card",bg:"#fafaf7",ink:"#242424",accent:"#777",muted:"#777",line:"#c9c9c4",font:"Arial,sans-serif",weight:400,track:".22em",heroInk:"#fff",motif:"linear-gradient(90deg,#fff 0 70%,#d7d7d2 70% 100%)"},
+    vetements:{format:"statement",bg:"#efefec",ink:"#101010",accent:"#101010",muted:"#555",line:"#101010",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.055em",heroInk:"#fff",motif:"linear-gradient(90deg,#111 0 18%,#efefec 18% 100%)"},
+    "number-nine":{format:"editorial",bg:"#eeeae0",ink:"#302a26",accent:"#6e342c",muted:"#71685f",line:"#bdb4a6",font:"Georgia,'Times New Roman',serif",weight:400,track:".16em",heroInk:"#fff",motif:"linear-gradient(90deg,#5e302c,#b18d75)"},
+    palace:{format:"statement",bg:"#f1f0eb",ink:"#151515",accent:"#d5e63c",muted:"#555",line:"#171717",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.04em",heroInk:"#111",motif:"linear-gradient(110deg,#d5e63c,#e8f17d)"},
+    sicko:{format:"statement",bg:"#171717",ink:"#f3f0e9",accent:"#c6ff00",muted:"#b1b1a8",line:"#777",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.04em",heroInk:"#111",motif:"linear-gradient(90deg,#c6ff00,#e4ff8a)"},
+    awake:{format:"colour",bg:"#f4f0e6",ink:"#171717",accent:"#e75c35",muted:"#625b51",line:"#c8bca8",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.025em",heroInk:"#fff",motif:"linear-gradient(115deg,#e75c35 0 34%,#f1b93d 34% 67%,#315c9b 67%)"},
+    "palm-angels":{format:"wide",bg:"#f1eee8",ink:"#171717",accent:"#171717",muted:"#666",line:"#aaa49b",font:"Arial,sans-serif",weight:700,track:".18em",heroInk:"#fff",motif:"linear-gradient(90deg,#111 0 12%,#f1eee8 12% 100%)"},
+    needles:{format:"editorial",bg:"#f1eee8",ink:"#252329",accent:"#5b405e",muted:"#716b70",line:"#c6bdc6",font:"Georgia,'Times New Roman',serif",weight:400,track:".12em",heroInk:"#fff",motif:"linear-gradient(90deg,#5b405e,#a28aa4)"},
+    kaws:{format:"card",bg:"#f8f7f2",ink:"#171717",accent:"#171717",muted:"#696969",line:"#bdbdb7",font:"Arial Black,Arial,sans-serif",weight:900,track:".08em",heroInk:"#fff",motif:"radial-gradient(circle at 20% 50%,#171717 0 8px,transparent 9px),radial-gradient(circle at 80% 50%,#171717 0 8px,transparent 9px),linear-gradient(90deg,#deded8,#f8f7f2)"},
+    murakami:{format:"colour",bg:"#fffbea",ink:"#292329",accent:"#f0529b",muted:"#71636c",line:"#e8b6d0",font:"Arial Black,Arial,sans-serif",weight:900,track:".04em",heroInk:"#fff",motif:"linear-gradient(90deg,#f0529b,#f5a623,#f9e34b,#43b77a,#319ad8,#8a5bd6)"},
+    cpfm:{format:"wide",bg:"#fffdf2",ink:"#292821",accent:"#eddb32",muted:"#77715d",line:"#c9c1a1",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.025em",heroInk:"#27251c",motif:"linear-gradient(100deg,#eddb32 0 18%,#f4a4b6 18% 38%,#b8d8a0 38% 60%,#fffdf2 60%)"},
+    vlone:{format:"statement",bg:"#171717",ink:"#f5f5f5",accent:"#ff6b00",muted:"#b7b7b7",line:"#777",font:"Arial Black,Arial,sans-serif",weight:900,track:".02em",heroInk:"#111",motif:"linear-gradient(90deg,#ff6b00,#ff9a45)"},
+    yeezy:{format:"wide",bg:"#efede6",ink:"#292823",accent:"#aaa69a",muted:"#77746d",line:"#c9c5ba",font:"Arial,sans-serif",weight:400,track:".32em",heroInk:"#24231f",motif:"linear-gradient(90deg,#d6d2c7,#efede6)"},
+    adidas:{format:"ticket",bg:"#fff",ink:"#171717",accent:"#171717",muted:"#656565",line:"#b8b8b8",font:"Arial,sans-serif",weight:800,track:".06em",heroInk:"#fff",motif:"repeating-linear-gradient(0deg,#171717 0 3px,transparent 3px 6px)"},
+    nike:{format:"colour",bg:"#f7f7f4",ink:"#151515",accent:"#e65324",muted:"#686868",line:"#bdbdb8",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.04em",heroInk:"#fff",motif:"linear-gradient(110deg,#e65324,#f18a43)"},
+    beats:{format:"card",bg:"#fff",ink:"#161616",accent:"#e31b23",muted:"#666",line:"#d1d1d1",font:"Arial,sans-serif",weight:800,track:"-.02em",heroInk:"#fff",motif:"linear-gradient(90deg,#e31b23,#f26b70)"},
+    givenchy:{format:"card",bg:"#f8f7f3",ink:"#222",accent:"#222",muted:"#777",line:"#c9c7c0",font:"Arial,sans-serif",weight:500,track:".3em",heroInk:"#fff",motif:"linear-gradient(90deg,#222,#777)"},
+    "heron-preston":{format:"statement",bg:"#f4f1eb",ink:"#191919",accent:"#f15b2a",muted:"#69645f",line:"#bdb5aa",font:"Arial Black,Arial,sans-serif",weight:900,track:".02em",heroInk:"#fff",motif:"linear-gradient(90deg,#f15b2a 0 20%,#f4f1eb 20% 100%)"},
+    "raf-simons":{format:"editorial",bg:"#eeece5",ink:"#1e1d1a",accent:"#333",muted:"#77736a",line:"#bcb8ae",font:"Georgia,'Times New Roman',serif",weight:400,track:".2em",heroInk:"#fff",motif:"linear-gradient(90deg,#252522,#a7a397)"},
+    revenge:{format:"colour",bg:"#171717",ink:"#f4f1ec",accent:"#b8a4ee",muted:"#b8b3c4",line:"#5f596b",font:"Arial Black,Arial,sans-serif",weight:900,track:".02em",heroInk:"#171717",motif:"linear-gradient(110deg,#b8a4ee,#efb2d8)"},
+    vivet:{format:"card",bg:"#f4f0e9",ink:"#24211d",accent:"#8b755e",muted:"#746b61",line:"#c7bcae",font:"Georgia,'Times New Roman',serif",weight:500,track:".2em",heroInk:"#fff",motif:"linear-gradient(90deg,#8b755e,#d7c6ad)"},
+    ambush:{format:"wide",bg:"#f1f0e9",ink:"#171717",accent:"#d4ef2c",muted:"#666",line:"#b7b7a9",font:"Arial Black,Arial,sans-serif",weight:900,track:".02em",heroInk:"#171717",motif:"linear-gradient(100deg,#d4ef2c 0 22%,#171717 22% 24%,#f1f0e9 24% 100%)"},
+    youngboy:{format:"statement",bg:"#191919",ink:"#f4f4f4",accent:"#d7b75b",muted:"#b5b5b5",line:"#666",font:"Arial Black,Arial,sans-serif",weight:900,track:".015em",heroInk:"#191919",motif:"linear-gradient(90deg,#d7b75b,#f0dda0)"}
+  };
   function brandReceipt(br, items, no, date){
-    const style = RECEIPT_STYLE[br.k] || "plain";
-    const format = RECEIPT_FORMAT[style] || "ticket";
+    const design = RECEIPT_DESIGN[br.k] || {format:"ticket",bg:"#fff",ink:"#171717",accent:"#777",muted:"#666",line:"#bbb",font:"Arial,sans-serif",weight:600,track:".08em",heroInk:"#fff",motif:"linear-gradient(90deg,#777,#ddd)"};
     const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
-    const rows = items.map(b => '<div class="thermal-item"><div class="thermal-description"><b>' + safeRecordText(b.name) + '</b>' + (b.maker.includes("×") ? '<small>' + safeRecordText(b.maker) + '</small>' : '') + '<small>' + (b.size ? 'SIZE ' + safeRecordText(b.size) + ' · ' : '') + 'QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
-    const names = {lv:"LOUIS VUITTON",cartier:"CARTIER",goyard:"GOYARD",hermes:"HERMÈS",margiela:"MAISON MARGIELA",offwhite:"OFF-WHITE",chrome:"CHROME HEARTS",raf:"RAF SIMONS",balenciaga:"BALENCIAGA",vetements:"VETEMENTS",numbernine:"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY",palm:"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY",heron:"HERON PRESTON",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN",plain:safeRecordText(br.w)}[style] || safeRecordText(br.w);
-    const intro = format === "email"
-      ? '<div class="doc-subject">Your order from Manifest</div><div class="doc-title">Your order is confirmed</div><p class="doc-copy">Dear ' + safeRecordText(receiptCustomer || 'Customer') + ',<br>Thank you for your recent purchase from Manifest. Your order details are below.</p>'
-      : format === "card"
-      ? '<div class="doc-title">Purchase record</div><p class="doc-copy">Selected and acquired through Manifest.</p>'
-      : format === "statement"
-      ? '<div class="doc-title">Order confirmed.</div><p class="doc-copy">A record of the objects selected through Manifest.</p>'
-      : '<div class="doc-title">Order details</div>';
-    return '<div class="rcpt-paper house-receipt house-' + style + ' doc-' + format + '"><div class="doc-issuer">MANIFEST</div><header class="house-receipt-head"><div class="house-wordmark">' + names + '</div></header>' + intro + '<div class="house-order"><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div class="house-order"><span>DATE</span><b>' + safeRecordText(date) + '</b></div><div class="house-items-head"><span>ITEM</span><span>PRICE</span></div><div class="house-items">' + rows + '</div><div class="house-summary"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="house-grand"><span>TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="house-tender"><span>PAID WITH</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">' + (format === "email" ? 'A shipping confirmation and tracking information will be sent separately.' : 'Thank you for choosing Manifest.') + '</div><div class="house-reference">' + safeRecordText(no) + '</div></div>';
+    const rows = items.map(b => '<div class="doc-item"><div class="doc-item-main"><b>' + safeRecordText(b.name) + '</b><small>' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
+    const style = '--doc-bg:' + design.bg + ';--doc-ink:' + design.ink + ';--doc-accent:' + design.accent + ';--doc-muted:' + design.muted + ';--doc-line:' + design.line + ';--doc-font:' + design.font + ';--doc-weight:' + design.weight + ';--doc-track:' + design.track + ';--doc-hero-ink:' + design.heroInk + ';--doc-motif:' + design.motif + ';';
+    const greeting = receiptCustomer ? '<p class="doc-copy">Prepared for ' + safeRecordText(receiptCustomer) + '.</p>' : '';
+    const intro = {
+      email:'<div class="doc-subject">MANIFEST · ORDER CONFIRMATION</div><div class="doc-title">Your order is confirmed</div><p class="doc-copy">Thank you for choosing Manifest. Your purchase details are set out below.</p>',
+      card:'<div class="doc-title">Purchase record</div><p class="doc-copy">A considered selection, acquired through Manifest.</p>',
+      wide:'<div class="doc-title">Order / object record</div><p class="doc-copy">The following pieces form part of this Manifest order.</p>',
+      statement:'<div class="doc-title">Order confirmed.</div><p class="doc-copy">A Manifest purchase. Details and itemisation follow.</p>',
+      editorial:'<div class="doc-title">The order, in detail.</div><p class="doc-copy">A record of the selected piece and its acquisition through Manifest.</p>',
+      colour:'<div class="doc-title">Good choice.</div><p class="doc-copy">Your Manifest order is confirmed. Here is what is coming with you.</p>',
+      ticket:'<div class="doc-title">Order details</div>'
+    }[design.format] || '<div class="doc-title">Order details</div>';
+    const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
+    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><div class="doc-issuer">MANIFEST <span>· PURCHASE DOCUMENT</span></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div><div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div></header>' + intro + greeting + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Sold by Manifest. Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
-    if (br.r) return br.r(items, no, date);
     return brandReceipt(br, items, no, date);
   }
   function manifestReceipt(items, no, date){
