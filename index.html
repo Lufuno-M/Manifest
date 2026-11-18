@@ -1071,6 +1071,12 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .doc-ticket{width:100mm!important;margin:0 auto!important}
 }
 
+
+.receipt-name-label{display:block;margin:12px 0 6px;font:9px 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#777}
+.receipt-name-input{display:block;width:100%;height:42px;padding:0 12px;border:1px solid #d7d5d0;border-radius:5px;background:#fff;color:#171717;font:13px 'Archivo',sans-serif;outline:none}
+.receipt-name-input:focus{border-color:#777}
+@media print{.receipt-name-label,.receipt-name-input{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -1236,6 +1242,8 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 <div class="pay-sheet-backdrop" id="pay-backdrop"></div>
 <div class="pay-sheet" id="pay-sheet" role="dialog" aria-modal="true" aria-label="Payment">
   <div class="ps-head"><span id="ps-wallet"></span><button type="button" id="ps-cancel">Cancel</button></div>
+  <label class="receipt-name-label" for="receipt-customer-name">Name for the order</label>
+  <input class="receipt-name-input" id="receipt-customer-name" type="text" autocomplete="name" placeholder="Customer name" maxlength="80">
   <div id="ps-rows"></div>
   <div class="ps-total"><span>Total</span><span id="ps-total"></span></div>
   <div class="ps-msg" id="ps-msg" aria-live="polite"></div>
@@ -2204,6 +2212,7 @@ function formatRecognizedValue(usdPrice, zar){
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
 
   const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let receiptCustomer = '';
   const RECEIPT_STYLE = {lv:"lv",cartier:"cartier",goyard:"goyard",hermes:"hermes",margiela:"margiela","off-white":"offwhite","chrome-hearts":"chrome","raf-simons":"raf",balenciaga:"balenciaga",vetements:"vetements","number-nine":"numbernine",palace:"palace",sicko:"sicko",awake:"awake","palm-angels":"palm",needles:"needles",kaws:"kaws",murakami:"murakami",cpfm:"cpfm",vlone:"vlone",yeezy:"yeezy",adidas:"adidas",nike:"nike",beats:"beats",givenchy:"givenchy","heron-preston":"heron",revenge:"revenge",vivet:"vivet",ambush:"ambush",youngboy:"youngboy"};
   const RECEIPT_FORMAT = {lv:"email",cartier:"card",hermes:"card",goyard:"card","chrome-hearts":"wide",vetements:"statement","offwhite":"statement",balenciaga:"wide",raf:"wide",margiela:"card",numbernine:"card",palace:"statement",sicko:"statement",awake:"card",palm:"wide",needles:"card",kaws:"card",murakami:"card",cpfm:"wide",vlone:"statement",yeezy:"wide",adidas:"ticket",nike:"ticket",beats:"card",givenchy:"card",heron:"statement",revenge:"statement",vivet:"card",ambush:"wide",youngboy:"statement"};
   function brandReceipt(br, items, no, date){
@@ -2213,7 +2222,7 @@ function formatRecognizedValue(usdPrice, zar){
     const rows = items.map(b => '<div class="thermal-item"><div class="thermal-description"><b>' + safeRecordText(b.name) + '</b>' + (b.maker.includes("×") ? '<small>' + safeRecordText(b.maker) + '</small>' : '') + '<small>' + (b.size ? 'SIZE ' + safeRecordText(b.size) + ' · ' : '') + 'QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
     const names = {lv:"LOUIS VUITTON",cartier:"CARTIER",goyard:"GOYARD",hermes:"HERMÈS",margiela:"MAISON MARGIELA",offwhite:"OFF-WHITE",chrome:"CHROME HEARTS",raf:"RAF SIMONS",balenciaga:"BALENCIAGA",vetements:"VETEMENTS",numbernine:"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY",palm:"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY",heron:"HERON PRESTON",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN",plain:safeRecordText(br.w)}[style] || safeRecordText(br.w);
     const intro = format === "email"
-      ? '<div class="doc-subject">Your order from Manifest</div><div class="doc-title">Your order is confirmed</div><p class="doc-copy">Thank you for your recent purchase from Manifest. Your order details are below.</p>'
+      ? '<div class="doc-subject">Your order from Manifest</div><div class="doc-title">Your order is confirmed</div><p class="doc-copy">Dear ' + safeRecordText(receiptCustomer || 'Customer') + ',<br>Thank you for your recent purchase from Manifest. Your order details are below.</p>'
       : format === "card"
       ? '<div class="doc-title">Purchase record</div><p class="doc-copy">Selected and acquired through Manifest.</p>'
       : format === "statement"
@@ -2239,6 +2248,7 @@ function formatRecognizedValue(usdPrice, zar){
   }
   function runReceipts(){
     const run = ++rcptRun;
+    receiptCustomer = (document.getElementById('receipt-customer-name').value || '').trim();
     const date = new Date().toLocaleDateString('en-ZA');
     const base = String(Date.now()).slice(-6);
     const groups = new Map();
