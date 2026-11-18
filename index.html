@@ -582,6 +582,37 @@
   .rcpt-slip.printing{ animation:none; }
 }
 
+/* Raf Simons AW05 — a narrow printed slip, using the collection's archival label language. */
+.rcpt-paper.raf-simons-slip{
+  width:100%;padding:25px 21px 30px;background:#f2f0e9;color:#171714;
+  font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.55;
+}
+.raf-simons-slip .rs-brand{
+  text-align:center;font-family:'Archivo',sans-serif;font-size:21px;
+  font-weight:500;letter-spacing:.16em;margin:0 0 5px;
+}
+.raf-simons-slip .rs-season,.raf-simons-slip .rs-collection{
+  text-align:center;font-size:8px;letter-spacing:.13em;
+}
+.raf-simons-slip .rs-collection{margin-top:3px;font-size:9px;font-weight:500}
+.raf-simons-slip .rs-rule{border-top:1px dashed #777;margin:15px 0}
+.raf-simons-slip .rs-meta,.raf-simons-slip .rs-price,.raf-simons-slip .rs-total,.raf-simons-slip .rs-tender{
+  display:flex;justify-content:space-between;gap:12px;
+}
+.raf-simons-slip .rs-meta{font-size:9px;padding:2px 0}
+.raf-simons-slip .rs-meta b,.raf-simons-slip .rs-price b,.raf-simons-slip .rs-total b,.raf-simons-slip .rs-tender b{font-weight:500}
+.raf-simons-slip .rs-label{font-size:8px;letter-spacing:.12em;margin-bottom:10px}
+.raf-simons-slip .rs-item{padding:7px 0 9px;border-bottom:1px dotted #aaa}
+.raf-simons-slip .rs-name{font-size:10px;line-height:1.45}
+.raf-simons-slip .rs-detail{font-size:8px;color:#666;margin-top:3px}
+.raf-simons-slip .rs-price{margin-top:5px;font-size:9px}
+.raf-simons-slip .rs-total{font-size:12px;font-weight:600}
+.raf-simons-slip .rs-tender{margin-top:13px;font-size:8px}
+.raf-simons-slip .rs-barcode{margin:18px auto 5px;width:78%;height:30px}
+.raf-simons-slip .rs-barcode svg{width:100%;height:100%}
+.raf-simons-slip .rs-ref{text-align:center;font-size:8px;letter-spacing:.18em}
+.raf-simons-slip .rs-foot{text-align:center;margin-top:15px;font-size:8px;letter-spacing:.1em}
+
 /* ---- Manifest acquisition records: distinct document grammars, not a shared receipt skin. ---- */
 .rcpt-paper.manifest-record{width:100%;min-height:260px;padding:25px 22px 30px;background:#fbfaf6;color:#171717;font-family:'JetBrains Mono',monospace}
 .manifest-record .mr-kicker{font-size:8px;letter-spacing:.19em;text-transform:uppercase;color:#777}
@@ -1848,7 +1879,7 @@ function formatRecognizedValue(usdPrice, zar){
     B('beats', /beats/i, 'Beats by Dre', '', 'Thank you', 'BTS', { bh:'10px', band:'#e10600', wcss:A(800,18,0) }),
     B('givenchy', /givenchy/i, 'GIVENCHY', 'Paris', 'Merci', 'GVC', { wcss:F(20,8) }),
     B('heron-preston', /heron preston/i, 'HERON PRESTON', '', 'Thank you', 'HP', { bh:'10px', band:'#ff5a1f', wcss:A(600,15,3) }),
-    B('raf-simons', /raf simons/i, 'RAF SIMONS', 'Antwerp', 'Thank you', 'RS', { wcss:A(400,17,6) }),
+    B('raf-simons', /raf simons/i, 'RAF SIMONS', 'Antwerp', 'Thank you', 'RS', { r:rafSimonsSlip, wcss:A(400,17,6) }),
     B('revenge', /revenge/i, 'REVENGE', '', 'Thank you', 'RVG', { wcss:A(800,20,3) }),
     B('vivet', /vivet/i, 'VIVET', '', 'Thank you', 'VVT', { wcss:A(800,20,6) }),
     B('ambush', /ambush/i, 'AMBUSH', 'Tokyo', 'Thank you', 'AMB', { wcss:A(800,19,5) }),
@@ -1948,6 +1979,32 @@ function formatRecognizedValue(usdPrice, zar){
       <div class="sp-from"><b>Issued by</b><br>Manifest<br>Independent collector record · Not brand-issued<br><b>Selected wallet</b> ${wallet}<br><b>Checkout</b> Demonstration completed<br><small>No funds transferred · Not a payment receipt.</small></div>
       <div class="sp-bc">${code39(no)}</div>
       <div class="sp-fine">Retained in the Manifest archive.</div>
+    </div>`;
+  }
+  function rafSimonsSlip(items, no, date){
+    const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
+    const rows = items.map(b => `
+      <div class="rs-item">
+        <div class="rs-name">${safeRecordText(b.name)}</div>
+        <div class="rs-detail">${b.size ? 'SIZE ' + safeRecordText(b.size) + '　' : ''}QTY 1</div>
+        <div class="rs-price"><span>1 ×</span><b>${safeRecordText(b.label)}</b></div>
+      </div>`).join('');
+    return `<div class="rcpt-paper raf-simons-slip">
+      <div class="rs-brand">RAF SIMONS</div>
+      <div class="rs-season">AUTUMN / WINTER 2005</div>
+      <div class="rs-collection">HISTORY OF MY WORLD</div>
+      <div class="rs-rule"></div>
+      <div class="rs-meta"><span>ORDER</span><b>${no}</b></div>
+      <div class="rs-meta"><span>DATE</span><b>${date}</b></div>
+      <div class="rs-rule"></div>
+      <div class="rs-label">ITEM / DESCRIPTION</div>
+      ${rows}
+      <div class="rs-rule"></div>
+      <div class="rs-total"><span>TOTAL</span><b>${zarFormat(total)}</b></div>
+      <div class="rs-tender"><span>PAYMENT</span><b>${safeRecordText(wallet)}</b></div>
+      <div class="rs-barcode">${code39(no)}</div>
+      <div class="rs-ref">${no}</div>
+      <div class="rs-foot">ALL SHADOWS AND DELIVERANCE</div>
     </div>`;
   }
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
