@@ -578,6 +578,66 @@
   .rcpt-slip.printing{ animation:none; }
 }
 
+/* ---- Manifest acquisition records: distinct document grammars, not a shared receipt skin. ---- */
+.rcpt-paper.manifest-record{width:100%;min-height:260px;padding:25px 22px 30px;background:#fbfaf6;color:#171717;font-family:'JetBrains Mono',monospace}
+.manifest-record .mr-kicker{font-size:8px;letter-spacing:.19em;text-transform:uppercase;color:#777}
+.manifest-record .mr-title{margin:15px 0 5px;font-size:18px;line-height:1.15;font-weight:500}
+.manifest-record .mr-sub{font-size:9px;line-height:1.5;color:#777}
+.manifest-record .mr-rule{border-top:1px solid currentColor;opacity:.35;margin:16px 0}
+.manifest-record .mr-row{display:flex;justify-content:space-between;gap:14px;padding:4px 0;font-size:9px;line-height:1.5}
+.manifest-record .mr-row span:first-child{color:#777}
+.manifest-record .mr-row b{text-align:right;font-weight:500}
+.manifest-record .mr-object{padding:10px 0}
+.manifest-record .mr-object-name{font-size:13px;line-height:1.35;font-weight:600}
+.manifest-record .mr-object-meta{margin-top:5px;font-size:9px;color:#777;line-height:1.5}
+.manifest-record .mr-total{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:700}
+.manifest-record .mr-payment{margin-top:14px;padding:10px;border:1px solid #aaa;font-size:9px;line-height:1.6}
+.manifest-record .mr-payment strong{display:block;font-size:10px;letter-spacing:.08em}
+.manifest-record .mr-payment small{display:block;margin-top:3px;color:#777;font-size:8px}
+.manifest-record .mr-issuer{margin-top:17px;font-size:9px;line-height:1.5}
+.manifest-record .mr-issuer strong{display:block;letter-spacing:.13em}
+.manifest-record .mr-code{margin-top:13px;font-size:8px;letter-spacing:.16em;color:#777}
+.manifest-record.lv-record{background:#f3ead8;color:#30271d;font-family:'Fraunces',serif;padding:30px 24px 34px}
+.lv-record .mr-kicker,.lv-record .mr-row,.lv-record .mr-sub,.lv-record .mr-object-meta,.lv-record .mr-code{font-family:'JetBrains Mono',monospace}
+.lv-record .mr-title{font-size:23px;letter-spacing:.025em}
+.lv-record .mr-rule{border-top-style:double;border-top-width:3px;opacity:.5}
+.lv-record .mr-object-name{font-size:16px;font-weight:400}
+.lv-record .mr-issuer{text-align:center;letter-spacing:.04em}
+.goyard-record{background:#f0e7d2!important;color:#29372d!important;border:5px double #a78a55}
+.goyard-record .mr-title{text-align:center;letter-spacing:.22em;font-size:20px}
+.goyard-record .mr-kicker,.goyard-record .mr-code{text-align:center}
+.goyard-record .mr-object{border-top:1px dotted #9a875f;border-bottom:1px dotted #9a875f;margin:12px 0}
+.hermes-record{background:#f4e8d8!important;border-top:9px solid #e87524}
+.hermes-record .mr-title{font-family:'Fraunces',serif;font-size:24px}
+.hermes-record .mr-total{border-top:1px solid #b65a24;padding-top:12px}
+.margiela-record{background:#fafaf7!important;color:#222!important;font-family:'Archivo',sans-serif!important}
+.margiela-record .mr-kicker{letter-spacing:.3em}
+.margiela-record .mr-title{font-size:16px;letter-spacing:.2em;text-transform:uppercase}
+.margiela-record .mr-object-name{font-size:20px;font-weight:400}
+.margiela-record .mr-issuer{border-top:1px solid #222;padding-top:12px}
+.offwhite-record{background:#f8f8f5!important;color:#111!important;font-family:'JetBrains Mono',monospace!important}
+.offwhite-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;font-size:23px}
+.offwhite-record .mr-kicker,.offwhite-record .mr-issuer{letter-spacing:.04em}
+.offwhite-record .mr-rule{border-top:2px solid #111;opacity:1}
+.chrome-record{background:#101010!important;color:#e6e2dc!important;border:1px solid #aaa}
+.chrome-record .mr-kicker,.chrome-record .mr-row span:first-child,.chrome-record .mr-sub,.chrome-record .mr-object-meta,.chrome-record .mr-code{color:#aaa}
+.chrome-record .mr-title{font-family:'Fraunces',serif;letter-spacing:.16em;font-size:19px}
+.chrome-record .mr-rule{border-color:#aaa;opacity:.7}
+.chrome-record .mr-payment{border-color:#777}
+.chrome-record .mr-payment small{color:#aaa}
+.raf-record{background:#eeeae2!important;color:#191919!important;font-family:'Archivo',sans-serif!important;padding:30px 24px 38px}
+.raf-record .mr-kicker{font-family:'JetBrains Mono',monospace}
+.raf-record .mr-title{font-family:'Fraunces',serif;font-size:28px;letter-spacing:-.025em}
+.raf-record .mr-object{margin:18px 0;padding:18px 0;border-top:1px solid #aaa;border-bottom:1px solid #aaa}
+.raf-record .mr-object-name{font-size:18px;font-weight:400}
+.raf-record .mr-payment{background:#fff;border:0}
+.recognition-record{background:#f1f0eb!important;color:#171717!important;border-left:8px solid #171717}
+.recognition-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;font-size:22px}
+.recognition-record .mr-object-name{font-size:16px}
+.industrial-record{background:#f5f5f2!important;color:#111!important;border:1px solid #111}
+.industrial-record .mr-title{font-family:'Archivo',sans-serif;font-weight:800;letter-spacing:-.04em;font-size:22px}
+.industrial-record .mr-kicker{background:#111;color:#fff;display:inline-block;padding:4px 6px}
+
 /* ---- BAPE: its own two documents. In-store ticket (sans, bold labels) and the online order page. ---- */
 .rcpt-paper.bape{ font-family:'Archivo',Arial,Helvetica,sans-serif; font-size:10.5px; line-height:14px; --paper:#fff; --ink:#111; --mute:#555; --rule:#111; }
 .bape .bp-logo{ display:block; height:46px; margin:0 auto 6px; object-fit:contain; }
@@ -1713,7 +1773,7 @@ function formatRecognizedValue(usdPrice, zar){
     openSheet();
   });
 
-  // ---- Receipts (mock): after payment, one slip per house prints out of the slot,
+  // ---- Acquisition records: after the checkout demonstration, one Manifest record per house prints out of the slot,
   // each on that house's own paper. Items from the same house share a slip, even
   // across collabs ("Nike × Supreme" prints on Supreme's slip, with its credit line).
   const stageR = document.getElementById('rcpt-stage');
@@ -1883,7 +1943,72 @@ function formatRecognizedValue(usdPrice, zar){
   }
   const brandOf = (house) => BRANDS.find(b => b.m.test(house));
 
+  // Each acquisition record has its own document grammar. These are Manifest-authored
+  // records inspired by each house's visual language, never documents issued by the houses.
+  const RECORD_KIND = {
+    lv:'lv', goyard:'goyard', hermes:'hermes', margiela:'margiela',
+    'off-white':'offwhite', 'chrome-hearts':'chrome', 'raf-simons':'raf',
+    sicko:'recognition', yeezy:'recognition', murakami:'recognition',
+    'number-nine':'margiela', vetements:'industrial', balenciaga:'industrial',
+    palace:'industrial', revenge:'industrial', vlone:'industrial', ambush:'industrial'
+  };
+  const safeRecordText = (v) => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  function acquisitionRecord(br, items, no, date){
+    const kind = RECORD_KIND[br.k] || 'standard';
+    const classes = {lv:'lv-record',goyard:'goyard-record',hermes:'hermes-record',margiela:'margiela-record',offwhite:'offwhite-record',chrome:'chrome-record',raf:'raf-record',recognition:'recognition-record',industrial:'industrial-record',standard:''};
+    const names = items.map(b => safeRecordText(b.name));
+    const objects = items.map(b => `<div class="mr-object"><div class="mr-object-name">${safeRecordText(b.name)}</div><div class="mr-object-meta">${b.size ? 'Size · '+safeRecordText(b.size)+'　' : ''}Quantity · 1${b.maker.includes('×') ? '<br>'+safeRecordText(b.maker) : ''}</div></div>`).join('');
+    const total = sumOf(items);
+    const issuer = {
+      lv:'Record established by Manifest',
+      goyard:'Émis par Manifest',
+      hermes:'Document établi par Manifest',
+      margiela:'MANIFEST / ARCHIVE',
+      offwhite:'"ISSUED BY" — MANIFEST',
+      chrome:'Filed and retained by Manifest',
+      raf:'Filed by Manifest',
+      recognition:'Recognised and recorded by Manifest',
+      industrial:'MANIFEST · OBJECT RECORD',
+      standard:'Issued by Manifest'
+    }[kind];
+    const heading = {
+      lv:'Maison acquisition record',
+      goyard:'ACQUISITION',
+      hermes:'Record of acquisition',
+      margiela:'Object / Entry',
+      offwhite:'OBJECT RECORD',
+      chrome:'COLLECTOR’S RECORD',
+      raf:'Object, acquired.',
+      recognition:'Object recognised',
+      industrial:'ACQUISITION FILE',
+      standard:'Acquisition record'
+    }[kind];
+    const metadata = kind === 'lv' || kind === 'goyard' || kind === 'hermes'
+      ? `<div class="mr-row"><span>Record reference</span><b>${no}</b></div><div class="mr-row"><span>Date recorded</span><b>${date}</b></div>`
+      : kind === 'raf'
+      ? `<div class="mr-row"><span>Manifest file</span><b>${no}</b></div><div class="mr-row"><span>Filed</span><b>${date}</b></div>`
+      : `<div class="mr-row"><span>MANIFEST REF.</span><b>${no}</b></div><div class="mr-row"><span>RECORDED</span><b>${date}</b></div>`;
+    const payment = `<div class="mr-payment"><strong>WALLET CHECKOUT · COMPLETED</strong>Method · ${safeRecordText(wallet)}<small>Manifest checkout demonstration. No funds were transferred; this is not a payment receipt.</small></div>`;
+    const issuerBlock = kind === 'offwhite'
+      ? `<div class="mr-issuer"><strong>"ISSUED BY"</strong>MANIFEST<br>Independent collector documentation</div>`
+      : `<div class="mr-issuer"><strong>${issuer}</strong><span class="mr-sub">Independent collector documentation · Not brand-issued</span></div>`;
+    return `<div class="rcpt-paper manifest-record ${classes[kind]}">
+      <div class="mr-kicker">MANIFEST　/　${kind === 'raf' ? 'FIELD NOTE' : 'COLLECTOR DOCUMENT'}</div>
+      <div class="mr-title">${heading}</div>
+      <div class="mr-sub">${safeRecordText(br.w)}${br.s ? '　·　'+safeRecordText(br.s) : ''}</div>
+      <div class="mr-rule"></div>
+      ${metadata}
+      <div class="mr-rule"></div>
+      ${objects}
+      <div class="mr-rule"></div>
+      <div class="mr-total"><span>${kind === 'raf' ? 'Acquisition value' : 'Recorded total'}</span><span>${total}</span></div>
+      ${payment}
+      ${issuerBlock}
+      <div class="mr-code">${no}　/　${names.length} OBJECT${names.length === 1 ? '' : 'S'}</div>
+    </div>`;
+  }
   function slipHTML(br, items, no, date){
+    if (!br.r) return acquisitionRecord(br, items, no, date);
     if (br.r) return br.r(items, no, date);   // houses with their own document (BAPE)
     const q = (s) => br.q ? '"' + s + '"' : s;
     const look = { paper:br.paper, ink:br.ink, mute:br.mute, rule:br.rule || br.mute, band:br.band, bh:br.bh };
@@ -1951,8 +2076,8 @@ function formatRecognizedValue(usdPrice, zar){
   psConfirm.addEventListener('click', () => {
     if (psConfirm.disabled) return;
     psConfirm.disabled = true;
-    psMsg.textContent = 'Authorising…';
-    setTimeout(() => { psMsg.textContent = '✓ Done'; }, 800);
+    psMsg.textContent = 'Completing checkout demonstration…';
+    setTimeout(() => { psMsg.textContent = '✓ Checkout step complete · no funds transferred'; }, 800);
     setTimeout(() => {
       closeSheet();
       closeRecord();
