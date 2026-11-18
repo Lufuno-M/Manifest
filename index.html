@@ -1292,6 +1292,16 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .rcpt-paper.supreme{width:80mm!important;max-width:80mm!important;padding:22px 20px 36px!important;-webkit-mask:none!important;mask:none!important}
 }
 
+
+/* Preserve the three original house-specific receipts rather than stretching them into the new document layouts. */
+.rcpt-slip.supreme-slip,.rcpt-slip.bape-slip,.rcpt-slip.raf-slip{width:min(300px,82vw)!important;margin-top:-40px!important;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))!important}
+.rcpt-slip.supreme-slip:first-child,.rcpt-slip.bape-slip:first-child,.rcpt-slip.raf-slip:first-child{margin-top:6px!important}
+.rcpt-slip.bape-slip .rcpt-paper,.rcpt-slip.raf-slip .rcpt-paper{width:100%!important;max-width:300px!important;padding:22px 20px 36px!important}
+@media print{
+ #rcpt-stage .rcpt-slip.bape-slip,#rcpt-stage .rcpt-slip.raf-slip{width:80mm!important;margin:0 auto!important;filter:none!important}
+ #rcpt-stage .rcpt-slip.bape-slip .rcpt-paper,#rcpt-stage .rcpt-slip.raf-slip .rcpt-paper{width:80mm!important;max-width:80mm!important;padding:22px 20px 36px!important;-webkit-mask:none!important;mask:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -2531,7 +2541,9 @@ function formatRecognizedValue(usdPrice, zar){
     return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><div class="doc-issuer">MANIFEST <span>· PURCHASE DOCUMENT</span></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Sold by Manifest. Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
+    if (br.k === 'bape') return bapeSlip(items, no, date);
     if (br.k === 'supreme') return supremeSlip(items, no, date);
+    if (br.k === 'raf-simons') return rafSimonsSlip(items, no, date);
     return brandReceipt(br, items, no, date);
   }
   function manifestReceipt(items, no, date){
@@ -2569,6 +2581,8 @@ function formatRecognizedValue(usdPrice, zar){
       el.style.zIndex = String(slips.length + 1);
       el.innerHTML = html;
       if (el.querySelector('.rcpt-paper.supreme')) el.classList.add('supreme-slip');
+      if (el.querySelector('.rcpt-paper.bape')) el.classList.add('bape-slip');
+      if (el.querySelector('.rcpt-paper.raf-simons-slip')) el.classList.add('raf-slip');
       pileR.appendChild(el);
       slips.push(el);
     };
