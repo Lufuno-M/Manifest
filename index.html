@@ -935,6 +935,123 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
   .ps-loader i,.ps-success-mark{animation:none}
   .ps-status{transition:none}
 }
+
+/* House receipt families — shared readable structure, distinct visual identities. */
+.rcpt-paper.house-receipt{
+  box-sizing:border-box;width:100%;padding:30px 25px 27px;
+  background:#fff;color:#171717;border:0;
+  font-family:'JetBrains Mono',monospace;font-size:9px;line-height:1.55;
+  letter-spacing:0;overflow-wrap:anywhere;
+}
+.house-receipt-head{text-align:center;margin:0 0 25px}
+.house-wordmark{font-family:'Archivo',Arial,sans-serif;font-size:20px;line-height:1.15;font-weight:600;letter-spacing:.12em}
+.house-receipt-head>div:nth-child(2){margin-top:7px;font-size:8px;letter-spacing:.12em}
+.house-order{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:4px 0}
+.house-order span,.house-items-head,.house-summary>div>span,.house-tender>span{font-size:8px;letter-spacing:.09em;color:var(--receipt-muted,#777)}
+.house-order b{font-weight:500;text-align:right;overflow-wrap:anywhere}
+.house-items-head{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--receipt-rule,#bbb);border-bottom:1px solid var(--receipt-rule,#bbb);padding:9px 0;margin-top:17px}
+.house-items{padding:5px 0}
+.thermal-item{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;padding:11px 0;border-bottom:1px solid var(--receipt-rule,#ddd)}
+.thermal-description{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.thermal-description b{font-size:9px;font-weight:500;line-height:1.45}
+.thermal-description small{font-size:8px;color:var(--receipt-muted,#777);line-height:1.45}
+.thermal-item>strong{flex:none;max-width:38%;font-size:9px;font-weight:500;text-align:right;white-space:nowrap}
+.house-summary{padding-top:13px}
+.house-summary>div,.house-tender{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:4px 0}
+.house-summary b,.house-tender b{font-weight:500;text-align:right}
+.house-summary .house-grand{border-top:1px solid var(--receipt-rule,#999);margin-top:8px;padding-top:11px;font-size:11px}
+.house-summary .house-grand span{font-size:8px;letter-spacing:.12em}
+.house-tender{border-top:1px solid var(--receipt-rule,#bbb);margin-top:17px;padding-top:12px}
+.house-barcode{height:35px;margin:20px auto 5px;display:flex;justify-content:center;align-items:center;overflow:hidden}
+.house-barcode svg{max-width:100%;height:32px}
+.house-reference{text-align:center;font-size:8px;letter-spacing:.15em}
+.house-receipt-foot{text-align:center;margin-top:19px;font-size:8px;color:var(--receipt-muted,#777);letter-spacing:.06em}
+
+/* Louis Vuitton — quiet warm paper, centered maison wordmark, fine double rules. */
+.house-lv{--receipt-muted:#746b5d;--receipt-rule:#b9aa91;background:#f5f0e6!important;color:#30291f!important;font-family:'Fraunces',Georgia,serif!important}
+.house-lv .house-wordmark{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:19px;letter-spacing:.22em}
+.house-lv .house-items-head{border-top:3px double #9c8b70;border-bottom:1px solid #9c8b70}
+.house-lv .house-summary .house-grand{border-top:3px double #9c8b70}
+.house-lv .house-receipt-foot{font-family:'Fraunces',Georgia,serif;letter-spacing:.14em}
+
+/* Goyard — restrained heritage green and gilt framing. */
+.house-goyard{--receipt-muted:#657064;--receipt-rule:#a69b79;background:#f2eddf!important;color:#28372d!important;border:4px double #a18b5b!important}
+.house-goyard .house-wordmark{font-family:'Fraunces',Georgia,serif;font-size:18px;letter-spacing:.24em}
+.house-goyard .house-receipt-head{margin-bottom:21px}
+.house-goyard .house-items-head,.house-goyard .house-summary .house-grand{border-color:#9b8658}
+
+/* Hermès — warm orange accent and editorial serif. */
+.house-hermes{--receipt-muted:#806b5c;--receipt-rule:#d5a27b;background:#f8eee3!important;color:#38271d!important;border-top:8px solid #e87524!important;font-family:'Fraunces',Georgia,serif!important}
+.house-hermes .house-wordmark{font-size:21px;letter-spacing:.08em}
+.house-hermes .house-items-head{border-color:#d87936}
+.house-hermes .house-summary .house-grand{border-color:#d87936}
+
+/* Maison Margiela — clinical white, numbered identity, precise mono. */
+.house-margiela{--receipt-muted:#777;--receipt-rule:#c9c9c5;background:#fafaf8!important;color:#202020!important}
+.house-margiela .house-wordmark{font-weight:400;letter-spacing:.2em;font-size:16px}
+.house-margiela .house-receipt-head:after{content:'0 0 0 0';display:block;margin-top:9px;font-size:9px;letter-spacing:.35em}
+.house-margiela .house-items-head{border-top:2px solid #222;border-bottom:1px solid #222}
+
+/* Off-White — industrial labeling and strong black rules. */
+.house-offwhite{--receipt-muted:#555;--receipt-rule:#111;background:#f8f8f5!important;color:#111!important}
+.house-offwhite .house-wordmark{font-weight:800;letter-spacing:.03em;font-size:21px}
+.house-offwhite .house-receipt-head>div:nth-child(2){text-transform:uppercase}
+.house-offwhite .house-items-head{border-top:2px solid #111;border-bottom:2px solid #111}
+
+/* Chrome Hearts — dark silver-on-black. */
+.house-chrome{--receipt-muted:#aaa;--receipt-rule:#777;background:#111!important;color:#eee!important;border:1px solid #777!important;font-family:'Fraunces',Georgia,serif!important}
+.house-chrome .house-wordmark{font-size:18px;letter-spacing:.2em}
+.house-chrome .house-items-head{border-top:1px solid #aaa;border-bottom:1px solid #aaa}
+.house-chrome .house-receipt-foot{color:#aaa}
+
+/* Raf Simons — archival AW05 label language. */
+.house-raf{--receipt-muted:#777;--receipt-rule:#aaa;background:#efede7!important;color:#171717!important}
+.house-raf .house-wordmark{font-weight:400;font-size:20px;letter-spacing:.2em}
+.house-raf .house-items-head{border-style:dashed;border-left:0;border-right:0}
+.house-raf .house-summary .house-grand{border-top-style:dashed}
+
+/* Distinct secondary house treatments. */
+.house-balenciaga,.house-vetements{--receipt-muted:#777;--receipt-rule:#222;background:#f7f7f5!important;color:#111!important}
+.house-balenciaga .house-wordmark,.house-vetements .house-wordmark{font-size:19px;font-weight:800;letter-spacing:.16em}
+.house-numbernine{--receipt-muted:#777;--receipt-rule:#999;background:#eeeae2!important;color:#27231f!important}
+.house-numbernine .house-wordmark{font-family:'Fraunces',Georgia,serif;font-size:20px;letter-spacing:.08em}
+.house-palace{--receipt-muted:#666;--receipt-rule:#111;background:#f4f4f0!important;color:#111!important}
+.house-palace .house-wordmark{font-weight:800;font-size:24px;letter-spacing:-.04em}
+.house-sicko{--receipt-muted:#777;--receipt-rule:#222;background:#f5f4ef!important;color:#111!important}
+.house-sicko .house-wordmark{font-size:22px;font-weight:800;letter-spacing:.04em}
+.house-awake{--receipt-muted:#777;--receipt-rule:#222;background:#f7f7f4!important;color:#111!important}
+.house-awake .house-wordmark{font-weight:800;font-size:21px;letter-spacing:.08em}
+.house-palm{--receipt-muted:#777;--receipt-rule:#777;background:#f1eee7!important;color:#25231f!important}
+.house-palm .house-wordmark{font-family:'Fraunces',Georgia,serif;font-size:20px;letter-spacing:.1em}
+.house-needles{--receipt-muted:#777;--receipt-rule:#222;background:#f3f1eb!important;color:#171717!important}
+.house-needles .house-wordmark{font-size:18px;letter-spacing:.22em}
+.house-kaws,.house-murakami{--receipt-muted:#777;--receipt-rule:#999;background:#f7f4ee!important;color:#222!important}
+.house-kaws .house-wordmark,.house-murakami .house-wordmark{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:20px}
+.house-cpfm{--receipt-muted:#777;--receipt-rule:#333;background:#f4f3ec!important;color:#222!important}
+.house-cpfm .house-wordmark{font-size:16px;letter-spacing:.08em;font-weight:700}
+.house-vlone{--receipt-muted:#777;--receipt-rule:#111;background:#f7f5f0!important;color:#111!important}
+.house-vlone .house-wordmark{font-weight:900;font-size:24px;letter-spacing:.03em}
+.house-yeezy{--receipt-muted:#777;--receipt-rule:#aaa;background:#e9e8e3!important;color:#252525!important}
+.house-yeezy .house-wordmark{font-size:17px;font-weight:400;letter-spacing:.28em}
+.house-adidas{--receipt-muted:#777;--receipt-rule:#111;background:#f8f8f6!important;color:#111!important}
+.house-adidas .house-wordmark{font-weight:800;font-size:20px;letter-spacing:.08em}
+.house-nike{--receipt-muted:#777;--receipt-rule:#111;background:#f8f8f6!important;color:#111!important}
+.house-nike .house-wordmark{font-weight:800;font-size:24px;font-style:italic;letter-spacing:-.04em}
+.house-beats{--receipt-muted:#777;--receipt-rule:#aaa;background:#f7f7f7!important;color:#111!important}
+.house-beats .house-wordmark{font-size:22px;font-weight:700;letter-spacing:-.04em}
+.house-givenchy{--receipt-muted:#777;--receipt-rule:#222;background:#f6f4ef!important;color:#171717!important}
+.house-givenchy .house-wordmark{font-size:19px;font-weight:600;letter-spacing:.2em}
+.house-heron{--receipt-muted:#777;--receipt-rule:#222;background:#f4f3ef!important;color:#171717!important}
+.house-heron .house-wordmark{font-size:17px;letter-spacing:.09em}
+.house-revenge{--receipt-muted:#777;--receipt-rule:#111;background:#f5f3ed!important;color:#111!important}
+.house-revenge .house-wordmark{font-family:'Fraunces',Georgia,serif;font-size:22px;font-style:italic}
+.house-vivet{--receipt-muted:#777;--receipt-rule:#aaa;background:#f4f1e9!important;color:#222!important}
+.house-vivet .house-wordmark{font-family:'Fraunces',Georgia,serif;font-size:21px;font-weight:400}
+.house-ambush{--receipt-muted:#777;--receipt-rule:#222;background:#f7f6f2!important;color:#111!important}
+.house-ambush .house-wordmark{font-size:20px;letter-spacing:.16em}
+.house-youngboy{--receipt-muted:#777;--receipt-rule:#222;background:#f6f4ef!important;color:#171717!important}
+.house-youngboy .house-wordmark{font-size:13px;letter-spacing:.06em;font-weight:800}
+.house-plain{--receipt-muted:#777;--receipt-rule:#aaa;background:#fff!important;color:#171717!important}
 </style>
 </head>
 <body>
