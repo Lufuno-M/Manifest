@@ -6,7 +6,7 @@
 <title>MANIFEST</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:ital,wght@0,400;0,500;0,600;0,800;1,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Archivo:ital,wght@0,400;0,500;0,600;0,800;1,800&family=JetBrains+Mono:wght@400;500&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
 <style>
 
   :root{
@@ -1078,11 +1078,28 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 @media print{.receipt-name-label,.receipt-name-input{display:none!important}}
 
 
-/* Unknown / research-led labels: plain Manifest document until a source-true identity is available. */
-.house-sicko,.house-revenge{background:#fff!important;color:#171717!important;border:1px solid #d2d2d2!important;font-family:'JetBrains Mono',monospace!important}
-.house-sicko .doc-motif,.house-revenge .doc-motif{display:none}
-.house-sicko .doc-brand,.house-revenge .doc-brand{font-family:'JetBrains Mono',monospace!important;font-size:20px!important;font-weight:600!important;letter-spacing:.08em!important}
-.house-sicko .doc-brand-head,.house-revenge .doc-brand-head{background:none!important;color:#171717!important;padding:0!important;border:0!important;transform:none!important}
+/* SICKÖ — research-led print direction: T-Rex Global's red-figure artwork and early underground graphic language. No copied artwork or invented logo. */
+.house-sicko{background:#fff!important;color:#171717!important;border:1px solid #c9c4bc!important;font-family:'Archivo',Arial,sans-serif!important}
+.house-sicko .doc-motif{height:5px!important;background:#a71920!important;margin-bottom:28px!important}
+.house-sicko .doc-brand-head{display:block!important;background:none!important;color:#171717!important;padding:0 0 13px!important;border:0!important;border-bottom:1px solid #a71920!important;transform:none!important}
+.house-sicko .doc-brand{font-family:'Archivo',Arial,sans-serif!important;font-size:clamp(29px,4vw,38px)!important;font-weight:800!important;letter-spacing:-.07em!important}
+.house-sicko .doc-brand-caption{font:9px 'JetBrains Mono',monospace!important;letter-spacing:.16em!important;color:#a71920!important}
+.house-sicko .doc-title{font-family:'Archivo',Arial,sans-serif!important;font-weight:600!important;letter-spacing:-.035em!important}
+.house-sicko .doc-items{border-top:1px solid #171717!important}
+.house-sicko .doc-item{border-bottom:1px solid #d8d3cc!important}
+.house-sicko .doc-total{border-color:#a71920!important}
+.house-sicko .doc-total b{color:#a71920!important}
+
+/* REVENGE — the real identity is the pointed gothic arch wordmark and graphic-led streetwear. Keep the rest like a credible order slip. */
+.house-revenge{background:#fff!important;color:#111!important;border:1px solid #cfcfcf!important;font-family:'Archivo',Arial,sans-serif!important}
+.house-revenge .doc-motif{height:3px!important;background:#111!important;margin-bottom:30px!important}
+.house-revenge .doc-brand-head{display:block!important;text-align:center!important;background:none!important;color:#111!important;padding:0 0 17px!important;border:0!important;border-bottom:1px solid #222!important;transform:none!important}
+.house-revenge .doc-brand{font-family:'UnifrakturCook',Georgia,serif!important;font-size:clamp(38px,6vw,54px)!important;font-weight:700!important;letter-spacing:0!important;line-height:1!important;text-transform:uppercase!important}
+.house-revenge .doc-brand-caption{font:8px 'JetBrains Mono',monospace!important;letter-spacing:.22em!important;color:#555!important;text-align:center!important}
+.house-revenge .doc-title{font-family:'Archivo',Arial,sans-serif!important;font-weight:600!important;letter-spacing:-.035em!important}
+.house-revenge .doc-items{border-top:1px solid #111!important}
+.house-revenge .doc-item{border-bottom:1px solid #d5d5d5!important}
+.house-revenge .doc-total{border-color:#111!important}
 /* Brand-by-brand Manifest purchase documents */
 .rcpt-pile{gap:38px;padding:32px 24px 18vh}
 .rcpt-slip{width:min(780px,94vw);margin:0;clip-path:none;filter:drop-shadow(0 14px 32px rgba(0,0,0,.2))}
@@ -2459,8 +2476,8 @@ function formatRecognizedValue(usdPrice, zar){
     vetements:{format:"statement",bg:"#efefec",ink:"#101010",accent:"#101010",muted:"#555",line:"#101010",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.055em",heroInk:"#fff",motif:"linear-gradient(90deg,#111 0 18%,#efefec 18% 100%)"},
     "number-nine":{format:"editorial",bg:"#eeeae0",ink:"#302a26",accent:"#6e342c",muted:"#71685f",line:"#bdb4a6",font:"Georgia,'Times New Roman',serif",weight:400,track:".16em",heroInk:"#fff",motif:"linear-gradient(90deg,#5e302c,#b18d75)"},
     palace:{format:"statement",bg:"#f1f0eb",ink:"#151515",accent:"#d5e63c",muted:"#555",line:"#171717",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.04em",heroInk:"#111",motif:"linear-gradient(110deg,#d5e63c,#e8f17d)"},
-    /* SICKO: keep the receipt neutral. T-Rex Global’s artwork is the reference, not a made-up store identity. */
-     sicko:{format:"wide",bg:"#fff",ink:"#171717",accent:"#777",muted:"#666",line:"#d2d2d2",font:"'JetBrains Mono',monospace",weight:500,track:".04em",heroInk:"#fff",motif:"none"},
+    /* SICKÖ: restrained white stock, black type and a single red print cue drawn from the T-Rex Global / Born From Pain visual references. */
+     sicko:{format:"wide",bg:"#fff",ink:"#171717",accent:"#a71920",muted:"#666",line:"#d8d3cc",font:"'Archivo',Arial,sans-serif",weight:800,track:"-.05em",heroInk:"#fff",motif:"linear-gradient(90deg,#a71920 0 100%)"},
     awake:{format:"colour",bg:"#f4f0e6",ink:"#171717",accent:"#e75c35",muted:"#625b51",line:"#c8bca8",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.025em",heroInk:"#fff",motif:"linear-gradient(115deg,#e75c35 0 34%,#f1b93d 34% 67%,#315c9b 67%)"},
     "palm-angels":{format:"wide",bg:"#f1eee8",ink:"#171717",accent:"#171717",muted:"#666",line:"#aaa49b",font:"Arial,sans-serif",weight:700,track:".18em",heroInk:"#fff",motif:"linear-gradient(90deg,#111 0 12%,#f1eee8 12% 100%)"},
     needles:{format:"editorial",bg:"#f1eee8",ink:"#252329",accent:"#5b405e",muted:"#716b70",line:"#c6bdc6",font:"Georgia,'Times New Roman',serif",weight:400,track:".12em",heroInk:"#fff",motif:"linear-gradient(90deg,#5b405e,#a28aa4)"},
@@ -2475,8 +2492,8 @@ function formatRecognizedValue(usdPrice, zar){
     givenchy:{format:"card",bg:"#f8f7f3",ink:"#222",accent:"#222",muted:"#777",line:"#c9c7c0",font:"Arial,sans-serif",weight:500,track:".3em",heroInk:"#fff",motif:"linear-gradient(90deg,#222,#777)"},
     "heron-preston":{format:"statement",bg:"#f4f1eb",ink:"#191919",accent:"#f15b2a",muted:"#69645f",line:"#bdb5aa",font:"Arial Black,Arial,sans-serif",weight:900,track:".02em",heroInk:"#fff",motif:"linear-gradient(90deg,#f15b2a 0 20%,#f4f1eb 20% 100%)"},
     "raf-simons":{format:"editorial",bg:"#eeece5",ink:"#1e1d1a",accent:"#333",muted:"#77736a",line:"#bcb8ae",font:"Georgia,'Times New Roman',serif",weight:400,track:".2em",heroInk:"#fff",motif:"linear-gradient(90deg,#252522,#a7a397)"},
-    /* REVENGE: no fabricated gothic logo or colour system; use the clean Manifest receipt default. */
-     revenge:{format:"wide",bg:"#fff",ink:"#171717",accent:"#777",muted:"#666",line:"#d2d2d2",font:"'JetBrains Mono',monospace",weight:500,track:".04em",heroInk:"#fff",motif:"none"},
+    /* REVENGE: monochrome order slip; gothic wordmark treatment is confined to the brand heading. */
+     revenge:{format:"wide",bg:"#fff",ink:"#111",accent:"#111",muted:"#555",line:"#d5d5d5",font:"'Archivo',Arial,sans-serif",weight:600,track:"0",heroInk:"#fff",motif:"linear-gradient(90deg,#111 0 100%)"},
     vivet:{format:"card",bg:"#f4f0e9",ink:"#24211d",accent:"#8b755e",muted:"#746b61",line:"#c7bcae",font:"Georgia,'Times New Roman',serif",weight:500,track:".2em",heroInk:"#fff",motif:"linear-gradient(90deg,#8b755e,#d7c6ad)"},
     ambush:{format:"wide",bg:"#f1f0e9",ink:"#171717",accent:"#d4ef2c",muted:"#666",line:"#b7b7a9",font:"Arial Black,Arial,sans-serif",weight:900,track:".02em",heroInk:"#171717",motif:"linear-gradient(100deg,#d4ef2c 0 22%,#171717 22% 24%,#f1f0e9 24% 100%)"},
     youngboy:{format:"statement",bg:"#191919",ink:"#f4f4f4",accent:"#d7b75b",muted:"#b5b5b5",line:"#666",font:"Arial Black,Arial,sans-serif",weight:900,track:".015em",heroInk:"#191919",motif:"linear-gradient(90deg,#d7b75b,#f0dda0)"}
@@ -2522,7 +2539,7 @@ function formatRecognizedValue(usdPrice, zar){
       vetements:["ORDER / OBJECT","The order is confirmed. The details are deliberately kept direct."],
       "number-nine":["An order, recorded","A record of the selected object and its place in this purchase."],
       palace:["Order locked.","Your selection is confirmed. Here are the details."],
-      sicko:["Order details","A straightforward record of the selected pieces and payment."],
+      sicko:["Order details","SICKÖ / BORN FROM PAIN. A record of the selected pieces and payment."],
       awake:["Good things, incoming.","Your Manifest order is confirmed. Here's what you've selected."],
       "palm-angels":["Purchase record","The selected pieces and their order details, brought together."],
       needles:["Selected pieces","A quiet record of the pieces acquired through Manifest."],
@@ -2543,8 +2560,8 @@ function formatRecognizedValue(usdPrice, zar){
       youngboy:["ORDER SECURED","Your Manifest selection is confirmed. The order details follow."]
     }[br.k] || ["Order details","Your purchase through Manifest is confirmed."];
     const intro = '<div class="doc-title">' + safeRecordText(language[0]) + '</div><p class="doc-copy">' + safeRecordText(language[1]) + '</p>';
-    const sourceLine = ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '<div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div>' : '';
-    const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKO",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
+    const sourceLine = br.k === "sicko" ? '<div class="doc-brand-caption">BORN FROM PAIN · SELECTED THROUGH MANIFEST</div>' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '<div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div>' : br.k === "revenge" ? '<div class="doc-brand-caption">SELECTED THROUGH MANIFEST</div>' : '';
+    const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKÖ",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
     return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><div class="doc-issuer">MANIFEST <span>· PURCHASE DOCUMENT</span></div><header class="doc-brand-head"><div class="doc-brand">' + name + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Sold by Manifest. Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
