@@ -2401,7 +2401,6 @@ function formatRecognizedValue(usdPrice, zar){
     const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
     const rows = items.map(b => '<div class="doc-item"><div class="doc-item-main"><b>' + safeRecordText(b.name) + '</b><small>' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
     const style = '--doc-bg:' + design.bg + ';--doc-ink:' + design.ink + ';--doc-accent:' + design.accent + ';--doc-muted:' + design.muted + ';--doc-line:' + design.line + ';--doc-font:' + design.font + ';--doc-weight:' + design.weight + ';--doc-track:' + design.track + ';--doc-hero-ink:' + design.heroInk + ';--doc-motif:' + design.motif + ';';
-    const greeting = receiptCustomer ? '<p class="doc-copy">Prepared for ' + safeRecordText(receiptCustomer) + '.</p>' : '';
     const language = {
       bape:["Your pieces are yours.","Your selection is confirmed. Keep this order record with the pieces."],
       lv:["Your order is confirmed","Thank you for choosing Manifest. Your purchase details are below."],
