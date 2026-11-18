@@ -2394,9 +2394,9 @@ function formatRecognizedValue(usdPrice, zar){
         ${vat ? `<div><span>VAT</span><span>${zarFormat(vat)}</span></div>` : ''}
         <div class="t"><span>Total</span><span>${zarFormat(total)}</span></div>
       </div>
-      <div class="sp-from"><b>Payment</b><br>${safeRecordText(wallet)}</div>
+      <div class="sp-from"><b>Payment method</b><br>${safeRecordText(wallet)}</div>
       <div class="sp-bc">${code39(no)}</div>
-      
+      <div class="sp-fine">Thank you.</div>
     </div>`;
   }
   function rafSimonsSlip(items, no, date){
