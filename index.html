@@ -1737,7 +1737,7 @@ function formatRecognizedValue(usdPrice, zar){
   const B = (k, m, w, s, f, p, o = {}) => ({ k, m, w, s, f, p, ...o });
   // Order matters: first match wins, so a collab prints on the house listed first
   // (Supreme before Nike, Off-White before Nike, Yeezy before Adidas, and so on).
-  // Logo images are optional: drop a file at assets/receipt-logos/<key>.png and it prints
+  // Logo images are optional: drop a file at assets/receipt-logo-<key>.png and it prints
   // above the wordmark; if the file is missing the image removes itself.
   const BRANDS = [
     B('bape', /bathing ape|bape/i, 'A BATHING APE®', 'BAPE® store copy', 'Thank you', 'BAPE',
@@ -1831,7 +1831,7 @@ function formatRecognizedValue(usdPrice, zar){
     const time = new Date().toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
     const ref = bpRef;
     const nm = (b) => (b.name + (b.size ? ' ' + b.size : '')).toUpperCase();
-    const logo = '<img class="bp-logo" src="assets/receipt-logos/bape.png" alt="" onerror="this.remove()">';
+    const logo = '<img class="bp-logo" src="assets/receipt-logo-bape.png" alt="" onerror="this.remove()">';
     const rows = items.map(b =>
       `<div class="bp-it">${ref(b)} - ${nm(b)}</div><div class="bp-g"><span></span><span>${b.label}</span><span>1</span><span>${b.label}</span></div>`).join('');
     return `<div class="rcpt-paper bape">
@@ -1857,7 +1857,7 @@ function formatRecognizedValue(usdPrice, zar){
       <div class="bp-foot">Thank you for shopping at Manifest.</div>
       <div class="rcpt-fine"><button type="button" class="bp-flip" data-bp-flip>Order page ›</button></div>
     </div>
-    ${orderPage(items, no, date, '<img src="assets/receipt-logos/bape.png" alt="" onerror="this.outerHTML=\'<b>A BATHING APE®</b>\'">')}`;
+    ${orderPage(items, no, date, '<img src="assets/receipt-logo-bape.png" alt="" onerror="this.outerHTML=\'<b>A BATHING APE®</b>\'">')}`;
   }
   function supremeSlip(items, no, date){
     const total = items.reduce((t, b) => t + zarNumber(b.label), 0);
@@ -1865,7 +1865,7 @@ function formatRecognizedValue(usdPrice, zar){
     const rows = items.map(b =>
       `<div class="sp-it"><img src="${b.asset}" alt="" onerror="this.style.visibility='hidden'"><div>${b.name}${b.maker.includes('×') ? '<br>' + b.maker : ''}${b.size ? '<br>Size: ' + b.size : ''}</div><span>${b.label}</span></div>`).join('');
     return `<div class="rcpt-paper supreme">
-      <img class="sp-logo" src="assets/receipt-logos/supreme.png" alt="Supreme" onerror="this.outerHTML='<span class=&quot;sp-box&quot;>Supreme</span>'">
+      <img class="sp-logo" src="assets/receipt-logo-supreme.png" alt="Supreme" onerror="this.outerHTML='<span class=&quot;sp-box&quot;>Supreme</span>'">
       <div class="sp-ord">Order #${no}</div>
       <div class="sp-date">${date}</div>
       <div class="sp-hd">Order Detail</div>
@@ -1894,7 +1894,7 @@ function formatRecognizedValue(usdPrice, zar){
       `<div class="rcpt-row"><span>${q((b.size ? 'Size ' + b.size + ' · ' : '') + 'Qty 1')}</span><b>${b.label}</b></div>`).join('');
     return `<div class="rcpt-paper" style="${vars}">
       <div class="band"></div>
-      ${br.k !== 'plain' ? `<img class="brand-logo" src="assets/receipt-logos/${br.k}.png" alt="" onerror="this.remove()">` : ''}
+      ${br.k !== 'plain' ? `<img class="brand-logo" src="assets/receipt-logo-${br.k}.png" alt="" onerror="this.remove()">` : ''}
       <div class="brand-word" style="${br.wcss}">${br.w}</div>
       <div class="brand-sub">${br.s || '&nbsp;'}</div>
       <div class="rcpt-row"><span>Slip No.</span><b>${no}</b></div>
