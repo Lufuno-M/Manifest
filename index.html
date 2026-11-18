@@ -1261,6 +1261,11 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .manifest-record{width:178mm!important;max-width:none!important;margin:0 auto!important}
 }
 
+
+.rcpt-print{position:fixed;top:14px;right:90px;z-index:7;color:#EDEAF2;background:rgba(20,20,20,.82);border:1px solid rgba(255,255,255,.18);font:10px 'JetBrains Mono',monospace;letter-spacing:.13em;text-transform:uppercase;padding:9px 12px;cursor:pointer;opacity:.86}
+.rcpt-print:hover{opacity:1;background:#303030}
+@media print{.rcpt-print{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -1436,6 +1441,7 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 
 <div class="rcpt-stage" id="rcpt-stage" role="dialog" aria-modal="true" aria-label="Receipts">
   <div class="rcpt-slot"></div>
+  <button type="button" class="rcpt-print" id="rcpt-print">Print documents</button>
   <button type="button" class="rcpt-done" id="rcpt-done">Done ✕</button>
   <div class="rcpt-pile" id="rcpt-pile"></div>
 </div>
@@ -2571,6 +2577,7 @@ function formatRecognizedValue(usdPrice, zar){
       runReceipts();
     }, processingTime + 1050);
   });
+  document.getElementById('rcpt-print').addEventListener('click', () => window.print());
   document.getElementById('rcpt-done').addEventListener('click', closeReceipts);
   document.getElementById('ps-cancel').addEventListener('click', closeSheet);
   sheetBack.addEventListener('click', closeSheet);
