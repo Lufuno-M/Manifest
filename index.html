@@ -2237,32 +2237,38 @@ indexListEl.addEventListener('click', e => {
   window.openRecordById(row.dataset.id);
 });
 
-// PRICING — every object carries one fixed rand figure in `zar`. No range, no formula at display time.
-// The figure is chosen from PRICE_LADDER (steps of roughly 1.4–1.7×, so neighbouring rungs read as different
-// classes rather than haggling noise), priced by what the OBJECT IS, not by how hot the house is:
-// same kind of object = same rung, whoever made it. `price` (USD) is kept only as legacy reference data.
-// `own:true` marks a maker's own published price (BRTHRHOOD444), which stays off-ladder on purpose.
-// Each price = the higher of an affordability price and a credibility floor (~40% of market reference), capped per category: Footwear R3,000 (grail:true pairs R4,500) · Apparel/Accessory/Object R4,500 · Jewelry/Bag R15,000. Run auditPrices() in the console after adding anything.
-const PRICE_LADDER = [150, 250, 350, 500, 750, 1000, 1500, 2000, 3000, 4500, 6500, 9500, 15000];
-const PRICE_CEILING = { Footwear: 3000, Apparel: 4500 };
-const GRAIL_FOOTWEAR_CEILING = 4500; // only objects flagged grail:true may exceed the Footwear ceiling
-const USD_TO_ZAR = 17; // legacy fallback only
+// PRICING — the stored `zar` value is the object's existing recognized-value base.
+// Non-maker-listed objects receive a stable, individual 8–13% margin, rounded to the nearest R10.
+// There is no shared price ladder and no category ceiling: the object sets its own price.
+// `own:true` preserves a maker's published price exactly. The legacy USD × 0.6 × R17
+// fallback remains for any future object that has no explicit ZAR value.
+const PRICE_STEP = 10;
+const USD_TO_ZAR = 17;
+function stablePriceMargin(id){
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return 0.08 + (hash % 6) * 0.01;
+}
+OBJECTS.forEach(o => {
+  if (!Number.isFinite(o.zar) || o.zar <= 0) return;
+  o.zarBase = o.zar;
+  o.priceMargin = o.own ? 0 : stablePriceMargin(o.id);
+  if (!o.own) o.zar = Math.round((o.zarBase * (1 + o.priceMargin)) / PRICE_STEP) * PRICE_STEP;
+});
 function formatRecognizedValue(usdPrice, zar){
   if (zar) return 'R' + zar.toLocaleString('en-ZA');
-  const round = (n) => Math.round(n / 10) * 10;
+  const round = (n) => Math.round(n / PRICE_STEP) * PRICE_STEP;
   return 'R' + round(usdPrice * 0.6 * USD_TO_ZAR).toLocaleString('en-ZA');
 }
 window.auditPrices = function(){
   const bad = [];
   OBJECTS.forEach(o => {
-    if (!o.zar) bad.push([o.id, 'no zar']);
-    else {
-      if (!o.own && !PRICE_LADDER.includes(o.zar)) bad.push([o.id, 'off-ladder', o.zar]);
-      const c = PRICE_CEILING[o.category];
-      if (c && o.zar > (o.grail && o.category === 'Footwear' ? GRAIL_FOOTWEAR_CEILING : c)) bad.push([o.id, 'over ' + o.category + ' ceiling', o.zar]);
-    }
+    if (!Number.isFinite(o.zar) || o.zar <= 0) bad.push([o.id, 'missing or invalid ZAR price', o.zar]);
+    else if (o.zar % PRICE_STEP !== 0) bad.push([o.id, 'not rounded to R10', o.zar]);
+    else if (o.own && o.zar !== o.zarBase) bad.push([o.id, 'maker price changed', o.zarBase, o.zar]);
+    else if (!o.own && (o.priceMargin < 0.08 || o.priceMargin > 0.13)) bad.push([o.id, 'margin outside 8–13%', o.priceMargin]);
   });
-  console.log(bad.length ? bad : 'prices ok — ' + OBJECTS.length + ' objects');
+  console.log(bad.length ? bad : 'prices ok — ' + OBJECTS.length + ' objects; R10 resolution; individual 8–13% margins');
   return bad;
 };
 
