@@ -1347,6 +1347,10 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .rcpt-slip.bape-slip .rcpt-paper,#rcpt-stage .rcpt-slip.raf-slip .rcpt-paper{width:80mm!important;max-width:80mm!important;padding:22px 20px 36px!important;-webkit-mask:none!important;mask:none!important}
 }
 
+  .archive-switch{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;padding:0 18px 26px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft)}
+  .archive-switch button{border:0;background:none;color:inherit;padding:5px 0;opacity:.55;border-bottom:1px solid transparent}
+  .archive-switch button.active{opacity:1;color:var(--ink);border-color:var(--ink)}
+  .archive-switch .archive-count{opacity:.65;margin-left:4px}
 </style>
 </head>
 <body>
@@ -1435,6 +1439,7 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 </section>
 
 <nav class="field-filters" id="field-filters" aria-label="Filter by category"></nav>
+<nav class="archive-switch" id="archive-switch" aria-label="Collection view"><button type="button" data-view="collection" class="active">Collection</button><button type="button" data-view="archive">Archive <span class="archive-count" id="archive-count">00</span></button><button type="button" data-view="all">Everything</button></nav>
 
 <section class="field" id="field">
   <div id="field-objects"></div>
@@ -1696,7 +1701,7 @@ const OBJECTS = [
     blurb:'Red, capsule-shaped, unmistakable from across a room — the shape became the signal before the sound did.', asset:'assets/beats-pill-red.png' },
   { id:'nike-vlone-af1', name:'Air Force 1 Low × VLONE', maker:'Nike × VLONE', category:'Footwear', price:950, zar:4500, grail:true, sizes:['7','8','9','10','11','12','13'],
     blurb:'Black leather, orange Swoosh, "Friends Alone" stitched into the panel — a friendship turned into a colorway.', asset:'assets/nike-vlone-af1.png',
-    scarcity:'hyper-limited at ComplexCon 2016, then a Harlem-only release in 2017' },
+    scarcity:'2016 ComplexCon debut; followed by a Harlem-only release in 2017. A documented limited release, not a generic AF1 colourway.' },
   { id:'supreme-white-af1', name:'Air Force 1 Low × Supreme', maker:'Nike × Supreme', category:'Footwear', price:400, zar:3000, sizes:['7','8','9','10','11','12','13'],
     blurb:'White leather, a heart stitched in red at the tongue — the most restrained thing Supreme ever put its name on.', asset:'assets/supreme-white-af1.png' },
   { id:'white-cpfm-nike-af1', name:'Air Force 1 Low × CPFM', maker:'Nike × Cactus Plant Flea Market', category:'Footwear', price:340, zar:2000, sizes:['7','8','9','10','11','12','13'],
@@ -1708,7 +1713,7 @@ const OBJECTS = [
   { id:'white-nike-ow-nrg-hoodie', name:'NRG Hoodie — White', maker:'Nike × Off-White', category:'Apparel', price:650, zar:4500, sizes:['S','M','L','XL'],
     blurb:'The same architecture as the black sample, inverted — orange diagonal stripes on white.', asset:'assets/white-nike-ow-nrg-hoodie.png' },
   { id:'raf-simons-consumed-red-hoodie', name:'"Consumed" Hoodie', maker:'Raf Simons', category:'Apparel', price:1400, zar:4500, sizes:['S','M','L','XL'],
-    blurb:'A horror-film still printed across black cotton — the graphic that made Raf\'s archive era a religion for the people who found it early.', asset:'assets/raf-simons-consumed-red-hoodie.png' },
+    blurb:'A horror-film still printed across black cotton — the graphic that made Raf\'s archive era a religion for the people who found it early.', asset:'assets/raf-simons-consumed-red-hoodie.png', grail:true, scarcity:'SS03 Consumed is a recognised early-2000s Raf archive collection. Grailed records show sold examples across multiple sizes and highly variable prices; exact graphic/version and condition matter.' },
   { id:'black-sup-bogo-hoodie', name:'Box Logo Hoodie — Black', maker:'Supreme', category:'Apparel', price:380, zar:3000, sizes:['S','M','L','XL'],
     blurb:'Red box, white type, black fleece — the most counterfeited four letters in streetwear.', asset:'assets/black-sup-bogo-hoodie.png' },
   { id:'supreme-bogo-grey', name:'Box Logo Hoodie — Grey', maker:'Supreme', category:'Apparel', price:350, zar:2000, sizes:['S','M','L','XL'],
@@ -2056,7 +2061,8 @@ const arrivalMakerEl = document.getElementById('arrival-maker');
 const arrivalNameEl = document.getElementById('arrival-name');
 arrivalStageEl.style.transition = 'opacity 50ms linear';
 
-let arrivalObjData = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
+const currentCollection = OBJECTS.filter(o => !o.archived);
+let arrivalObjData = currentCollection[Math.floor(Math.random() * currentCollection.length)];
 function paintArrival(){
   arrivalStageEl.innerHTML = renderStage(arrivalObjData);
   arrivalMakerEl.textContent = arrivalObjData.maker;
@@ -2070,9 +2076,9 @@ function scheduleArrivalDrift(){
     arrivalStageEl.style.opacity = '0';
     rotateThesis();
     setTimeout(() => {
-      let next = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
-      while (next.id === arrivalObjData.id && OBJECTS.length > 1){
-        next = OBJECTS[Math.floor(Math.random() * OBJECTS.length)];
+      let next = currentCollection[Math.floor(Math.random() * currentCollection.length)];
+      while (next.id === arrivalObjData.id && currentCollection.length > 1){
+        next = currentCollection[Math.floor(Math.random() * currentCollection.length)];
       }
       arrivalObjData = next;
       paintArrival();
@@ -2146,7 +2152,7 @@ const indexListEl = document.getElementById('index-list');
 const indexSorted = [...OBJECTS].sort((a, b) =>
   a.maker.localeCompare(b.maker) || a.name.localeCompare(b.name));
 function paintIndex(q){
-  const list = q ? indexSorted.filter(o => matches(o, q)) : indexSorted;
+  const list = indexSorted.filter(o => inActiveView(o) && matches(o, q));
   let html = '', last = null;
   list.forEach(o => {
     if (o.maker !== last){ html += `<div class="index-house">${o.maker}</div>`; last = o.maker; }
@@ -2157,17 +2163,35 @@ function paintIndex(q){
 }
 
 let activeCategory = 'All';
+let activeView = 'collection';
+const isArchived = o => o.archived === true;
+const inActiveView = o => activeView === 'all' || (activeView === 'archive' ? isArchived(o) : !isArchived(o));
+const archiveSwitchEl = document.getElementById('archive-switch');
+function setArchiveView(view){
+  activeView = view;
+  archiveSwitchEl.querySelectorAll('button').forEach(b => {
+    const on = b.dataset.view === view;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+  applyFilter(document.getElementById('field-search-input').value.trim().toLowerCase());
+}
+archiveSwitchEl.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-view]');
+  if (btn) setArchiveView(btn.dataset.view);
+});
+document.getElementById('archive-count').textContent = String(OBJECTS.filter(isArchived).length).padStart(2,'0');
 function applyFilter(q){
   let visible = 0;
   wells.forEach(w => {
-    const m = matches(w.obj, q)
+    const m = inActiveView(w.obj) && matches(w.obj, q)
       && (activeCategory === 'All' || w.obj.category === activeCategory);
     w.el.style.display = m ? '' : 'none';
     if (m) visible++;
   });
   const filtered = q || activeCategory !== 'All';
   document.getElementById('field-count').textContent =
-    String(visible).padStart(2, '0') + (filtered ? ' matching' : ' objects');
+    String(visible).padStart(2, '0') + (filtered ? ' matching' : activeView === 'archive' ? ' archived objects' : ' objects');
   document.getElementById('field-empty').style.display = visible === 0 ? 'block' : 'none';
   paintIndex(q);
 }
@@ -2390,8 +2414,10 @@ window.auditPrices = function(){
     nameEl.textContent = o.name;
     blurbEl.textContent = o.blurb;
     const scarcityEl = document.getElementById('record-scarcity');
-    scarcityEl.textContent = o.scarcity || '';
-    scarcityEl.style.display = o.scarcity ? '' : 'none';
+    const archiveCopy = o.archived ? 'Archive · no longer in the active collection' : '';
+    const recognitionCopy = o.grail ? 'Collector reference · historically notable release' : '';
+    scarcityEl.textContent = [o.scarcity, recognitionCopy, archiveCopy].filter(Boolean).join(' · ');
+    scarcityEl.style.display = scarcityEl.textContent ? '' : 'none';
     priceEl.textContent = formatRecognizedValue(o.price, o.zar);
     if (o.sizes && o.sizes.length){
       sizesWrap.style.display = '';
