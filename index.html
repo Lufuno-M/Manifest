@@ -1181,6 +1181,8 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 .house-receipt .doc-items-head{display:flex;justify-content:space-between;gap:20px;padding:18px 0 8px}
 .house-receipt .doc-items{border-top:1px solid var(--doc-line)}
 .house-receipt .doc-item{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;padding:15px 0;border-bottom:1px solid var(--doc-line)}
+.house-receipt .doc-item.has-photo{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:14px}
+.house-receipt .doc-item-photo{display:block;width:54px;height:54px;object-fit:contain;object-position:center}
 .house-receipt .doc-item-main{min-width:0;display:grid;gap:6px}
 .house-receipt .doc-item-main b{font:600 13px/1.4 'Archivo',Arial,sans-serif;overflow-wrap:anywhere}
 .house-receipt .doc-item-main small{font:9px/1.5 'JetBrains Mono',monospace;color:var(--doc-muted)}
@@ -2862,7 +2864,12 @@ window.auditPrices = function(){
   function brandReceipt(br, items, no, date){
     const design = RECEIPT_DESIGN[br.k] || {format:"ticket",bg:"#fff",ink:"#171717",accent:"#777",muted:"#666",line:"#bbb",font:"Arial,sans-serif",weight:600,track:".08em",heroInk:"#fff",motif:"linear-gradient(90deg,#777,#ddd)"};
     const total = items.reduce((n,b) => n + zarNumber(b.label), 0);
-    const rows = items.map(b => '<div class="doc-item"><div class="doc-item-main"><b>' + safeRecordText(b.name) + '</b><small>' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
+    // Product thumbnails suit online-order formats; keep boutique/editorial slips text-led.
+    const receiptPhotoBrands = new Set(["nike","adidas","yeezy","beats"]);
+    const showItemPhotos = receiptPhotoBrands.has(br.k);
+    const rows = items.map(b => '<div class="doc-item' + (showItemPhotos && b.asset ? ' has-photo' : '') + '">' +
+      (showItemPhotos && b.asset ? '<img class="doc-item-photo" src="' + safeRecordText(b.asset) + '" alt="' + safeRecordText(b.name) + '" onerror="this.style.display=\'none\'">' : '') +
+      '<div class="doc-item-main"><b>' + safeRecordText(b.name) + '</b><small>' + safeRecordText(b.maker) + (b.size ? ' · SIZE ' + safeRecordText(b.size) : '') + ' · QTY 1</small></div><strong>' + safeRecordText(b.label) + '</strong></div>').join("");
     const style = '--doc-bg:' + design.bg + ';--doc-ink:' + design.ink + ';--doc-accent:' + design.accent + ';--doc-muted:' + design.muted + ';--doc-line:' + design.line + ';--doc-font:' + design.font + ';--doc-weight:' + design.weight + ';--doc-track:' + design.track + ';--doc-hero-ink:' + design.heroInk + ';--doc-motif:' + design.motif + ';';
     const language = {
       bape:["Your pieces are yours.","Your selection is confirmed. Keep this order record with the pieces."],
