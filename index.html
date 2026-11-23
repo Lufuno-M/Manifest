@@ -449,8 +449,9 @@
   .alt-chips.open{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
   .alt-chips button{ min-height:42px; display:flex; align-items:center; justify-content:center; width:100%; min-width:0; background:#fff; }
   .alt-chips button .wm{ justify-content:center; }
-  .ps-visual-apple i{width:49px;height:49px;border-radius:50%;background:radial-gradient(circle at 32% 25%,#fff 0 7%,#f0f1f5 24%,#aeb5c4 60%,#6b7281 100%);box-shadow:0 0 26px #c9d2e866,inset -7px -9px 14px #42495855;animation:ps-breathe 2s ease-in-out infinite}
-  .ps-visual-apple b{width:76px;height:76px;border:1px solid #aeb5c477;border-radius:50%;animation:ps-ripple 2.3s ease-out infinite}
+    .ps-visual-apple{width:28px;height:28px;margin:0 auto 12px}
+  .ps-visual-apple i{width:22px;height:22px;border:1.5px solid #d6d6dc;border-top-color:#171717;border-radius:50%;animation:ps-orbit 1s linear infinite}
+  .ps-visual-apple b{display:none}
   .alt-chips button{ border:1px solid var(--hairline); border-radius:5px; padding:8px 11px; color:var(--ink); transition:border-color .25s ease; }
   .alt-chips button:hover{ border-color:var(--ink-soft); }
   .alt-chips button.on{ border-color:var(--ink); }
@@ -535,7 +536,6 @@
 .ps-field input:focus{border-color:#555;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
 .ps-card-brand{display:flex;align-items:center;justify-content:space-between;min-height:18px;margin:0 0 10px;font:600 10px 'Archivo',sans-serif;letter-spacing:.08em;color:#777}
 .ps-card-brand strong{font-size:12px;color:#171717;letter-spacing:.02em}
-.ps-secure-note{margin:10px 0 0;color:#888;font:10px/1.5 'Archivo',sans-serif}
 .ps-method-panel[hidden]{display:none}
 .ps-qr-preview{margin-top:12px;display:flex;justify-content:center;padding:12px;background:#fafafa;border:1px dashed #ddd;border-radius:8px}
 .ps-qr-preview[hidden]{display:none}
@@ -2553,7 +2553,7 @@ window.auditPrices = function(){
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
     ).join('');
     document.getElementById('ps-total').textContent = sumOf(order);
-    psMsg.className = 'ps-msg'; psMsg.textContent = 'DEMO ONLY · No payment will be processed.'; sheet.classList.remove('confirmed','processing');
+    psMsg.className = 'ps-msg'; psMsg.textContent = 'Continue when ready.'; sheet.classList.remove('confirmed','processing');
     sheet.dataset.wallet = wallet === 'Yoco Checkout' ? 'yoco' : wallet === 'Debit / Credit Card' ? 'card' : wallet === 'Payment Link' ? 'link' : wallet === 'QR Code' ? 'qr' : 'apple';
     paintPaymentFields();
     sheetBack.classList.add('open');
@@ -2564,11 +2564,10 @@ window.auditPrices = function(){
     const title = document.getElementById('ps-method-title');
     const help = document.getElementById('ps-method-help');
     const fields = document.getElementById('ps-method-fields');
-    const commonNote = '<p class="ps-secure-note">Prototype only. No payment is processed and details are not sent to a payment provider.</p>';
     if (wallet === 'Debit / Credit Card'){
       title.textContent = 'Card details';
       help.textContent = 'The card network is recognised as you type.';
-      fields.innerHTML = '<div class="ps-card-brand"><span>CARD NETWORK</span><strong id="ps-card-network">CARD</strong></div><div class="ps-fields"><div class="ps-field wide"><label for="ps-card-number">Card number</label><input id="ps-card-number" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"></div><div class="ps-field"><label for="ps-card-expiry">Expiry</label><input id="ps-card-expiry" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM / YY"></div><div class="ps-field"><label for="ps-card-cvc">Security code</label><input id="ps-card-cvc" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"></div></div><p class="ps-secure-note">Do not enter real card details here. This is a visual prototype, not a secure card form.</p>' + commonNote;
+      fields.innerHTML = '<div class="ps-card-brand"><span>CARD NETWORK</span><strong id="ps-card-network">CARD</strong></div><div class="ps-fields"><div class="ps-field wide"><label for="ps-card-number">Card number</label><input id="ps-card-number" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"></div><div class="ps-field"><label for="ps-card-expiry">Expiry</label><input id="ps-card-expiry" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM / YY"></div><div class="ps-field"><label for="ps-card-cvc">Security code</label><input id="ps-card-cvc" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"></div></div>' + commonNote;
       const number = document.getElementById('ps-card-number');
       number.addEventListener('input', () => {
         const digits = number.value.replace(/\D/g,'').slice(0,19);
@@ -2584,23 +2583,23 @@ window.auditPrices = function(){
     } else if (wallet === 'Payment Link'){
       title.textContent = 'Payment link';
       help.textContent = 'Paste the checkout URL supplied by your payment provider.';
-      fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-payment-link">Payment URL</label><input id="ps-payment-link" type="url" inputmode="url" placeholder="https://…"></div></div><p class="ps-secure-note">The link is displayed for this demo only; it is not opened or verified.</p>';
+      fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-payment-link">Payment URL</label><input id="ps-payment-link" type="url" inputmode="url" placeholder="https://…"></div></div>';
     } else if (wallet === 'QR Code'){
       title.textContent = 'QR payment';
       help.textContent = 'Add the hosted QR image or a URL to the payment QR.';
-      fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-qr-url">QR image URL</label><input id="ps-qr-url" type="url" inputmode="url" placeholder="https://…"></div><div class="ps-field wide"><label for="ps-qr-file">Or choose a QR image</label><input id="ps-qr-file" type="file" accept="image/*"></div></div><div id="ps-qr-preview" class="ps-qr-preview" hidden></div><p class="ps-secure-note">The QR is preview-only in this prototype. Verify payment in your provider account.</p>';
+      fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-qr-url">QR image URL</label><input id="ps-qr-url" type="url" inputmode="url" placeholder="https://…"></div><div class="ps-field wide"><label for="ps-qr-file">Or choose a QR image</label><input id="ps-qr-file" type="file" accept="image/*"></div></div><div id="ps-qr-preview" class="ps-qr-preview" hidden></div>';
       const qrUrl = document.getElementById('ps-qr-url'), qrFile = document.getElementById('ps-qr-file'), qrPreview = document.getElementById('ps-qr-preview');
       const showQr = src => { qrPreview.innerHTML = '<img alt="Payment QR preview" src="' + String(src).replace(/&/g,'&amp;').replace(/"/g,'&quot;') + '">'; qrPreview.hidden = false; };
       qrUrl.addEventListener('change', () => { if (/^https:\/\//i.test(qrUrl.value.trim())) showQr(qrUrl.value.trim()); });
       qrFile.addEventListener('change', () => { const file = qrFile.files && qrFile.files[0]; if (file && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = () => showQr(reader.result); reader.readAsDataURL(file); } });
     } else if (wallet === 'Apple Pay'){
       title.textContent = 'Apple Pay';
-      help.textContent = 'A device-native wallet handoff would appear here when a real payment provider is connected.';
-      fields.innerHTML = '<p class="ps-secure-note">Apple Pay cannot be simulated as a real wallet authorisation in this standalone demo.</p>';
+      help.textContent = '';
+      fields.innerHTML = '';
     } else {
       title.textContent = 'Yoco Checkout';
-      help.textContent = 'Hosted checkout is the intended route for taking payment securely.';
-      fields.innerHTML = '<p class="ps-secure-note">Connect Yoco Checkout credentials and use its hosted payment flow here. This prototype does not collect or process payment details.</p>';
+      help.textContent = '';
+      fields.innerHTML = '';
     }
   }
   function closeSheet(){
@@ -3007,7 +3006,7 @@ window.auditPrices = function(){
     const processingTime = stages.reduce((sum, stage) => sum + stage[1], 0);
     setTimeout(() => {
       psMsg.className = 'ps-msg complete';
-      psMsg.innerHTML = '<span class="ps-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7"/></svg></span><span class="ps-status">Payment complete</span>';
+      psMsg.innerHTML = '<span class="ps-success-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.2 4.2L19 7"/></svg></span><span class="ps-status">Order recorded</span>';
       sheet.classList.remove('processing');
       sheet.classList.add('confirmed');
     }, processingTime);
