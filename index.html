@@ -2553,12 +2553,12 @@ window.auditPrices = function(){
       fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-card-number">Card number</label><input id="ps-card-number" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"></div><div class="ps-field"><label for="ps-card-expiry">Expiry</label><input id="ps-card-expiry" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM / YY"></div><div class="ps-field"><label for="ps-card-cvc">Security code</label><input id="ps-card-cvc" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"></div></div>' + commonNote;
       const number = document.getElementById('ps-card-number');
       number.addEventListener('input', () => {
-        const digits = number.value.replace(/\\D/g,'').slice(0,19);
+        const digits = number.value.replace(/\D/g,'').slice(0,19);
         number.value = digits.replace(/(.{4})/g,'$1 ').trim();
       });
       const expiry = document.getElementById('ps-card-expiry');
       expiry.addEventListener('input', () => {
-        const d = expiry.value.replace(/\\D/g,'').slice(0,4);
+        const d = expiry.value.replace(/\D/g,'').slice(0,4);
         expiry.value = d.length > 2 ? d.slice(0,2) + ' / ' + d.slice(2) : d;
       });
     } else if (wallet === 'Payment Link'){
