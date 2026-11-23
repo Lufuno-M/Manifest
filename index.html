@@ -2938,8 +2938,10 @@ window.auditPrices = function(){
         B('plain', /.*/, String(item.maker).toUpperCase(), '', 'Thank you', 'ORD');
       const key = br.k === 'plain' ? 'plain:' + item.maker : br.k;
       if (!groups.has(key)) groups.set(key, { br, items: [] });
-      const finalAmount = Math.round(zarNumber(item.label) * 0.70);
-      groups.get(key).items.push({ ...item, label: zarFormat(finalAmount) });
+      // The receipt must preserve the exact selling price already shown
+      // on the product record and in the bag. Never apply a retail/discount
+      // conversion at receipt-generation time.
+      groups.get(key).items.push({ ...item });
     });
     pileR.innerHTML = '';
     const slips = [];
