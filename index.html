@@ -479,10 +479,6 @@
   .mc-mark i+i{margin-left:-5px;background:#f2a900;mix-blend-mode:multiply}
   .wm-symbol{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;color:#171717}
   .wm-symbol svg{width:25px;height:25px;fill:none;stroke:currentColor}
-  .ps-head #ps-wallet{display:flex;align-items:center;min-height:34px}
-  .ps-head #ps-wallet .applepay-mark{display:inline-flex;align-items:center;gap:4px;color:#000;font-size:21px;font-weight:600}
-  .ps-head #ps-wallet .applepay-mark svg{display:block;width:19px;height:22px;fill:#000}
-  .ps-head #ps-wallet .wm-yoco{color:#fff;background:#171717}
   .ps-method-title:empty,.ps-method-help:empty{display:none}
   .wm-card{font-size:10px;font-weight:700;letter-spacing:.08em}
 
@@ -557,8 +553,20 @@
 .ps-qr-preview img{width:150px;height:150px;object-fit:contain}
 @media(max-width:380px){.pay-sheet{padding:18px 16px 22px}.ps-method-panel{padding:13px}}
 @media(prefers-reduced-motion:reduce){.ps-visual i,.ps-visual b{animation:none!important}}
-.ps-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-family:'Archivo', sans-serif; font-weight:600; font-size:17px; }
-.ps-head .applepay-mark, .ps-head .wm{ color:#000; }
+.ps-head{display:flex;justify-content:space-between;align-items:center;min-height:42px;margin:0 0 18px;font-family:'Archivo',sans-serif;font-weight:600;font-size:17px}
+.ps-head #ps-wallet{display:flex;align-items:center;min-height:38px}
+.ps-head #ps-wallet .applepay-mark{display:inline-flex;align-items:center;gap:5px;padding:7px 11px;background:#fff;border:1px solid #e5e5e8;border-radius:7px;color:#050505;font-family:'Archivo',sans-serif;font-size:19px;font-weight:650;letter-spacing:-.04em;line-height:1}
+.ps-head #ps-wallet .applepay-mark svg{display:block;width:17px;height:20px;fill:#050505;margin:0}
+.ps-head #ps-wallet .wm-yoco{color:#fff;background:#171717}
+.ps-head button{font-size:13px;color:#555;font-weight:500;padding:8px 0 8px 12px}
+.receipt-name-label{display:block;margin:0 0 7px;font:9px 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#777}
+.receipt-name-input{margin-bottom:16px}
+#ps-rows{margin-top:2px}
+.ps-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid rgba(0,0,0,.09);font-size:13px;line-height:1.45}
+.ps-row>span:first-child{font-weight:500;color:#242424}
+.ps-row .mono{white-space:nowrap;font-size:12px;color:#555}
+.ps-total{display:flex;align-items:baseline;justify-content:space-between;padding:16px 0 18px;font-family:'Archivo',sans-serif;font-weight:650;font-size:15px}
+.ps-total span:last-child{font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:-.025em}
 .ps-head button{ font-size:14px; color:#1a73e8; font-weight:400; }
 .ps-row{ display:flex; justify-content:space-between; gap:16px; padding:10px 0; border-bottom:1px solid rgba(0,0,0,0.08); font-size:14px; }
 .ps-total{ display:flex; justify-content:space-between; padding:14px 0 18px; font-family:'Archivo', sans-serif; font-weight:600; font-size:16px; }
@@ -1540,7 +1548,7 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 <div class="pay-sheet-backdrop" id="pay-backdrop"></div>
 <div class="pay-sheet" id="pay-sheet" role="dialog" aria-modal="true" aria-label="Payment">
   <div class="ps-head"><span id="ps-wallet"></span><button type="button" id="ps-cancel">Cancel</button></div>
-  <label class="receipt-name-label" for="receipt-customer-name">Name for the order</label>
+  <label class="receipt-name-label" for="receipt-customer-name">Order name</label>
   <input class="receipt-name-input" id="receipt-customer-name" type="text" autocomplete="name" placeholder="Customer name" maxlength="80">
   <div id="ps-rows"></div>
   <div class="ps-total"><span>Total</span><span id="ps-total"></span></div>
