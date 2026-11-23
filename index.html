@@ -463,6 +463,9 @@
   .wm-pay{ font-size:15px; font-weight:500; }
   .wm-samsung{ font-weight:700; font-size:12px; letter-spacing:0.16em; gap:0; }
   .wm-samsung .wm-pay{ letter-spacing:0.01em; margin-left:6px; }
+  .wm-yoco{font-size:18px;font-weight:800;letter-spacing:-.06em;color:#111}
+  .wm-yoco .wm-pay{font-size:11px;font-weight:600;letter-spacing:.01em;margin-left:5px}
+  .wm-card{font-size:10px;font-weight:700;letter-spacing:.08em}
 
   .bag{
     position:fixed; top:0; right:0; bottom:0; z-index:202;
@@ -1226,8 +1229,8 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 .house-nike .doc-brand{font-style:italic;font-size:32px}
 .house-palace .doc-brand-image{display:block;width:min(100%,280px);height:auto;margin:0 auto 16px}
 .house-puma .doc-brand-head{text-align:center;margin-bottom:24px}
-.house-puma .doc-brand-image{display:block;width:104px;height:62px;object-fit:contain;margin:0 auto 12px}
-.house-puma .doc-brand{font-family:Arial,sans-serif;font-size:25px;font-weight:800;letter-spacing:.22em}
+.house-puma .doc-brand-image{display:block;width:150px;height:86px;object-fit:contain;margin:0 auto 12px}
+.house-puma .doc-brand{display:flex;align-items:center;justify-content:center}
   .house-palace .doc-brand{font-style:italic;font-size:29px}
 .house-cpfm .doc-brand{font-size:16px;line-height:1.1;max-width:280px}
 .house-revenge .doc-brand-head{display:inline-block;padding:12px 18px;background:var(--doc-accent);color:var(--doc-hero-ink)}
@@ -2240,38 +2243,27 @@ indexListEl.addEventListener('click', e => {
   window.openRecordById(row.dataset.id);
 });
 
-// PRICING — the stored `zar` value is the object's existing recognized-value base.
-// Non-maker-listed objects receive a stable, individual 8–13% margin, rounded to the nearest R10.
-// There is no shared price ladder and no category ceiling: the object sets its own price.
-// `own:true` preserves a maker's published price exactly. The legacy USD × 0.6 × R17
-// fallback remains for any future object that has no explicit ZAR value.
+// PRICING — the entered ZAR value is the selling price.
+// Do not apply an automatic margin or a second conversion to a listed ZAR amount.
 const PRICE_STEP = 10;
 const USD_TO_ZAR = 17;
-function stablePriceMargin(id){
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-  return 0.08 + (hash % 6) * 0.01;
-}
 OBJECTS.forEach(o => {
   if (!Number.isFinite(o.zar) || o.zar <= 0) return;
   o.zarBase = o.zar;
-  o.priceMargin = o.own ? 0 : stablePriceMargin(o.id);
-  if (!o.own) o.zar = Math.round((o.zarBase * (1 + o.priceMargin)) / PRICE_STEP) * PRICE_STEP;
+  o.priceMargin = 0;
 });
 function formatRecognizedValue(usdPrice, zar){
-  if (zar) return 'R' + zar.toLocaleString('en-ZA');
+  if (Number.isFinite(zar) && zar > 0) return 'R' + zar.toLocaleString('en-ZA');
   const round = (n) => Math.round(n / PRICE_STEP) * PRICE_STEP;
   return 'R' + round(usdPrice * 0.6 * USD_TO_ZAR).toLocaleString('en-ZA');
 }
 window.auditPrices = function(){
   const bad = [];
   OBJECTS.forEach(o => {
-    if (!Number.isFinite(o.zar) || o.zar <= 0) bad.push([o.id, 'missing or invalid ZAR price', o.zar]);
-    else if (o.zar % PRICE_STEP !== 0) bad.push([o.id, 'not rounded to R10', o.zar]);
-    else if (o.own && o.zar !== o.zarBase) bad.push([o.id, 'maker price changed', o.zarBase, o.zar]);
-    else if (!o.own && (o.priceMargin < 0.08 || o.priceMargin > 0.13)) bad.push([o.id, 'margin outside 8–13%', o.priceMargin]);
+    if (!Number.isFinite(o.zar) || o.zar <= 0) bad.push([o.id, 'missing or invalid ZAR selling price', o.zar]);
+    else if (o.zar !== o.zarBase) bad.push([o.id, 'display price differs from entered selling price', o.zarBase, o.zar]);
   });
-  console.log(bad.length ? bad : 'prices ok — ' + OBJECTS.length + ' objects; R10 resolution; individual 8–13% margins');
+  console.log(bad.length ? bad : 'prices ok — ' + OBJECTS.length + ' objects; entered ZAR selling prices preserved');
   return bad;
 };
 
@@ -2295,20 +2287,24 @@ window.auditPrices = function(){
   /* ---- wallets ----
      One primary wallet, chosen for the device (or the last one the visitor picked).
      The other two are one small tap away, never competing for attention. */
-  const WALLETS = ['Apple Pay', 'Google Pay', 'Samsung Pay'];
+  const WALLETS = ['Yoco Checkout', 'Debit / Credit Card', 'Apple Pay', 'Google Pay', 'Samsung Pay', 'Payment Link', 'QR Code'];
   const APPLE = '<span class="applepay-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Pay</span>';
   const G_PATH = 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z';
   const MARKS = {
+    'Yoco Checkout': '<span class="wm wm-yoco">yoco<span class="wm-pay">checkout</span></span>',
+    'Debit / Credit Card': '<span class="wm wm-card">CARD · VISA / MASTERCARD</span>',
     'Apple Pay': APPLE,
     'Google Pay': '<span class="wm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + G_PATH + '"/></svg><span class="wm-pay">Pay</span></span>',
-    'Samsung Pay': '<span class="wm wm-samsung">SAMSUNG<span class="wm-pay">Pay</span></span>'
+    'Samsung Pay': '<span class="wm wm-samsung">SAMSUNG<span class="wm-pay">Pay</span></span>',
+    'Payment Link': '<span class="wm wm-card">PAYMENT LINK</span>',
+    'QR Code': '<span class="wm wm-card">QR PAYMENT</span>'
   };
   function detectWallet(){
     try { const s = localStorage.getItem('mf-wallet'); if (WALLETS.includes(s)) return s; } catch(e){}
     const ua = navigator.userAgent;
     if (/SamsungBrowser|SM-[A-Z]\d/.test(ua)) return 'Samsung Pay';
     if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua))) return 'Apple Pay';
-    return 'Google Pay';
+    return 'Yoco Checkout';
   }
   let wallet = detectWallet();
 
@@ -2512,7 +2508,8 @@ window.auditPrices = function(){
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
     ).join('');
     document.getElementById('ps-total').textContent = sumOf(order);
-    psMsg.className = 'ps-msg'; psMsg.innerHTML = ''; sheet.classList.remove('confirmed','processing'); sheet.dataset.wallet = wallet === 'Google Pay' ? 'google' : wallet === 'Samsung Pay' ? 'samsung' : 'apple';
+    psMsg.className = 'ps-msg'; psMsg.textContent = 'DEMO ONLY · No payment will be processed.'; sheet.classList.remove('confirmed','processing');
+    sheet.dataset.wallet = wallet === 'Google Pay' ? 'google' : wallet === 'Samsung Pay' ? 'samsung' : wallet === 'Yoco Checkout' ? 'yoco' : wallet === 'Debit / Credit Card' ? 'card' : wallet === 'Payment Link' ? 'link' : wallet === 'QR Code' ? 'qr' : 'apple';
     sheetBack.classList.add('open');
     sheet.classList.add('open');
   }
@@ -2827,7 +2824,7 @@ window.auditPrices = function(){
     const intro = '<div class="doc-title">' + safeRecordText(language[0]) + '</div><p class="doc-copy">' + safeRecordText(language[1]) + '</p>';
     const sourceLine = br.k === "sicko" ? '' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '' : br.k === "revenge" ? '<div class="doc-brand-caption"></div>' : '';
     const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKÖ",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
-    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><header class="doc-brand-head"><div class="doc-brand">' + (br.k === "palace" ? '<img class="doc-brand-image" src="assets/receipt-logo-palace.svg" alt="PALACE">' : br.k === "puma" ? '<img class="doc-brand-image" src="https://puma.io/images/logos/downloads/running-puma.svg" alt="PUMA leaping cat">' : name) + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
+    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><header class="doc-brand-head"><div class="doc-brand">' + (br.k === "palace" ? '<img class="doc-brand-image" src="assets/receipt-logo-palace.svg" alt="PALACE">' : br.k === "puma" ? '<img class="doc-brand-image" src="https://upload.wikimedia.org/wikipedia/commons/c/c0/Leaping_puma_icon_-_black.svg" alt="PUMA leaping cat">' : name) + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>TOTAL PAID</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
     if (br.k === 'bape') return bapeSlip(items, no, date);
@@ -2897,9 +2894,9 @@ window.auditPrices = function(){
     if (psConfirm.disabled) return;
     psConfirm.disabled = true;
     const stages = [
-      ['Connecting to wallet', 850],
-      ['Verifying payment', 1150],
-      ['Securing your order', 1050]
+      ['Opening the selected payment method', 850],
+      ['Reviewing the payment details', 1150],
+      ['Preparing the order record', 1050]
     ];
     let elapsed = 0;
     psMsg.className = 'ps-msg is-processing';
