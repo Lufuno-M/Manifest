@@ -471,6 +471,19 @@
   .ex-main .wm-yoco{color:#171717;background:#fff}
   .ex-main .wm-yoco .wm-pay{color:#171717}
   .alt-chips .wm-yoco{font-size:16px;padding:7px 9px}
+  .wm-cardmarks{display:inline-flex;align-items:center;gap:7px;color:#171717}
+  .wm-cardmarks .card-symbol{width:24px;height:18px;fill:none;stroke:currentColor}
+  .visa-mark{font:800 13px Arial,sans-serif;letter-spacing:-.06em}
+  .mc-mark{display:inline-flex;align-items:center}
+  .mc-mark i{display:block;width:13px;height:13px;border-radius:50%;background:#d9232e}
+  .mc-mark i+i{margin-left:-5px;background:#f2a900;mix-blend-mode:multiply}
+  .wm-symbol{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;color:#171717}
+  .wm-symbol svg{width:25px;height:25px;fill:none;stroke:currentColor}
+  .ps-head #ps-wallet{display:flex;align-items:center;min-height:34px}
+  .ps-head #ps-wallet .applepay-mark{display:inline-flex;align-items:center;gap:4px;color:#000;font-size:21px;font-weight:600}
+  .ps-head #ps-wallet .applepay-mark svg{display:block;width:19px;height:22px;fill:#000}
+  .ps-head #ps-wallet .wm-yoco{color:#fff;background:#171717}
+  .ps-method-title:empty,.ps-method-help:empty{display:none}
   .wm-card{font-size:10px;font-weight:700;letter-spacing:.08em}
 
   .bag{
@@ -2305,11 +2318,11 @@ window.auditPrices = function(){
   const APPLE = '<span class="applepay-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Pay</span>';
   const G_PATH = 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z';
   const MARKS = {
-    'Yoco Checkout': '<span class="wm wm-yoco">yoco<span class="wm-pay">checkout</span></span>',
-    'Debit / Credit Card': '<span class="wm wm-card">CARD · VISA / MASTERCARD</span>',
+    'Yoco Checkout': '<span class="wm wm-yoco" role="img" aria-label="Yoco Checkout">yoco<span class="wm-pay">checkout</span></span>',
+    'Debit / Credit Card': '<span class="wm wm-cardmarks" role="img" aria-label="Visa and Mastercard"><svg class="card-symbol" viewBox="0 0 28 20" aria-hidden="true"><rect x="1" y="1" width="26" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M1 7h26" stroke="currentColor" stroke-width="1.5"/><path d="M6 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span class="visa-mark">VISA</span><span class="mc-mark"><i></i><i></i></span></span>',
     'Apple Pay': APPLE,
-    'Payment Link': '<span class="wm wm-card">PAYMENT LINK</span>',
-    'QR Code': '<span class="wm wm-card">QR PAYMENT</span>'
+    'Payment Link': '<span class="wm wm-symbol" role="img" aria-label="Payment link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5l4-4M8.5 15H7a4 4 0 010-8h4M15.5 9H17a4 4 0 010 8h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
+    'QR Code': '<span class="wm wm-symbol" role="img" aria-label="QR payment"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 14h3v3h-3zM19 14v2M14 19h2M19 19h2v2h-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg></span>'
   };
   function detectWallet(){
     try { const s = localStorage.getItem('mf-wallet'); if (WALLETS.includes(s)) return s; } catch(e){}
@@ -2514,7 +2527,9 @@ window.auditPrices = function(){
   let order = [], orderFromBag = false;
 
   function openSheet(){
-    document.getElementById('ps-wallet').innerHTML = MARKS[wallet] || '';
+    const walletMark = document.getElementById('ps-wallet');
+    walletMark.innerHTML = MARKS[wallet] || MARKS['Yoco Checkout'];
+    walletMark.setAttribute('aria-label', wallet);
     psConfirm.textContent = 'Continue';
     document.getElementById('ps-rows').innerHTML = order.map(b =>
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
@@ -2529,44 +2544,34 @@ window.auditPrices = function(){
   function paintPaymentFields(){
     const panel = document.getElementById('ps-method-panel');
     const title = document.getElementById('ps-method-title');
-    panel.hidden = wallet === 'Apple Pay';
     const help = document.getElementById('ps-method-help');
     const fields = document.getElementById('ps-method-fields');
+    title.textContent = '';
+    help.textContent = '';
+    panel.hidden = wallet === 'Apple Pay' || wallet === 'Yoco Checkout';
     if (wallet === 'Debit / Credit Card'){
-      title.textContent = 'Card details';
-      help.textContent = 'The card network is recognised as you type.';
-      fields.innerHTML = '<div class="ps-card-brand"><span>CARD NETWORK</span><strong id="ps-card-network">CARD</strong></div><div class="ps-fields"><div class="ps-field wide"><label for="ps-card-number">Card number</label><input id="ps-card-number" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"></div><div class="ps-field"><label for="ps-card-expiry">Expiry</label><input id="ps-card-expiry" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM / YY"></div><div class="ps-field"><label for="ps-card-cvc">Security code</label><input id="ps-card-cvc" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"></div></div>' + commonNote;
+      fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-card-number">Card number</label><input id="ps-card-number" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"></div><div class="ps-field"><label for="ps-card-expiry">Expiry</label><input id="ps-card-expiry" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM / YY"></div><div class="ps-field"><label for="ps-card-cvc">Security code</label><input id="ps-card-cvc" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"></div></div>' + commonNote;
       const number = document.getElementById('ps-card-number');
       number.addEventListener('input', () => {
-        const digits = number.value.replace(/\D/g,'').slice(0,19);
+        const digits = number.value.replace(/\\D/g,'').slice(0,19);
         number.value = digits.replace(/(.{4})/g,'$1 ').trim();
-        const brand = /^4/.test(digits) ? 'VISA' : /^(5[1-5]|2[2-7])/.test(digits) ? 'MASTERCARD' : digits ? 'CARD' : 'CARD';
-        document.getElementById('ps-card-network').textContent = brand;
       });
       const expiry = document.getElementById('ps-card-expiry');
       expiry.addEventListener('input', () => {
-        const d = expiry.value.replace(/\D/g,'').slice(0,4);
+        const d = expiry.value.replace(/\\D/g,'').slice(0,4);
         expiry.value = d.length > 2 ? d.slice(0,2) + ' / ' + d.slice(2) : d;
       });
     } else if (wallet === 'Payment Link'){
-      title.textContent = 'Payment link';
-      help.textContent = 'Paste the checkout URL supplied by your payment provider.';
+      panel.hidden = false;
       fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-payment-link">Payment URL</label><input id="ps-payment-link" type="url" inputmode="url" placeholder="https://…"></div></div>';
     } else if (wallet === 'QR Code'){
-      title.textContent = 'QR payment';
-      help.textContent = 'Add the hosted QR image or a URL to the payment QR.';
+      panel.hidden = false;
       fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-qr-url">QR image URL</label><input id="ps-qr-url" type="url" inputmode="url" placeholder="https://…"></div><div class="ps-field wide"><label for="ps-qr-file">Or choose a QR image</label><input id="ps-qr-file" type="file" accept="image/*"></div></div><div id="ps-qr-preview" class="ps-qr-preview" hidden></div>';
       const qrUrl = document.getElementById('ps-qr-url'), qrFile = document.getElementById('ps-qr-file'), qrPreview = document.getElementById('ps-qr-preview');
       const showQr = src => { qrPreview.innerHTML = '<img alt="Payment QR preview" src="' + String(src).replace(/&/g,'&amp;').replace(/"/g,'&quot;') + '">'; qrPreview.hidden = false; };
       qrUrl.addEventListener('change', () => { if (/^https:\/\//i.test(qrUrl.value.trim())) showQr(qrUrl.value.trim()); });
       qrFile.addEventListener('change', () => { const file = qrFile.files && qrFile.files[0]; if (file && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = () => showQr(reader.result); reader.readAsDataURL(file); } });
-    } else if (wallet === 'Apple Pay'){
-      title.textContent = '';
-      help.textContent = '';
-      fields.innerHTML = '';
     } else {
-      title.textContent = 'Yoco Checkout';
-      help.textContent = '';
       fields.innerHTML = '';
     }
   }
