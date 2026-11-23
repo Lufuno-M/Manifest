@@ -477,8 +477,14 @@
   .mc-mark{display:inline-flex;align-items:center}
   .mc-mark i{display:block;width:13px;height:13px;border-radius:50%;background:#d9232e}
   .mc-mark i+i{margin-left:-5px;background:#f2a900;mix-blend-mode:multiply}
-  .wm-symbol{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;color:#171717}
-  .wm-symbol svg{width:25px;height:25px;fill:none;stroke:currentColor}
+  .wm-symbol{display:inline-flex;align-items:center;justify-content:center;color:currentColor}
+  .wm-symbol svg{width:22px;height:22px;fill:none;stroke:currentColor}
+  .wm-labeled{display:inline-flex;align-items:center;gap:7px;color:currentColor;font:600 13px 'Archivo',sans-serif;letter-spacing:0}
+  .wm-labeled svg{width:19px;height:19px;fill:none;stroke:currentColor;flex:none}
+  .ex-main .wm-labeled{color:#fff}
+  .ex-main .wm-samsung{color:#fff}
+  .alt-chips .wm-labeled{font-size:12px}
+  .alt-chips .wm-labeled svg{width:17px;height:17px}
   .ps-method-title:empty,.ps-method-help:empty{display:none}
   .wm-card{font-size:10px;font-weight:700;letter-spacing:.08em}
 
@@ -2329,8 +2335,9 @@ window.auditPrices = function(){
     'Yoco Checkout': '<span class="wm wm-yoco" role="img" aria-label="Yoco Checkout">yoco<span class="wm-pay">checkout</span></span>',
     'Debit / Credit Card': '<span class="wm wm-cardmarks" role="img" aria-label="Visa and Mastercard"><svg class="card-symbol" viewBox="0 0 28 20" aria-hidden="true"><rect x="1" y="1" width="26" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M1 7h26" stroke="currentColor" stroke-width="1.5"/><path d="M6 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span class="visa-mark">VISA</span><span class="mc-mark"><i></i><i></i></span></span>',
     'Apple Pay': APPLE,
-    'Payment Link': '<span class="wm wm-symbol" role="img" aria-label="Payment link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5l4-4M8.5 15H7a4 4 0 010-8h4M15.5 9H17a4 4 0 010 8h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>',
-    'QR Code': '<span class="wm wm-symbol" role="img" aria-label="QR payment"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 14h3v3h-3zM19 14v2M14 19h2M19 19h2v2h-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg></span>'
+    'Samsung Pay': '<span class="wm wm-samsung" role="img" aria-label="Samsung Pay">SAMSUNG<span class="wm-pay">Pay</span></span>',
+    'Payment Link': '<span class="wm wm-labeled" role="img" aria-label="Payment link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5l4-4M8.5 15H7a4 4 0 010-8h4M15.5 9H17a4 4 0 010 8h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Payment link</span></span>',
+    'QR Code': '<span class="wm wm-labeled" role="img" aria-label="QR code payment"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 14h3v3h-3zM19 14v2M14 19h2M19 19h2v2h-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg><span>QR code</span></span>'
   };
   function detectWallet(){
     try { const s = localStorage.getItem('mf-wallet'); if (WALLETS.includes(s)) return s; } catch(e){}
