@@ -463,7 +463,7 @@
   .wm-pay{ font-size:15px; font-weight:500; }
   .wm-samsung{ font-weight:700; font-size:12px; letter-spacing:0.16em; gap:0; }
   .wm-samsung .wm-pay{ letter-spacing:0.01em; margin-left:6px; }
-  .wm-yoco{font-size:18px;font-weight:800;letter-spacing:-.06em;color:#111}
+  .wm-yoco{font-size:18px;font-weight:800;letter-spacing:-.06em;color:#fff}
   .wm-yoco .wm-pay{font-size:11px;font-weight:600;letter-spacing:.01em;margin-left:5px}
   .wm-card{font-size:10px;font-weight:700;letter-spacing:.08em}
 
@@ -519,6 +519,41 @@
   transform:translate(-50%, 100%); transition: transform 0.4s var(--ease);
 }
 .pay-sheet.open{ transform:translate(-50%, 0); }
+.ps-head{min-height:34px}
+.ps-method-panel{margin:14px 0 8px;padding:16px;background:#fff;border:1px solid #e4e4e8;border-radius:12px}
+.ps-method-title{font:600 12px 'Archivo',sans-serif;margin:0 0 5px}
+.ps-method-help{font:11px/1.5 'Archivo',sans-serif;color:#777;margin:0 0 13px}
+.ps-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ps-field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.ps-field.wide{grid-column:1/-1}
+.ps-field label{font:600 10px 'Archivo',sans-serif;color:#555}
+.ps-field input{width:100%;height:42px;border:1px solid #dedee3;border-radius:7px;background:#fff;padding:0 11px;color:#171717;font:13px 'Archivo',sans-serif;outline:none;min-width:0}
+.ps-field input:focus{border-color:#555;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+.ps-card-brand{display:flex;align-items:center;justify-content:space-between;min-height:18px;margin:0 0 10px;font:600 10px 'Archivo',sans-serif;letter-spacing:.08em;color:#777}
+.ps-card-brand strong{font-size:12px;color:#171717;letter-spacing:.02em}
+.ps-secure-note{margin:10px 0 0;color:#888;font:10px/1.5 'Archivo',sans-serif}
+.ps-method-panel[hidden]{display:none}
+.ps-visual{width:86px;height:86px;position:relative;display:grid;place-items:center;margin:0 auto 2px}
+.ps-visual i,.ps-visual b{position:absolute;display:block}
+.ps-visual-orb i{width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0 5%,#c9d8ff 18%,#6b83ff 48%,#293c9b 78%,#17204c 100%);box-shadow:0 0 24px #8095ff88,inset -8px -10px 18px #111b55aa;animation:ps-breathe 1.8s ease-in-out infinite}
+.ps-visual-orb b{width:78px;height:78px;border:1px solid #aebcff88;border-radius:50%;animation:ps-ripple 2.2s ease-out infinite}
+.ps-visual-yoco i{width:48px;height:48px;border-radius:15px;background:#6d5dfc;box-shadow:0 8px 24px #6d5dfc55;transform:rotate(45deg);animation:ps-yoco 1.6s ease-in-out infinite}
+.ps-visual-yoco b{width:68px;height:68px;border:1px solid #b9b2ff;border-radius:20px;transform:rotate(45deg);animation:ps-ripple 2s ease-out infinite}
+.ps-visual-card i{width:62px;height:42px;border:1.5px solid #333;border-radius:7px;background:linear-gradient(145deg,#fff,#e8e8ed);box-shadow:0 7px 18px #0002}
+.ps-visual-card i:after{content:'';display:block;height:7px;background:#25252b;margin-top:9px}
+.ps-visual-card b{width:22px;height:22px;border:2px solid #555;border-right-color:transparent;border-radius:50%;animation:ps-orbit .7s linear infinite}
+.ps-visual-link i{width:55px;height:28px;border:2px solid #333;border-radius:16px;transform:rotate(-35deg)}
+.ps-visual-link b{width:22px;height:22px;border:2px solid #777;border-radius:50%;animation:ps-link 1.2s ease-in-out infinite}
+.ps-visual-qr i{width:48px;height:48px;border:5px dotted #222;background:repeating-linear-gradient(0deg,transparent 0 7px,#ddd 7px 9px);animation:ps-qr 1.4s ease-in-out infinite}
+.ps-visual-qr b{width:62px;height:2px;background:#555;box-shadow:0 0 8px #555;animation:ps-scan 1.4s ease-in-out infinite}
+@keyframes ps-breathe{50%{transform:scale(1.13);filter:brightness(1.15)}}
+@keyframes ps-ripple{0%{transform:scale(.72);opacity:.8}100%{transform:scale(1.25);opacity:0}}
+@keyframes ps-yoco{50%{transform:rotate(135deg) scale(.9)}}
+@keyframes ps-link{50%{transform:translate(9px,-7px)}}
+@keyframes ps-qr{50%{transform:rotate(8deg) scale(1.04)}}
+@keyframes ps-scan{0%,100%{transform:translateY(-20px);opacity:.4}50%{transform:translateY(20px);opacity:1}}
+@media(max-width:380px){.pay-sheet{padding:18px 16px 22px}.ps-method-panel{padding:13px}}
+@media(prefers-reduced-motion:reduce){.ps-visual i,.ps-visual b{animation:none!important}}
 .ps-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-family:'Archivo', sans-serif; font-weight:600; font-size:17px; }
 .ps-head .applepay-mark, .ps-head .wm{ color:#000; }
 .ps-head button{ font-size:14px; color:#1a73e8; font-weight:400; }
@@ -1522,6 +1557,11 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
   <input class="receipt-name-input" id="receipt-customer-name" type="text" autocomplete="name" placeholder="Customer name" maxlength="80">
   <div id="ps-rows"></div>
   <div class="ps-total"><span>Total</span><span id="ps-total"></span></div>
+  <section class="ps-method-panel" id="ps-method-panel">
+    <div class="ps-method-title" id="ps-method-title">Payment details</div>
+    <p class="ps-method-help" id="ps-method-help"></p>
+    <div id="ps-method-fields"></div>
+  </section>
   <div class="ps-msg" id="ps-msg" aria-live="polite"></div>
   <button class="btn-black" id="ps-confirm"></button>
 </div>
@@ -2287,15 +2327,13 @@ window.auditPrices = function(){
   /* ---- wallets ----
      One primary wallet, chosen for the device (or the last one the visitor picked).
      The other two are one small tap away, never competing for attention. */
-  const WALLETS = ['Yoco Checkout', 'Debit / Credit Card', 'Apple Pay', 'Google Pay', 'Samsung Pay', 'Payment Link', 'QR Code'];
+  const WALLETS = ['Yoco Checkout', 'Debit / Credit Card', 'Apple Pay', 'Payment Link', 'QR Code'];
   const APPLE = '<span class="applepay-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Pay</span>';
   const G_PATH = 'M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z';
   const MARKS = {
     'Yoco Checkout': '<span class="wm wm-yoco">yoco<span class="wm-pay">checkout</span></span>',
     'Debit / Credit Card': '<span class="wm wm-card">CARD · VISA / MASTERCARD</span>',
     'Apple Pay': APPLE,
-    'Google Pay': '<span class="wm"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + G_PATH + '"/></svg><span class="wm-pay">Pay</span></span>',
-    'Samsung Pay': '<span class="wm wm-samsung">SAMSUNG<span class="wm-pay">Pay</span></span>',
     'Payment Link': '<span class="wm wm-card">PAYMENT LINK</span>',
     'QR Code': '<span class="wm wm-card">QR PAYMENT</span>'
   };
@@ -2509,9 +2547,50 @@ window.auditPrices = function(){
     ).join('');
     document.getElementById('ps-total').textContent = sumOf(order);
     psMsg.className = 'ps-msg'; psMsg.textContent = 'DEMO ONLY · No payment will be processed.'; sheet.classList.remove('confirmed','processing');
-    sheet.dataset.wallet = wallet === 'Google Pay' ? 'google' : wallet === 'Samsung Pay' ? 'samsung' : wallet === 'Yoco Checkout' ? 'yoco' : wallet === 'Debit / Credit Card' ? 'card' : wallet === 'Payment Link' ? 'link' : wallet === 'QR Code' ? 'qr' : 'apple';
+    sheet.dataset.wallet = wallet === 'Yoco Checkout' ? 'yoco' : wallet === 'Debit / Credit Card' ? 'card' : wallet === 'Payment Link' ? 'link' : wallet === 'QR Code' ? 'qr' : 'apple';
+    paintPaymentFields();
     sheetBack.classList.add('open');
     sheet.classList.add('open');
+  }
+  function paintPaymentFields(){
+    const panel = document.getElementById('ps-method-panel');
+    const title = document.getElementById('ps-method-title');
+    const help = document.getElementById('ps-method-help');
+    const fields = document.getElementById('ps-method-fields');
+    const commonNote = '<p class="ps-secure-note">Prototype only. No payment is processed and details are not sent to a payment provider.</p>';
+    if (wallet === 'Debit / Credit Card'){
+      title.textContent = 'Card details';
+      help.textContent = 'The card network is recognised as you type.';
+      fields.innerHTML = '<div class="ps-card-brand"><span>CARD NETWORK</span><strong id="ps-card-network">CARD</strong></div><div class="ps-fields"><div class="ps-field wide"><label for="ps-card-number">Card number</label><input id="ps-card-number" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"></div><div class="ps-field"><label for="ps-card-expiry">Expiry</label><input id="ps-card-expiry" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM / YY"></div><div class="ps-field"><label for="ps-card-cvc">Security code</label><input id="ps-card-cvc" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"></div></div>' + commonNote;
+      const number = document.getElementById('ps-card-number');
+      number.addEventListener('input', () => {
+        const digits = number.value.replace(/\D/g,'').slice(0,19);
+        number.value = digits.replace(/(.{4})/g,'$1 ').trim();
+        const brand = /^4/.test(digits) ? 'VISA' : /^(5[1-5]|2[2-7])/.test(digits) ? 'MASTERCARD' : digits ? 'CARD' : 'CARD';
+        document.getElementById('ps-card-network').textContent = brand;
+      });
+      const expiry = document.getElementById('ps-card-expiry');
+      expiry.addEventListener('input', () => {
+        const d = expiry.value.replace(/\D/g,'').slice(0,4);
+        expiry.value = d.length > 2 ? d.slice(0,2) + ' / ' + d.slice(2) : d;
+      });
+    } else if (wallet === 'Payment Link'){
+      title.textContent = 'Payment link';
+      help.textContent = 'Paste the checkout URL supplied by your payment provider.';
+      fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-payment-link">Payment URL</label><input id="ps-payment-link" type="url" inputmode="url" placeholder="https://…"></div></div><p class="ps-secure-note">The link is displayed for this demo only; it is not opened or verified.</p>';
+    } else if (wallet === 'QR Code'){
+      title.textContent = 'QR payment';
+      help.textContent = 'Add the hosted QR image or a URL to the payment QR.';
+      fields.innerHTML = '<div class="ps-fields"><div class="ps-field wide"><label for="ps-qr-url">QR image URL</label><input id="ps-qr-url" type="url" inputmode="url" placeholder="https://…"></div><div class="ps-field wide"><label for="ps-qr-file">Or choose a QR image</label><input id="ps-qr-file" type="file" accept="image/*"></div></div><p class="ps-secure-note">The QR is preview-only in this prototype. Verify payment in your provider account.</p>';
+    } else if (wallet === 'Apple Pay'){
+      title.textContent = 'Apple Pay';
+      help.textContent = 'A device-native wallet handoff would appear here when a real payment provider is connected.';
+      fields.innerHTML = '<p class="ps-secure-note">Apple Pay cannot be simulated as a real wallet authorisation in this standalone demo.</p>';
+    } else {
+      title.textContent = 'Yoco Checkout';
+      help.textContent = 'Hosted checkout is the intended route for taking payment securely.';
+      fields.innerHTML = '<p class="ps-secure-note">Connect Yoco Checkout credentials and use its hosted payment flow here. This prototype does not collect or process payment details.</p>';
+    }
   }
   function closeSheet(){
     sheetBack.classList.remove('open');
@@ -2900,7 +2979,8 @@ window.auditPrices = function(){
     ];
     let elapsed = 0;
     psMsg.className = 'ps-msg is-processing';
-    psMsg.innerHTML = '<span class="ps-loader" aria-hidden="true"><i></i><i></i><i></i></span><span class="ps-status">Connecting to wallet</span>';
+    const visual = sheet.dataset.wallet || 'yoco';
+    psMsg.innerHTML = '<span class="ps-visual ps-visual-' + visual + '" aria-hidden="true"><i></i><b></b></span><span class="ps-status">Connecting to payment method</span>';
     sheet.classList.add('processing');
     stages.forEach(([label, duration], index) => {
       if (index === 0) return;
