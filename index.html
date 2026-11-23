@@ -2490,7 +2490,7 @@ window.auditPrices = function(){
     BAG.push(it);
     paintBag();
     countEl.classList.remove('pulse'); void countEl.offsetWidth; countEl.classList.add('pulse');
-    flash(addBtn, 'Added ✓');
+    closeRecord();
   });
   viewBagBtn.addEventListener('click', openBag);
   document.getElementById('bag-open').addEventListener('click', openBag);
