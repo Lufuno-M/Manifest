@@ -2511,7 +2511,7 @@ window.auditPrices = function(){
   let order = [], orderFromBag = false;
 
   function openSheet(){
-    document.getElementById('ps-wallet').textContent = '';
+    document.getElementById('ps-wallet').innerHTML = MARKS[wallet] || '';
     psConfirm.textContent = 'Continue';
     document.getElementById('ps-rows').innerHTML = order.map(b =>
       `<div class="ps-row"><span>${b.name}${b.size ? ' · ' + b.size : ''}</span><span class="mono">${b.label}</span></div>`
@@ -2526,6 +2526,7 @@ window.auditPrices = function(){
   function paintPaymentFields(){
     const panel = document.getElementById('ps-method-panel');
     const title = document.getElementById('ps-method-title');
+    panel.hidden = wallet === 'Apple Pay';
     const help = document.getElementById('ps-method-help');
     const fields = document.getElementById('ps-method-fields');
     if (wallet === 'Debit / Credit Card'){
@@ -2557,7 +2558,7 @@ window.auditPrices = function(){
       qrUrl.addEventListener('change', () => { if (/^https:\/\//i.test(qrUrl.value.trim())) showQr(qrUrl.value.trim()); });
       qrFile.addEventListener('change', () => { const file = qrFile.files && qrFile.files[0]; if (file && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = () => showQr(reader.result); reader.readAsDataURL(file); } });
     } else if (wallet === 'Apple Pay'){
-      title.textContent = 'Apple Pay';
+      title.textContent = '';
       help.textContent = '';
       fields.innerHTML = '';
     } else {
