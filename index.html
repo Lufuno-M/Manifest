@@ -580,17 +580,15 @@
 .ps-msg.is-processing,.ps-msg.complete{height:58px;opacity:1;margin:5px 0 0;color:var(--ink);font-size:12px}
 .ps-status{font:400 10px 'JetBrains Mono',monospace;letter-spacing:.055em;text-transform:uppercase;color:var(--ink-soft);transition:opacity .22s ease,transform .22s ease}
 .ps-status.is-changing{opacity:0;transform:translateY(3px)}
-.ps-progress{width:92px;height:3px;display:flex;gap:4px;align-items:center}
-.ps-progress span{height:100%;flex:1;min-width:0;border-radius:4px;background:rgba(32,28,20,.10);overflow:hidden;position:relative}
-.ps-progress span:after{content:'';position:absolute;inset:0;background:#A8632B;transform:scaleX(0);transform-origin:left;transition:transform .55s cubic-bezier(.22,.61,.36,1)}
-.ps-progress span.is-active:after,.ps-progress span.is-done:after{transform:scaleX(1)}
-.ps-progress span.is-active:after{background:linear-gradient(90deg,#A8632B,#C18A59);animation:ps-progress-glide 1.25s ease-in-out infinite}
-@keyframes ps-progress-glide{0%,100%{filter:brightness(.92)}50%{filter:brightness(1.18)}}
-.ps-success-mark{width:22px;height:22px;border:1px solid rgba(32,28,20,.28);border-radius:50%;background:transparent;color:var(--ink);display:grid;place-items:center;animation:ps-arrive .5s var(--ease) both}
-.ps-success-mark svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ps-signal{width:112px;height:25px;display:flex;align-items:center;justify-content:center;gap:4px}
+.ps-signal i{display:block;width:3px;height:7px;border-radius:5px;background:linear-gradient(180deg,#a9e7e8 0%,#8c83d9 48%,#efb27e 100%);transform:scaleY(.55);transform-origin:center;opacity:.48;animation:ps-signal-flow 1.05s ease-in-out infinite}
+.ps-signal i:nth-child(2){animation-delay:.08s}.ps-signal i:nth-child(3){animation-delay:.16s}.ps-signal i:nth-child(4){animation-delay:.24s}.ps-signal i:nth-child(5){animation-delay:.32s}.ps-signal i:nth-child(6){animation-delay:.40s}.ps-signal i:nth-child(7){animation-delay:.48s}.ps-signal i:nth-child(8){animation-delay:.56s}.ps-signal i:nth-child(9){animation-delay:.64s}.ps-signal i:nth-child(10){animation-delay:.72s}.ps-signal i:nth-child(11){animation-delay:.80s}
+@keyframes ps-signal-flow{0%,100%{transform:scaleY(.42);opacity:.35;filter:saturate(.8)}50%{transform:scaleY(2.15);opacity:1;filter:saturate(1.35) brightness(1.12)}}
+.ps-success-mark{width:22px;height:22px;background:transparent;color:var(--ink);display:grid;place-items:center;animation:ps-arrive .5s var(--ease) both}
+.ps-success-mark svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .pay-sheet.processing #ps-confirm,.pay-sheet.confirmed #ps-confirm{opacity:.35;pointer-events:none}
 @keyframes ps-orbit{to{transform:rotate(360deg)}}@keyframes ps-orbit-label{to{transform:rotate(-360deg)}}@keyframes ps-success{0%{opacity:0;transform:scale(.35)}70%{opacity:1;transform:scale(1.12)}100%{transform:scale(1)}}
-@media(prefers-reduced-motion:reduce){.ps-orbit,.ps-success-mark{animation:none}}
+@media(prefers-reduced-motion:reduce){.ps-orbit,.ps-signal i,.ps-success-mark{animation:none}}
 /* ---- receipts: printed after payment (mock). One slip per house, each on its own paper. ---- */
 .rcpt-stage{
   position:fixed; inset:0; z-index:500; overflow-y:auto; overflow-x:hidden;
@@ -923,7 +921,7 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 .ps-progress span.is-active:after{animation:ps-progress-glide 1.25s ease-in-out infinite}
 @keyframes ps-arrive{0%{opacity:0;transform:scale(.86)}65%{opacity:1;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){
-  .ps-progress span:after,.ps-success-mark{animation:none!important;transition:none}
+  .ps-signal i,.ps-success-mark{animation:none!important;transition:none}
   .ps-status{transition:none}
 }
 
@@ -2986,16 +2984,12 @@ window.auditPrices = function(){
     ];
     let elapsed = 0;
     psMsg.className = 'ps-msg is-processing';
-    psMsg.innerHTML = '<div class="ps-progress" aria-hidden="true"><span class="is-active"></span><span></span><span></span></div><span class="ps-status">Opening checkout</span>';
+    psMsg.innerHTML = '<div class="ps-signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="ps-status">Opening checkout</span>';
     sheet.classList.add('processing');
-    const progressParts = psMsg.querySelectorAll('.ps-progress span');
     stages.forEach(([label, duration], index) => {
       if (index === 0) return;
       elapsed += stages[index - 1][1];
       setTimeout(() => {
-        progressParts[index - 1]?.classList.remove('is-active');
-        progressParts[index - 1]?.classList.add('is-done');
-        progressParts[index]?.classList.add('is-active');
         const status = psMsg.querySelector('.ps-status');
         if (status) {
           status.classList.add('is-changing');
