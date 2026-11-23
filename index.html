@@ -445,7 +445,7 @@
   }
   .alt-row button{ font:inherit; letter-spacing:inherit; text-transform:inherit; color:inherit; padding:4px 2px; border-bottom:1px solid var(--hairline); }
   .alt-row button:hover{ color:var(--ink); }
-  .alt-chips{ display:none; justify-content:center; gap:8px; margin-top:10px; }
+  .alt-chips{ display:none; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:10px; }
   .alt-chips.open{ display:flex; }
   .alt-chips button{ border:1px solid var(--hairline); border-radius:5px; padding:8px 11px; color:var(--ink); transition:border-color .25s ease; }
   .alt-chips button:hover{ border-color:var(--ink-soft); }
@@ -2325,7 +2325,7 @@ window.auditPrices = function(){
     host.dataset.pre = pre;
     host.innerHTML =
       '<button type="button" class="btn-black ex-main" id="' + mainId + '"></button>' + (afterMain || '') +
-      '<div class="alt-row"><button type="button" class="ex-toggle" aria-expanded="false">Other wallets</button>' + (altExtra || '') + '</div>' +
+      '<div class="alt-row"><button type="button" class="ex-toggle" aria-expanded="false">Other payment methods</button>' + (altExtra || '') + '</div>' +
       '<div class="alt-chips">' + WALLETS.map(w => '<button type="button" data-w="' + w + '" aria-label="' + w + '">' + MARKS[w] + '</button>').join('') + '</div>';
     const tog = host.querySelector('.ex-toggle'), chips = host.querySelector('.alt-chips');
     tog.addEventListener('click', () => {
