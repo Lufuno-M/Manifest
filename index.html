@@ -3330,8 +3330,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 
     wells.forEach(w => {
       if (w.el.style.display === 'none' || w.el.classList.contains('is-offscreen')){
-        w.dwell = 0;
-        w.episodeOpen = false;
+        w.dwell = Math.max(0, w.dwell - dt * DECAY);
+        if (w.dwell / MAX < 0.01) w.episodeOpen = false;
         return;
       }
       const r = w.el.getBoundingClientRect();
@@ -3529,7 +3529,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   if (!('IntersectionObserver' in window)) return;
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => entry.target.classList.toggle('is-offscreen', !entry.isIntersecting));
-  }, { rootMargin:'180px 0px' });
+  }, { rootMargin:'300px 0px' });
   document.querySelectorAll('.field-obj').forEach(el => observer.observe(el));
 })();
 </script>
