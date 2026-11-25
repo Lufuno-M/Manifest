@@ -1454,6 +1454,33 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
     .field-obj:active .stage,.arrival-obj-wrap:active .stage{transform:none;transition:none}
   }
 
+
+/* ERIC EMANUEL — colour-blocked sportswear receipt, distinct from the standard slip. */
+.house-receipt.doc-eric{max-width:640px;padding:36px 42px 40px;background:var(--doc-bg);border:1px solid #e5e2da!important;overflow:hidden}
+.doc-eric .doc-motif{height:12px;margin:-36px -42px 28px;background:var(--doc-motif)}
+.doc-eric .doc-brand-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 30px;padding:0 0 18px;border-bottom:1px solid #151F52}
+.doc-eric .doc-brand{display:flex;align-items:center;line-height:1}
+.house-eric-emanuel .doc-brand-image{display:block;width:58px;height:46px;object-fit:contain;margin:0}
+.doc-eric .doc-brand-caption{font:700 9px/1.8 'JetBrains Mono',monospace;letter-spacing:.13em;text-align:right;color:#151F52;margin:0}
+.doc-eric .doc-title{font:900 clamp(30px,4.5vw,42px)/.98 Arial,sans-serif;letter-spacing:-.055em;color:#151F52;margin:0 0 12px;max-width:430px}
+.doc-eric .doc-copy{font:400 13px/1.6 Arial,sans-serif;color:#66708f;max-width:390px;margin:0 0 28px}
+.doc-eric .doc-meta{gap:12px;margin:0 0 28px}
+.doc-eric .doc-meta>div{padding:12px 14px;background:#f4f3ee;border-top:3px solid #EF6E1F}
+.doc-eric .doc-meta>div:nth-child(2){border-top-color:#3950A9}
+.doc-eric .doc-meta span{font-size:8px;letter-spacing:.13em;color:#66708f}
+.doc-eric .doc-meta b{font-size:12px;color:#151F52}
+.doc-eric .doc-items-head{font:700 9px 'JetBrains Mono',monospace;letter-spacing:.12em;color:#151F52;border-bottom:1px solid #151F52;padding-bottom:10px}
+.doc-eric .doc-item{padding:15px 12px;border-bottom:1px solid #e2e2dd;border-left:4px solid #EF6E1F}
+.doc-eric .doc-item:nth-child(even){border-left-color:#3950A9}
+.doc-eric .doc-item-main b{font:700 13px/1.4 Arial,sans-serif;color:#151F52}
+.doc-eric .doc-item-main small{font:9px/1.7 'JetBrains Mono',monospace;color:#66708f}
+.doc-eric .doc-item>strong{font:700 12px Arial,sans-serif;color:#151F52}
+.doc-eric .doc-totals{margin-top:22px}
+.doc-eric .doc-total{border-top:2px solid #151F52;border-bottom:0;padding-top:14px}
+.doc-eric .doc-total b{color:#EF6E1F;font-size:20px}
+.doc-eric .doc-payment{border-top:1px solid #d8dce9;padding-top:14px}
+.doc-eric .doc-closing{color:#3950A9;font-weight:700}
+@media(max-width:600px){.house-receipt.doc-eric{padding:28px 23px 30px}.doc-eric .doc-motif{margin:-28px -23px 23px}.doc-eric .doc-brand-head{gap:12px}.house-eric-emanuel .doc-brand-image{width:48px;height:40px}.doc-eric .doc-brand-caption{font-size:8px}.doc-eric .doc-title{font-size:32px}}
 </style>
 </head>
 <body>
@@ -2748,6 +2775,7 @@ window.auditPrices = function(){
     B('vetements', /vetements|coming soon/i, 'VETEMENTS', 'Zürich · Paris', 'Thank you', 'VTM', { wcss:A(800,17,5) }),
     B('number-nine', /number \(n\)ine/i, 'NUMBER (N)INE', 'Tokyo', 'Thank you', 'N9', { paper:'#efece4', wcss:F(17,4) }),
     B('palace', /palace/i, 'PALACE', 'Skateboards · London', 'Thank you', 'PLC', { wcss:A(800,22,1,'font-style:italic;') }),
+    B('eric-emanuel', /^Eric Emanuel$/i, 'ERIC EMANUEL', 'EE / Sportswear', 'Thank you', 'EE', { wcss:A(800,20,-.5) }),
     B('sicko', /sicko/i, 'SICKO', 'Born From Pain', 'Thank you', 'SCK', { wcss:A(800,22,2) }),
     B('awake', /awake/i, 'AWAKE NY', 'New York', 'Thank you', 'AWK', { paper:'#f4f0e6', wcss:F(18,5) }),
     B('palm-angels', /palm angels/i, 'PALM ANGELS', 'Los Angeles · Milano', 'Thank you', 'PA',
@@ -2910,6 +2938,7 @@ window.auditPrices = function(){
     palace:{format:"statement",bg:"#f1f0eb",ink:"#151515",accent:"#d5e63c",muted:"#555",line:"#171717",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.04em",heroInk:"#111",motif:"linear-gradient(110deg,#d5e63c,#e8f17d)"},
     /* SICKÖ: restrained white stock, black type and a single red print cue drawn from the T-Rex Global / Born From Pain visual references. */
      sicko:{format:"wide",bg:"#fff",ink:"#171717",accent:"#a71920",muted:"#666",line:"#d8d3cc",font:"'Archivo',Arial,sans-serif",weight:800,track:"-.05em",heroInk:"#fff",motif:"linear-gradient(90deg,#a71920 0 100%)"},
+    "eric-emanuel":{format:"eric",bg:"#fffdf8",ink:"#151F52",accent:"#EF6E1F",muted:"#66708f",line:"#d8dce9",font:"Arial,sans-serif",weight:800,track:"-.03em",heroInk:"#fff",motif:"linear-gradient(90deg,#EF6E1F 0 25%,#151F52 25% 50%,#f5c644 50% 75%,#3950A9 75%)"},
     awake:{format:"colour",bg:"#f4f0e6",ink:"#171717",accent:"#e75c35",muted:"#625b51",line:"#c8bca8",font:"Arial Black,Arial,sans-serif",weight:900,track:"-.025em",heroInk:"#fff",motif:"linear-gradient(115deg,#e75c35 0 34%,#f1b93d 34% 67%,#315c9b 67%)"},
     "palm-angels":{format:"wide",bg:"#f1eee8",ink:"#171717",accent:"#171717",muted:"#666",line:"#aaa49b",font:"Arial,sans-serif",weight:700,track:".18em",heroInk:"#fff",motif:"linear-gradient(90deg,#111 0 12%,#f1eee8 12% 100%)"},
     needles:{format:"editorial",bg:"#f1eee8",ink:"#252329",accent:"#5b405e",muted:"#716b70",line:"#c6bdc6",font:"Georgia,'Times New Roman',serif",weight:400,track:".12em",heroInk:"#fff",motif:"linear-gradient(90deg,#5b405e,#a28aa4)"},
@@ -2977,6 +3006,7 @@ window.auditPrices = function(){
       "number-nine":["An order, recorded","A record of the selected object and its place in this purchase."],
       palace:["Order locked.","Your selection is confirmed. Here are the details."],
       sicko:["Order details","SICKÖ / BORN FROM PAIN. A record of the selected pieces and payment."],
+      "eric-emanuel":["Colour in play.","A little colour, a little sport, and a piece worth keeping."],
       awake:["Good things, incoming.","Your order is confirmed. Here's what you've selected."],
       "palm-angels":["Purchase record","The selected pieces and their order details, brought together."],
       needles:["Selected pieces","A quiet record of the pieces acquired."],
@@ -2997,9 +3027,9 @@ window.auditPrices = function(){
       youngboy:["ORDER SECURED","Your selection is confirmed. The order details follow."]
     }[br.k] || ["Order details","Your purchase is confirmed."];
     const intro = '<div class="doc-title">' + safeRecordText(language[0]) + '</div><p class="doc-copy">' + safeRecordText(language[1]) + '</p>';
-    const sourceLine = br.k === "sicko" ? '' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '' : br.k === "revenge" ? '<div class="doc-brand-caption"></div>' : '';
-    const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKÖ",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN"}[br.k] || safeRecordText(br.w);
-    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><header class="doc-brand-head"><div class="doc-brand">' + (br.k === "palace" ? '<img class="doc-brand-image" src="assets/receipt-logo-palace.svg" alt="PALACE">' : br.k === "puma" ? '<img class="doc-brand-image" src="https://upload.wikimedia.org/wikipedia/commons/c/c0/Leaping_puma_icon_-_black.svg" alt="PUMA leaping cat">' : br.k === "nike" ? '<img class="doc-brand-image" src="assets/receipt-logo-nike.svg" alt="Nike Swoosh">' : name) + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>ORDER TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
+    const sourceLine = br.k === "eric-emanuel" ? '<div class="doc-brand-caption">EE / SPORTSWEAR<br>NEW YORK · COLOUR IN PLAY</div>' : br.k === "sicko" ? '' : ["lv","cartier","goyard","hermes","givenchy","chrome-hearts","margiela"].includes(br.k) ? '' : br.k === "revenge" ? '<div class="doc-brand-caption"></div>' : '';
+    const name = {bape:"A BATHING APE®",lv:"LOUIS VUITTON",cartier:"CARTIER",supreme:"Supreme", "off-white":"OFF-WHITE™","chrome-hearts":"CHROME HEARTS",goyard:"GOYARD",hermes:"HERMÈS",balenciaga:"BALENCIAGA",margiela:"MAISON MARGIELA",vetements:"VETEMENTS","number-nine":"NUMBER (N)INE",palace:"PALACE",sicko:"SICKÖ",awake:"AWAKE NY","palm-angels":"PALM ANGELS",needles:"NEEDLES",kaws:"KAWS",murakami:"KAIKAI KIKI",cpfm:"CACTUS PLANT FLEA MARKET",vlone:"VLONE",yeezy:"YEEZY",adidas:"adidas",nike:"NIKE",beats:"Beats",givenchy:"GIVENCHY","heron-preston":"HERON PRESTON","raf-simons":"RAF SIMONS",revenge:"REVENGE",vivet:"VIVET",ambush:"AMBUSH",youngboy:"YOUNGBOY NEVER BROKE AGAIN","eric-emanuel":"ERIC EMANUEL"}[br.k] || safeRecordText(br.w);
+    return '<div class="rcpt-paper house-receipt house-' + safeRecordText(br.k) + ' doc-' + design.format + '" style="' + style + '"><div class="doc-motif"></div><header class="doc-brand-head"><div class="doc-brand">' + (br.k === "palace" ? '<img class="doc-brand-image" src="assets/receipt-logo-palace.svg" alt="PALACE">' : br.k === "puma" ? '<img class="doc-brand-image" src="https://upload.wikimedia.org/wikipedia/commons/c/c0/Leaping_puma_icon_-_black.svg" alt="PUMA leaping cat">' : br.k === "nike" ? '<img class="doc-brand-image" src="assets/receipt-logo-nike.svg" alt="Nike Swoosh">' : br.k === "eric-emanuel" ? '<img class="doc-brand-image" src="assets/receipt-logo-ee.svg" alt="Eric Emanuel EE monogram">' : name) + '</div>' + sourceLine + '</header>' + intro + '<div class="doc-meta"><div><span>ORDER REFERENCE</span><b>' + safeRecordText(no) + '</b></div><div><span>DATE</span><b>' + safeRecordText(date) + '</b></div></div><div class="doc-items-head"><span>OBJECT / DESCRIPTION</span><span>AMOUNT</span></div><div class="doc-items">' + rows + '</div><div class="doc-totals"><div><span>SUBTOTAL</span><b>' + zarFormat(total) + '</b></div><div class="doc-total"><span>ORDER TOTAL</span><b>' + zarFormat(total) + '</b></div></div><div class="doc-payment"><span>PAYMENT</span><b>' + safeRecordText(wallet) + '</b></div><div class="doc-closing">Thank you for your order.</div><div class="doc-ref">' + safeRecordText(no) + '</div></div>';
   }
   function slipHTML(br, items, no, date){
     if (br.k === 'bape') return bapeSlip(items, no, date);
