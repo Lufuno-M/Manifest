@@ -326,7 +326,7 @@
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     opacity:0; pointer-events:none;
-    transition: opacity 0.35s var(--ease);
+    transition: opacity 0.22s ease-out;
   }
   .record-backdrop.open{ opacity:1; pointer-events:auto; }
   .record{
@@ -341,7 +341,7 @@
     box-shadow:0 30px 60px rgba(20,18,26,0.28);
     padding:40px var(--pad) 0;
     opacity:0; pointer-events:none;
-    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+    transition: opacity 0.22s ease-out, transform 0.22s cubic-bezier(.2,.75,.25,1);
   }
   .record.open{ opacity:1; transform:translate(-50%,-50%); pointer-events:auto; }
   .record-close{
@@ -496,7 +496,7 @@
     display:flex; flex-direction:column;
     padding:28px 28px 24px;
     transform:translateX(100%);
-    transition: transform 0.4s var(--ease);
+    transition: transform 0.24s cubic-bezier(.2,.75,.25,1);
   }
   .bag.open{ transform:none; }
   .bag-head{ display:flex; justify-content:space-between; align-items:center; }
@@ -793,7 +793,7 @@ body.on-dark .wordmark-nav, body.on-dark .nav-right, body.on-dark .bag-btn, body
   width:0; opacity:0; padding:4px 0; border:none; border-bottom:1px solid var(--hairline);
   background:transparent; outline:none; border-radius:0;
   font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--ink);
-  transition:width .4s var(--ease), opacity .3s ease, color .5s ease;
+  transition:width .22s ease-out, opacity .18s ease-out, color .3s ease;
 }
 .nav-search input::placeholder{ color:var(--ink-soft); opacity:.7; }
 .nav-search.open input{ width:clamp(120px,22vw,220px); opacity:1; }
@@ -813,7 +813,7 @@ body.on-dark .nav-search input{ color:#EDEAF2; border-bottom-color:rgba(237,234,
   background:#FCFBF8; box-shadow:20px 0 50px rgba(20,18,26,.2);
   display:flex; flex-direction:column; padding:28px 28px 0;
   transform:translateX(-100%); visibility:hidden;
-  transition:transform .4s var(--ease), visibility 0s .4s;
+  transition:transform .24s cubic-bezier(.2,.75,.25,1), visibility 0s .24s;
 }
 .index.open{ transform:none; visibility:visible; transition-delay:0s; }
 .index-head{ display:flex; justify-content:space-between; align-items:center; padding-bottom:16px; border-bottom:1px solid var(--hairline); }
@@ -1388,6 +1388,26 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
  #rcpt-stage .rcpt-slip.bape-slip,#rcpt-stage .rcpt-slip.raf-slip{width:80mm!important;margin:0 auto!important;filter:none!important}
  #rcpt-stage .rcpt-slip.bape-slip .rcpt-paper,#rcpt-stage .rcpt-slip.raf-slip .rcpt-paper{width:80mm!important;max-width:80mm!important;padding:22px 20px 36px!important;-webkit-mask:none!important;mask:none!important}
 }
+
+
+
+  /* Interaction performance pass: immediate tactile feedback, shorter motion,
+     and less work for elements outside the visitor's view. */
+  button, a, .field-obj, .arrival-obj-wrap{ -webkit-tap-highlight-color:transparent; }
+  button:active, a:active{ transform:scale(.975); transition:transform 90ms ease-out; }
+  .field-obj:active, .arrival-obj-wrap:active{ transform:scale(.985); }
+  button:focus-visible{ transition:outline-offset 120ms ease; }
+  .record-backdrop,.index-backdrop,.bag-backdrop,.pay-backdrop{ backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+  .record-backdrop,.index-backdrop{ transition:opacity .22s ease-out; }
+  .record{ transition:opacity .22s ease-out, transform .22s cubic-bezier(.2,.75,.25,1); }
+  .index{ transition:transform .24s cubic-bezier(.2,.75,.25,1), visibility 0s .24s; }
+  .index.open{ transition-delay:0s; }
+  .bag{ transition:transform .24s cubic-bezier(.2,.75,.25,1); }
+  .nav-search input{ transition:width .22s ease-out, opacity .18s ease-out, color .3s ease; }
+  .field-obj.is-offscreen{ animation-play-state:paused!important; }
+  @media(prefers-reduced-motion:reduce){
+    button:active,a:active,.field-obj:active,.arrival-obj-wrap:active{transform:none;transition:none}
+  }
 
 </style>
 </head>
@@ -3206,8 +3226,14 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     capEl.style.setProperty('--cap-opacity', presence.toFixed(3));
   }
 
+  let lastCloudHueUpdate = 0;
+  let lastFrameWork = 0;
   function loop(){
     const now = performance.now();
+    if (document.hidden){ requestAnimationFrame(loop); return; }
+    // Keep the ambient field fluid while avoiding 60 full layout/style passes per second.
+    if (now - lastFrameWork < 1000 / 30){ requestAnimationFrame(loop); return; }
+    lastFrameWork = now;
     const dt = Math.min((now - lastFrame) / 1000, 0.1);
     lastFrame = now;
 
@@ -3228,10 +3254,13 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       const s = baseScale + bass * 0.025;
       p.el.style.transform = `translate(${x.toFixed(2)}vmax, ${y.toFixed(2)}vmax) scale(${s.toFixed(3)})`;
       p.el.style.opacity = (p.baseOpacity * (1 - bass * 0.06)).toFixed(3);
-      const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
-      p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
+      if (now - lastCloudHueUpdate > 1800){
+        const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
+        p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
+      }
     });
 
+    if (now - lastCloudHueUpdate > 1800) lastCloudHueUpdate = now;
     motionEnergy *= 0.93;
     const stillness = 1 - Math.min(motionEnergy, 1);
 
@@ -3434,6 +3463,17 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   zoom.addEventListener('click', () => zoom.classList.remove('open'));
   addEventListener('keydown', e => { if (e.key === 'Escape') zoom.classList.remove('open'); });
   request();
+})();
+</script>
+
+<script>
+// Pause decorative object drift outside the viewport; resume as objects approach.
+(function(){
+  if (!('IntersectionObserver' in window)) return;
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => entry.target.classList.toggle('is-offscreen', !entry.isIntersecting));
+  }, { rootMargin:'180px 0px' });
+  document.querySelectorAll('.field-obj').forEach(el => observer.observe(el));
 })();
 </script>
 </body>
