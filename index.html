@@ -2275,6 +2275,7 @@ const matches = (o, q) => !q
 const indexListEl = document.getElementById('index-list');
 const indexSorted = [...OBJECTS].sort((a, b) =>
   a.maker.localeCompare(b.maker) || a.name.localeCompare(b.name));
+const indexRank = new Map(indexSorted.map((o, i) => [o.id, i]));
 function paintIndex(q, category = 'All'){
   const list = indexSorted.filter(o => matches(o, q) && (category === 'All' || o.category === category));
   let html = '', last = null;
@@ -2297,8 +2298,7 @@ function applyFilter(q){
   });
   const filtered = !!q || activeCategory !== 'All';
   fieldObjectsEl.classList.toggle('is-filtered', !!filtered);
-  const rank = filtered ? new Map(indexSorted.map((o, i) => [o.id, i])) : null;
-  wells.forEach(w => { w.el.style.order = rank ? rank.get(w.obj.id) : ''; });
+  wells.forEach(w => { w.el.style.order = filtered ? indexRank.get(w.obj.id) : ''; });
   document.getElementById('field-count').textContent =
     String(visible).padStart(2, '0') + (filtered ? ' matching' : ' objects');
   document.getElementById('field-empty').style.display = visible === 0 ? 'block' : 'none';
@@ -3327,8 +3327,8 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
 
     wells.forEach(w => {
       if (w.el.style.display === 'none' || w.el.classList.contains('is-offscreen')){
-        w.dwell = Math.max(0, w.dwell - dt * DECAY);
-        applyWell(w, w.dwell / MAX, 0.55, false, 0);
+        w.dwell = 0;
+        w.episodeOpen = false;
         return;
       }
       const r = w.el.getBoundingClientRect();
