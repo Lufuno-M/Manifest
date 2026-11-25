@@ -1450,6 +1450,9 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
     transform:scale(.975);
     transition:transform 90ms ease-out;
   }
+  @media(prefers-reduced-motion:reduce){
+    .field-obj:active .stage,.arrival-obj-wrap:active .stage{transform:none;transition:none}
+  }
 
 </style>
 </head>
