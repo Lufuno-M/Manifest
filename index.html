@@ -203,7 +203,7 @@
   #field-objects{
     --w: clamp(128px, 36vw, 176px);          /* one base size, responsive */
     display:flex; flex-direction:column;
-    gap: clamp(56px, 11vh, 110px);           /* constant breathing room */
+    gap: clamp(42px, 7vh, 76px);             /* still airy, less empty travel */
   }
   .field-obj{
     --iw: calc(var(--w) * var(--s, 1));      /* +/-6% variation only */
@@ -1409,6 +1409,48 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
     button:active,a:active,.field-obj:active,.arrival-obj-wrap:active{transform:none;transition:none}
   }
 
+  /* Search and category results become a readable index without changing the
+     scattered, drifting arrangement of the unfiltered archive. */
+  #field-objects.is-filtered{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));
+    align-items:start;
+    justify-items:center;
+    gap:clamp(28px,4vw,44px) 22px;
+  }
+  #field-objects.is-filtered .field-obj{
+    width:100%;
+    max-width:190px;
+    margin-left:0;
+    justify-self:center;
+  }
+  #field-objects.is-filtered .field-obj .stage{
+    width:min(100%,176px);
+  }
+  #field-objects.is-filtered .field-obj .cap{
+    width:100%;
+    margin-top:10px;
+    opacity:1;
+    transform:none;
+  }
+  .record-size-row button{
+    transition:background-color .12s ease,border-color .12s ease,color .12s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .record-size-row button.chosen{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:#fff;
+  }
+  .record-size-row button:focus-visible{
+    outline:2px solid #A8632B;
+    outline-offset:3px;
+  }
+  .field-obj:active .stage,.arrival-obj-wrap:active .stage{
+    transform:scale(.975);
+    transition:transform 90ms ease-out;
+  }
+
 </style>
 </head>
 <body>
@@ -2233,8 +2275,8 @@ const matches = (o, q) => !q
 const indexListEl = document.getElementById('index-list');
 const indexSorted = [...OBJECTS].sort((a, b) =>
   a.maker.localeCompare(b.maker) || a.name.localeCompare(b.name));
-function paintIndex(q){
-  const list = q ? indexSorted.filter(o => matches(o, q)) : indexSorted;
+function paintIndex(q, category = 'All'){
+  const list = indexSorted.filter(o => matches(o, q) && (category === 'All' || o.category === category));
   let html = '', last = null;
   list.forEach(o => {
     if (o.maker !== last){ html += `<div class="index-house">${o.maker}</div>`; last = o.maker; }
@@ -2253,11 +2295,14 @@ function applyFilter(q){
     w.el.style.display = m ? '' : 'none';
     if (m) visible++;
   });
-  const filtered = q || activeCategory !== 'All';
+  const filtered = !!q || activeCategory !== 'All';
+  fieldObjectsEl.classList.toggle('is-filtered', !!filtered);
+  const rank = filtered ? new Map(indexSorted.map((o, i) => [o.id, i])) : null;
+  wells.forEach(w => { w.el.style.order = rank ? rank.get(w.obj.id) : ''; });
   document.getElementById('field-count').textContent =
     String(visible).padStart(2, '0') + (filtered ? ' matching' : ' objects');
   document.getElementById('field-empty').style.display = visible === 0 ? 'block' : 'none';
-  paintIndex(q);
+  paintIndex(q, activeCategory);
 }
 paintIndex('');
 
@@ -2441,7 +2486,7 @@ window.auditPrices = function(){
 
   function paintRecordStage(name){
     const src = recordAssets[recordIndex];
-    stageEl.innerHTML = `<img src="${src}" alt="${name}" loading="lazy">`;
+    stageEl.innerHTML = `<img src="${src}" alt="${name}" loading="eager" decoding="async" fetchpriority="high">`;
     if (recordAssets.length > 1){
       dotsEl.style.display = 'flex';
       dotsEl.innerHTML = recordAssets.map((_, i) =>
@@ -2458,6 +2503,17 @@ window.auditPrices = function(){
       dotsEl.innerHTML = '';
     }
   }
+
+  sizeRow.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-size]');
+    if (!btn || btn.disabled) return;
+    sizeRow.querySelectorAll('button[data-size]').forEach(b => {
+      const selected = b === btn;
+      b.classList.toggle('chosen', selected);
+      b.setAttribute('aria-pressed', String(selected));
+    });
+    sizeHint.textContent = '';
+  });
 
   function openRecord(o){
     current = o;
@@ -2478,15 +2534,8 @@ window.auditPrices = function(){
       // Optional per-object `out:['S','XL']` marks sizes we don't have right now.
       sizeRow.innerHTML = o.sizes.map(s => {
         const out = o.out && o.out.includes(s);
-        return `<button type="button" data-size="${s}"${out ? ' disabled class="out" aria-label="' + s + ', unavailable"' : ''}>${s}</button>`;
+        return `<button type="button" data-size="${s}" aria-pressed="false"${out ? ' disabled class="out" aria-label="' + s + ', unavailable"' : ''}>${s}</button>`;
       }).join('');
-      sizeRow.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          sizeRow.querySelectorAll('button').forEach(b => b.classList.remove('chosen'));
-          btn.classList.add('chosen');
-          sizeHint.textContent = '';
-        });
-      });
     } else {
       sizesWrap.style.display = 'none';
       sizeRow.innerHTML = '';
@@ -3277,6 +3326,11 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     applyWell(arrivalWell, arrivalWell.dwell / MAX, 0.5, true, arrivalVisible ? 1 : 0);
 
     wells.forEach(w => {
+      if (w.el.style.display === 'none' || w.el.classList.contains('is-offscreen')){
+        w.dwell = Math.max(0, w.dwell - dt * DECAY);
+        applyWell(w, w.dwell / MAX, 0.55, false, 0);
+        return;
+      }
       const r = w.el.getBoundingClientRect();
       const onscreen = r.bottom > -300 && r.top < window.innerHeight + 300;
       if (!onscreen){
