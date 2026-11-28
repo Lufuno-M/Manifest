@@ -48,9 +48,9 @@
     position:absolute;
     width:64vmax; height:64vmax;
     border-radius:50%;
-    filter: url(#water-1);
+    filter: none;
     mix-blend-mode: multiply;
-    will-change: transform, filter;
+    will-change: transform;
   }
   .cloud-1{
     top:-18vmax; left:-14vmax;
@@ -1487,41 +1487,7 @@ body.on-dark .sound-btn{ color:#EDEAF2; }
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <filter id="water-1" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.010 0.014" numOctaves="2" seed="3" result="n">
-        <animate attributeName="baseFrequency" values="0.008 0.012;0.014 0.009;0.008 0.012" dur="12s" repeatCount="indefinite"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G"/>
-      <feGaussianBlur stdDeviation="14"/>
-    </filter>
-    <filter id="water-2" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.011" numOctaves="2" seed="11" result="n">
-        <animate attributeName="baseFrequency" values="0.007 0.010;0.011 0.007;0.007 0.010" dur="14s" repeatCount="indefinite"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G"/>
-      <feGaussianBlur stdDeviation="16"/>
-    </filter>
-    <filter id="water-3" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.009" numOctaves="1" seed="27" result="n">
-        <animate attributeName="baseFrequency" values="0.010 0.008;0.015 0.011;0.010 0.008" dur="11s" repeatCount="indefinite"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="80" xChannelSelector="R" yChannelSelector="G"/>
-      <feGaussianBlur stdDeviation="12"/>
-    </filter>
-    <filter id="water-4" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.009 0.013" numOctaves="2" seed="41" result="n">
-        <animate attributeName="baseFrequency" values="0.008 0.011;0.012 0.015;0.008 0.011" dur="13s" repeatCount="indefinite"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="55" xChannelSelector="R" yChannelSelector="G"/>
-      <feGaussianBlur stdDeviation="15"/>
-    </filter>
-    <filter id="water-5" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.011 0.008" numOctaves="1" seed="53" result="n">
-        <animate attributeName="baseFrequency" values="0.009 0.007;0.013 0.010;0.009 0.007" dur="10s" repeatCount="indefinite"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="65" xChannelSelector="R" yChannelSelector="G"/>
-      <feGaussianBlur stdDeviation="13"/>
-    </filter>
+    <!-- Lightweight ambient gradients replace animated turbulence filters on entry. -->
   </defs>
 </svg>
 
@@ -3278,7 +3244,6 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
   const cloudEls = Array.from(document.querySelectorAll('.weather .cloud'));
   const waveParams = cloudEls.map((el, i) => ({
     el,
-    filterId: `water-${i + 1}`,
     baseOpacity: [0.78, 0.72, 0.56, 0.68, 0.6][i],
     ax: 6 + i * 1.4,
     ay: 5 + i * 1.1,
@@ -3291,13 +3256,9 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     cpy: 11 + i * 1.9,
     chopPhase: i * 3.1,
     scaleAmp: 0.08 + i * 0.01,
-    scalePeriod: 90 + i * 13,
-    huePeriod: 260 + i * 53,
-    hueAmp: 7 + (i % 3) * 2,
-    huePhase: i * 2.3
+    scalePeriod: 90 + i * 13
   }));
-
-  function applyWell(w, energy, opacityCap, isArrival, presence){
+function applyWell(w, energy, opacityCap, isArrival, presence){
     const opacity = Math.min(opacityCap, energy * opacityCap * 1.05);
     const scale = 0.5 + Math.min(1, energy) * 1.0;
     const target = isArrival ? arrivalWell.haloEl : w.halo;
@@ -3308,8 +3269,7 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
     capEl.style.setProperty('--cap-opacity', presence.toFixed(3));
   }
 
-  let lastCloudHueUpdate = 0;
-  let lastFrameWork = 0;
+let lastFrameWork = 0;
   function loop(){
     const now = performance.now();
     if (document.hidden){ requestAnimationFrame(loop); return; }
@@ -3336,14 +3296,9 @@ document.getElementById('pending-list').innerHTML = PENDING.map(p => `
       const s = baseScale + bass * 0.025;
       p.el.style.transform = `translate(${x.toFixed(2)}vmax, ${y.toFixed(2)}vmax) scale(${s.toFixed(3)})`;
       p.el.style.opacity = (p.baseOpacity * (1 - bass * 0.06)).toFixed(3);
-      if (now - lastCloudHueUpdate > 1800){
-        const h = Math.sin(elapsed / p.huePeriod * Math.PI * 2 + p.huePhase) * p.hueAmp;
-        p.el.style.filter = `url(#${p.filterId}) hue-rotate(${h.toFixed(2)}deg)`;
-      }
-    });
+});
 
-    if (now - lastCloudHueUpdate > 1800) lastCloudHueUpdate = now;
-    motionEnergy *= 0.93;
+motionEnergy *= 0.93;
     const stillness = 1 - Math.min(motionEnergy, 1);
 
     curX += (targetX - curX) * 0.05;
